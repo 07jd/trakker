@@ -17,10 +17,10 @@ interface GameDao{
     fun getGameByExactName(gameName: String): Flow<Game?>
 
     @Query("SELECT * FROM game WHERE name LIKE :gameName")
-    fun getGamesByName(gameName: String): Flow<Game?>
+    fun getGamesByName(gameName: String): List<Game>
 
-    @Query("SELECT * FROM game")
-    fun getAllGames(): Flow<List<Game>>
+    @Query("SELECT * FROM game ORDER BY rating DESC")
+    fun getAllGames(): List<Game>
 
     @Query("""
         SELECT EXISTS(

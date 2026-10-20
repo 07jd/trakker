@@ -19,5 +19,9 @@ data class FeedState(
     val searchTerm: String = "",  // Needed for refresh search term
     val searchResult: List<FeedItem> = emptyList(),
 
-    val isRefreshing: Boolean = false
+    val isRefreshing: Boolean = false,
+    val refreshFailed: Boolean = false,
+
+    val usingOfflineDataFeed: Boolean = false,
+    val usingOfflineDataSearch: Boolean = false,
 )
