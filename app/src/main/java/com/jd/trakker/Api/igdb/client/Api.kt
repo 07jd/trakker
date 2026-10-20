@@ -5,15 +5,19 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 data class RequestBody(
-    val operation: String,
     val page: Int?,
     val name: String?,
     val id: Int?
 )
 
 interface Api {
-    @POST("api/igdb")
-    suspend fun fetch(
+    @POST("api/igdb/feed")
+    suspend fun fetchFeed(
+        @Body request: RequestBody
+    ): Response<List<GameResponse>>
+
+    @POST("api/igdb/search")
+    suspend fun fetchGames(
         @Body request: RequestBody
     ): Response<List<GameResponse>>
 }
