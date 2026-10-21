@@ -2,8 +2,8 @@ package com.jd.trakker.App.Feed
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jd.trakker.Api.igdb.client.GameFetcher
-import com.jd.trakker.Api.igdb.db.GameDao
+import com.jd.trakker.api.igdb.client.GameFetcher
+import com.jd.trakker.api.igdb.db.GameDao
 import com.jd.trakker.App.Feed.db.FeedResult
 import com.jd.trakker.App.Feed.db.FeedResultDao
 import com.jd.trakker.App.Feed.db.FeedType
@@ -31,7 +31,7 @@ class feedViewModel(
                 getFeedPage(1, 5, true)
                 _state.update { it.copy(loading = false) }
             } catch (e: Exception) {
-                println("Init feed get fail, ${e.message}")
+                println("Init feed get fail, ${e.message}; Getting cached data")
                 val data = when (_state.value.feedType) {
                     FeedType.Games -> withContext(Dispatchers.IO) {
                         gameDao.getAllGames()
@@ -206,6 +206,7 @@ class feedViewModel(
                     }
                     try {
                         val data = search(event.name)
+                        println("Got data from the server")
                         _state.update {
                             it.copy(
                                 loading = false,

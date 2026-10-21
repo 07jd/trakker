@@ -1,39 +1,35 @@
-package com.jd.trakker.Api.TMDB.Client
+package com.jd.trakker.api.tmdb.client
 
-import com.jd.trakker.Api.ExceptionAPI
-import com.jd.trakker.Api.TMDB.DB.Show
+import com.jd.trakker.BuildConfig
+import com.jd.trakker.api.ExceptionAPI
+import com.jd.trakker.api.tmdb.db.Movie
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-enum class FetchType {
-    Feed,
-    Search
-}
-
-class ShowFetcher {
-    private val url = "https://trakker.07jd.workers.dev/"
+class MovieFetcher {
     private val api: TMDB by lazy {
-        Retrofit.Builder().baseUrl(url).addConverterFactory(GsonConverterFactory.create()).build()
+        Retrofit.Builder().baseUrl(BuildConfig.BASE_URL).addConverterFactory(GsonConverterFactory.create()).build()
             .create(TMDB::class.java)
     }
 
-    private fun parseShows(data: TmdbResponse): List<Show> {
+    private fun parseMovies(data: TmdbResponse): List<Movie> {
         return data.results.map {
-            Show(
+            Movie(
                 id = it.id,
+                adult = it.adult,
+                title = it.title!!,
                 genre_ids = it.genre_ids,
                 overview = it.overview,
+                release_date = it.release_date!!,
                 vote_average = it.vote_average,
+                video = it.video!!,
                 backdrop_path = it.backdrop_path,
-                poster_path = it.poster_path,
-                adult = it.adult,
-                name = it.name!!,
-                first_air_date = it.first_air_date!!
+                poster_path = it.poster_path
             )
         }
     }
 
-    private suspend fun fetch(name: String?, page: Int = 1, type: FetchType): List<Show> {
+    private suspend fun fetch(name: String?, page: Int = 1, type: FetchType): List<Movie> {
         var statusCode: Int?
         var body: TmdbResponse?
 
@@ -42,7 +38,7 @@ class ShowFetcher {
             val rawData = when (type) {
                 FetchType.Feed -> api.fetchFeed(
                     TmdbRequestBody(
-                        type = "show",
+                        type = "movie",
                         name = null,
                         page = page
                     )
@@ -50,7 +46,7 @@ class ShowFetcher {
 
                 FetchType.Search -> api.fetchMedia(
                     TmdbRequestBody(
-                        type = "show", name = name, page = page
+                        type = "movie", name = name, page = page
                     )
                 )
             }
@@ -69,18 +65,18 @@ class ShowFetcher {
         if (body == null) throw ExceptionAPI.fromCode(0, "Invalid data received")
 
         try {
-            return parseShows(body)
+            return parseMovies(body)
         } catch (e: Exception) {
-            println("Failed to parse shows: ${e.message}")
+            println("Failed to parse movies: ${e.message}")
             throw ExceptionAPI.fromCode(0, "Failed to parse data")
         }
     }
 
-    suspend fun searchShow(name: String, page: Int = 1): List<Show> {
+    suspend fun searchShow(name: String, page: Int = 1): List<Movie> {
         return fetch(name, page, FetchType.Search)
     }
 
-    suspend fun getFeed(page: Int = 1): List<Show> {
+    suspend fun getFeed(page: Int = 1): List<Movie> {
         return fetch(null, page, FetchType.Feed)
     }
 }

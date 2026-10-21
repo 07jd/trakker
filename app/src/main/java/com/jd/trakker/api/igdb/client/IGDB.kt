@@ -1,5 +1,17 @@
-package com.jd.trakker.Api.igdb.client
+package com.jd.trakker.api.igdb.client
 
+import retrofit2.Response
+import retrofit2.http.Body
+import retrofit2.http.POST
+
+// Request body
+data class RequestBody(
+    val page: Int?,
+    val name: String?,
+    val id: Int?
+)
+
+// API responses
 data class Cover(
     val id: Int,
     val image_id: String
@@ -34,3 +46,15 @@ data class GameResponse(
     val summary: String,
     val url: String
 )
+
+interface Api {
+    @POST("api/igdb/feed")
+    suspend fun fetchFeed(
+        @Body request: RequestBody
+    ): Response<List<GameResponse>>
+
+    @POST("api/igdb/search")
+    suspend fun fetchGames(
+        @Body request: RequestBody
+    ): Response<List<GameResponse>>
+}

@@ -1,4 +1,4 @@
-package com.jd.trakker.Api
+package com.jd.trakker.api
 
 import android.util.Base64
 import androidx.room.TypeConverter

@@ -1,4 +1,4 @@
-package com.jd.trakker.Api
+package com.jd.trakker.api
 
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException

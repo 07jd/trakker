@@ -27,7 +27,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.jd.trakker.Api.igdb.client.GameFetcher
+import com.jd.trakker.api.igdb.client.GameFetcher
 import com.jd.trakker.App.Feed.Feed
 import com.jd.trakker.App.Feed.feedViewModel
 import com.jd.trakker.R

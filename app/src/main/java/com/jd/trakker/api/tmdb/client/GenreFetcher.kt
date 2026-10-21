@@ -1,15 +1,15 @@
-package com.jd.trakker.Api.TMDB.Client
+package com.jd.trakker.api.tmdb.client
 
-import com.jd.trakker.Api.ExceptionAPI
-import com.jd.trakker.Api.TMDB.DB.MovieGenre
-import com.jd.trakker.Api.TMDB.DB.ShowGenre
+import com.jd.trakker.BuildConfig
+import com.jd.trakker.api.ExceptionAPI
+import com.jd.trakker.api.tmdb.db.MovieGenre
+import com.jd.trakker.api.tmdb.db.ShowGenre
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class GenreFetcher {
-    private val url = "https://trakker.07jd.workers.dev/"
     private val api: TMDB by lazy {
-        Retrofit.Builder().baseUrl(url).addConverterFactory(GsonConverterFactory.create()).build()
+        Retrofit.Builder().baseUrl(BuildConfig.BASE_URL).addConverterFactory(GsonConverterFactory.create()).build()
             .create(TMDB::class.java)
     }
 

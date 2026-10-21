@@ -6,8 +6,8 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.AndroidViewModel
 import androidx.room.Room
 import androidx.sqlite.driver.AndroidSQLiteDriver
-import com.jd.trakker.Api.igdb.db.GameDao
-import com.jd.trakker.Api.igdb.db.GameDatabase
+import com.jd.trakker.api.igdb.db.GameDao
+import com.jd.trakker.api.igdb.db.GameDatabase
 import com.jd.trakker.App.Feed.db.FeedResultDao
 import com.jd.trakker.App.Feed.db.FeedResultDatabase
 import kotlinx.coroutines.flow.map

@@ -58,7 +58,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import com.jd.trakker.Api.igdb.db.Game
+import com.jd.trakker.api.igdb.db.Game
 import com.jd.trakker.App.Feed.db.FeedType
 import com.jd.trakker.R
 import kotlinx.coroutines.flow.distinctUntilChanged

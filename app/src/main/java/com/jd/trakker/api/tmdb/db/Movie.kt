@@ -1,18 +1,19 @@
-package com.jd.trakker.Api.TMDB.DB
+package com.jd.trakker.api.tmdb.db
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "shows")
-data class Show(
+@Entity("movies")
+data class Movie(
     @PrimaryKey(autoGenerate = false)
     val id: Int,
+    val title: String,
     val adult: Boolean,
     val genre_ids: List<Int>,
-    val name: String,
-    val first_air_date: String,
     val overview: String,
+    val release_date: String,
     val vote_average: Double,
+    val video: Boolean,
     val backdrop_path: String,
     val poster_path: String,
 )

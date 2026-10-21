@@ -1,4 +1,4 @@
-package com.jd.trakker.Api.TMDB.DB
+package com.jd.trakker.api.tmdb.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

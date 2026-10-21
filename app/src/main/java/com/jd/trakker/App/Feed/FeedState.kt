@@ -1,6 +1,6 @@
 package com.jd.trakker.App.Feed
 
-import com.jd.trakker.Api.igdb.db.Game
+import com.jd.trakker.api.igdb.db.Game
 import com.jd.trakker.App.Feed.db.FeedType
 
 sealed interface FeedItem

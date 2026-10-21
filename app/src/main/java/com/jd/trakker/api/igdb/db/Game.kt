@@ -1,4 +1,4 @@
-package com.jd.trakker.Api.igdb.db
+package com.jd.trakker.api.igdb.db
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

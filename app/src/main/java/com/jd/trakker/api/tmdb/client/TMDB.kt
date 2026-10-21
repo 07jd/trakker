@@ -1,7 +1,7 @@
-package com.jd.trakker.Api.TMDB.Client
+package com.jd.trakker.api.tmdb.client
 
-import com.jd.trakker.Api.TMDB.DB.MovieGenre
-import com.jd.trakker.Api.TMDB.DB.ShowGenre
+import com.jd.trakker.api.tmdb.db.MovieGenre
+import com.jd.trakker.api.tmdb.db.ShowGenre
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET

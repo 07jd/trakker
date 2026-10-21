@@ -18,6 +18,12 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField(
+            type = "String",
+            name = "BASE_URL",
+            value = "\"https://trakker.07jd.workers.dev/\"",
+        )
     }
 
     buildTypes {
@@ -32,7 +38,8 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
     buildFeatures {
-        compose = true
+        compose     = true
+        buildConfig = true
     }
 }
 

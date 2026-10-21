@@ -3,7 +3,7 @@ package com.jd.trakker.App.Feed.db
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.jd.trakker.Api.ListConverter
+import com.jd.trakker.api.ListConverter
 
 @Database(
     entities = [FeedResult::class],
