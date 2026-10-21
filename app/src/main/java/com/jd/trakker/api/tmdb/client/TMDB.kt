@@ -10,8 +10,9 @@ import retrofit2.http.POST
 // Body sent to the API
 data class TmdbRequestBody(
     val type: String?,
-    val name: String?,
-    val page: Int?
+    val query: String?,
+    val page: Int?,
+    val adult: Boolean = false,
 )
 
 // API raw responses
@@ -39,8 +40,8 @@ data class TmdbDataResponse(
 
     val overview: String,
     val vote_average: Double,
-    val backdrop_path: String,
-    val poster_path: String,
+    val backdrop_path: String?,
+    val poster_path: String?,
 )
 
 data class TmdbGenresResponse(

@@ -16,6 +16,9 @@ interface ShowDao {
     @Query("SELECT * FROM shows WHERE id = :id")
     suspend fun getByID(id: Int): Show?
 
-    @Query("SELECT * FROM shows")
+    @Query("SELECT * FROM shows ORDER BY vote_average DESC")
     suspend fun getAll(): List<Show>
+
+    @Query("SELECT * FROM shows WHERE id IN (:ids)")
+    suspend fun getBatchByID(ids: List<Int>): List<Show>
 }

@@ -10,19 +10,42 @@ import com.jd.trakker.api.igdb.db.GameDao
 import com.jd.trakker.api.igdb.db.GameDatabase
 import com.jd.trakker.App.Feed.db.FeedResultDao
 import com.jd.trakker.App.Feed.db.FeedResultDatabase
+import com.jd.trakker.api.tmdb.db.MovieDatabase
+import com.jd.trakker.api.tmdb.db.MovieGenreDatabase
+import com.jd.trakker.api.tmdb.db.ShowDatabase
+import com.jd.trakker.api.tmdb.db.ShowGenreDatabase
 import kotlinx.coroutines.flow.map
 
 class AppViewModel(
     dataStore: DataStore<Preferences>,
     application: Application
 ) : AndroidViewModel(application) {
-    private val gamesDB: GameDatabase by lazy {
+    val gamesDB: GameDatabase by lazy {
         Room.databaseBuilder<GameDatabase>(application.applicationContext, "games")
             .setDriver(AndroidSQLiteDriver())
             .build()
     }
-
-    private val feedDB: FeedResultDatabase by lazy {
+    val moviesDB: MovieDatabase by lazy {
+        Room.databaseBuilder<MovieDatabase>(application.applicationContext, "movies")
+            .setDriver(AndroidSQLiteDriver())
+            .build()
+    }
+    val showsDB: ShowDatabase by lazy {
+        Room.databaseBuilder<ShowDatabase>(application.applicationContext, "shows")
+            .setDriver(AndroidSQLiteDriver())
+            .build()
+    }
+    val movieGenreDB: MovieGenreDatabase by lazy {
+        Room.databaseBuilder<MovieGenreDatabase>(application.applicationContext, "movieGenre")
+            .setDriver(AndroidSQLiteDriver())
+            .build()
+    }
+    val showGenreDB: ShowGenreDatabase by lazy {
+        Room.databaseBuilder<ShowGenreDatabase>(application.applicationContext, "showGenre")
+            .setDriver(AndroidSQLiteDriver())
+            .build()
+    }
+    val feedDB: FeedResultDatabase by lazy {
         Room.databaseBuilder<FeedResultDatabase>(application.applicationContext, "feedResult")
             .setDriver(AndroidSQLiteDriver())
             .build()
@@ -30,13 +53,5 @@ class AppViewModel(
 
     val setupDone = dataStore.data.map { config ->
         config[AppConfig.setupDone] ?: false
-    }
-
-    fun getGamesDao(): GameDao {
-        return gamesDB.dao
-    }
-
-    fun getFeedResultDao(): FeedResultDao {
-        return feedDB.dao
     }
 }

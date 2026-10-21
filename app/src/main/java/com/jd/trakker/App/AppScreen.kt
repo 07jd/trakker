@@ -143,9 +143,12 @@ fun AppNavHost(
                     Destination.Media -> {
                         val feedVM: feedViewModel = viewModel {
                             feedViewModel(
-                                feedResultDao = viewModel.getFeedResultDao(),
-                                gameDao = viewModel.getGamesDao(),
-                                gameFetcher = GameFetcher()
+                                movieDao = viewModel.moviesDB.dao,
+                                showDao = viewModel.showsDB.dao,
+                                showGenreDao = viewModel.showGenreDB.dao,
+                                movieGenreDao = viewModel.movieGenreDB.dao,
+                                gameDao = viewModel.gamesDB.dao,
+                                feedResultDao = viewModel.feedDB.dao
                             )
                         }
 

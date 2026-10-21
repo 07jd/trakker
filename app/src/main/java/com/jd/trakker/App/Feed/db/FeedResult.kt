@@ -6,8 +6,7 @@ import androidx.room.PrimaryKey
 enum class FeedType {
     Games,
     Movies,
-    Shows,
-    Books
+    Shows
 }
 
 @Entity(tableName = "feedResult")

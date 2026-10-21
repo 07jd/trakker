@@ -45,6 +45,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -56,16 +57,18 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import com.jd.trakker.api.igdb.db.Game
 import com.jd.trakker.App.Feed.db.FeedType
 import com.jd.trakker.R
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.launch
 
-const val cover_img_url =
+const val igdb_cover_img_url =
     "https://images.igdb.com/igdb/image/upload/t_cover_big/" // In aspect ratio of 3:4
+const val tmdb_image_endpoint = "https://image.tmdb.org/t/p/w500"
 
 @Composable
 fun Feed(
@@ -94,6 +97,18 @@ fun Feed(
                 }
             }
 
+            // Show info when something fails
+            LaunchedEffect(uiState.operationFailed) {
+                if (uiState.operationFailed) {
+                    snackbarState.showSnackbar(
+                        message = uiState.failureMessage,
+                        duration = SnackbarDuration.Short
+                    )
+
+                    onEvent(FeedEvent.clearFailure)
+                }
+            }
+
             FeedScreen(
                 gridState,
                 snackbarState,
@@ -105,7 +120,6 @@ fun Feed(
                 uiState.showingSearchResults,
                 uiState.nextPageLoading,
                 uiState.isRefreshing,
-                uiState.refreshFailed,
                 uiState.feedType,
                 onEvent
             )
@@ -125,7 +139,6 @@ fun FeedScreen(
     showingSearchResults: Boolean,
     nextPageLoading: Boolean,
     isRefreshing: Boolean,
-    refreshFailed: Boolean,
     feedType: FeedType,
     onEvent: (FeedEvent) -> Unit
 ) {
@@ -138,6 +151,7 @@ fun FeedScreen(
                 feedType,
                 showingSearchResults,
                 if (showingSearchResults) usingOfflineDataSearch else usingOfflineDataFeed,
+                gridState,
                 onEvent
             )
         },
@@ -185,7 +199,7 @@ fun FeedScreen(
             // Empty Feed/Search Results
             if (showingSearchResults && searchResults.isEmpty() || !showingSearchResults && feed.isEmpty()) {
                 val text =
-                    if (showingSearchResults) "No results found" else "Nothing to show, try refreshing"
+                    if (showingSearchResults) "No results found" else "Nothing to show\nTry refreshing"
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -201,7 +215,8 @@ fun FeedScreen(
                     )
                     Text(
                         text = text,
-                        style = MaterialTheme.typography.displaySmallEmphasized
+                        style = MaterialTheme.typography.displaySmallEmphasized,
+                        textAlign = TextAlign.Center
                     )
                 }
             } else {
@@ -217,29 +232,18 @@ fun FeedScreen(
                         items = if (showingSearchResults) searchResults else feed,
                         key = {
                             when (it) {
-                                is FeedGame -> it.game.id
+                                is FeedGame  -> it.game.id
+                                is FeedMovie -> it.movie.id
+                                is FeedShow  -> it.show.id
                             }
                         }
                     ) {
-                        when (it) {
-                            is FeedGame -> FeedGameCard(it.game, onEvent)
-                        }
+                        FeedItemCard(it, onEvent)
                     }
                 }
             }
         }
 
-        // Show info when refresh fails
-        LaunchedEffect(refreshFailed) {
-            if (refreshFailed) {
-                snackbarState.showSnackbar(
-                    message = "Refresh failed",
-                    duration = SnackbarDuration.Short
-                )
-
-                onEvent(FeedEvent.clearRefreshFail)
-            }
-        }
 
         // Trigger to load next page of feed when at the bottom of the grid
         LaunchedEffect(gridState) {
@@ -257,7 +261,9 @@ fun FeedScreen(
 }
 
 @Composable
-fun FeedScreenChips(feedType: FeedType, onEvent: (FeedEvent) -> Unit) {
+fun FeedScreenChips(feedType: FeedType, gridState: LazyGridState, onEvent: (FeedEvent) -> Unit) {
+    val scope = rememberCoroutineScope()
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(
@@ -272,7 +278,17 @@ fun FeedScreenChips(feedType: FeedType, onEvent: (FeedEvent) -> Unit) {
                 label = {
                     Text(it.name)
                 },
-                onClick = { onEvent(FeedEvent.changeFeedType(it)) },
+                onClick = {
+                    onEvent(FeedEvent.changeFeedType(it))
+                    // Reset grid scroll position
+                    scope.launch {
+                        if (it == feedType) {
+                            gridState.animateScrollToItem(0)
+                        } else {
+                            gridState.scrollToItem(0)
+                        }
+                    }
+                },
                 leadingIcon = if (feedType == it) {
                     {
                         Icon(
@@ -294,6 +310,7 @@ fun FeedTopScreen(
     feedType: FeedType = FeedType.Games,
     showingSearchResults: Boolean,
     usingOfflineData: Boolean,
+    gridState: LazyGridState,
     onEvent: (FeedEvent) -> Unit
 ) {
     val focus = LocalFocusManager.current
@@ -355,7 +372,7 @@ fun FeedTopScreen(
 
         // Hide ships when showing search results
         AnimatedVisibility(!showingSearchResults) {
-            FeedScreenChips(feedType, onEvent)
+            FeedScreenChips(feedType, gridState, onEvent)
         }
 
         // Inform user that is using local data
@@ -378,23 +395,42 @@ fun FeedTopScreen(
 }
 
 @Composable
-fun FeedGameCard(game: Game, onEvent: (FeedEvent) -> Unit) {
+fun FeedItemCard(item: FeedItem, onEvent: (FeedEvent) -> Unit) {
+    val coverImageLink = when(item) {
+        is FeedGame     -> "${igdb_cover_img_url}${item.game.cover}.png"
+        is FeedMovie    -> "${tmdb_image_endpoint}${item.movie.poster_path}"
+        is FeedShow     -> "${tmdb_image_endpoint}${item.show.poster_path}"
+    }
+
+    val imageDescription = when(item) {
+        is FeedGame     -> "Cover art of ${item.game.name}"
+        is FeedMovie    -> "Poster art of ${item.movie.title}"
+        is FeedShow     -> "Poster art of ${item.show.name}"
+    }
+
+    val imageAspectRatio = when(item) {
+        is FeedGame -> 3/4f
+        else        -> 2/3f
+    }
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .aspectRatio(3f / 4f)
+            .aspectRatio(imageAspectRatio)
             .background(MaterialTheme.colorScheme.secondaryContainer)
             .clickable(true) {
-                onEvent(FeedEvent.focus(FeedGame(game)))
+                onEvent(FeedEvent.focus(item))
             },
-
         ) {
         AsyncImage(
-            model = "${cover_img_url}${game.cover}.png",
-            contentDescription = "Cover Art of ${game.name}",
+            model = coverImageLink,
+            contentDescription = imageDescription,
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Fit,
-            error = painterResource(id = R.drawable.controller)
+            error = if (item is FeedGame)
+                painterResource(id = R.drawable.controller)
+            else
+                painterResource(id = R.drawable.film)
         )
     }
 }
@@ -417,5 +453,6 @@ fun FocusedScreen(
                 Text("Click here to unfocus")
             }
         }
+        else -> TODO()
     }
 }

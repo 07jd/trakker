@@ -1,14 +1,16 @@
 package com.jd.trakker.api.igdb.db
 
 import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface GameDao{
-    @Upsert
-    fun insertGame(game: Game)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(games: List<Game>)
 
     @Query("SELECT * FROM game WHERE id = :gameID")
     fun getGameByID(gameID: Int): Flow<Game?>
@@ -20,7 +22,7 @@ interface GameDao{
     fun getGamesByName(gameName: String): List<Game>
 
     @Query("SELECT * FROM game ORDER BY rating DESC")
-    fun getAllGames(): List<Game>
+    fun getAll(): List<Game>
 
     @Query("""
         SELECT EXISTS(
@@ -29,6 +31,7 @@ interface GameDao{
         )""")
     suspend fun hasCompleteData(gameID: Int): Boolean
 
+    // The API query returns sorted DESC by rating so to keep consistency returns sorted
     @Query("SELECT * FROM game WHERE id IN (:ids) ORDER BY rating DESC")
-    suspend fun getGameBatchById(ids: List<Int>): List<Game>
+    suspend fun getBatchByID(ids: List<Int>): List<Game>
 }

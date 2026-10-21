@@ -14,6 +14,7 @@ class MovieFetcher {
 
     private fun parseMovies(data: TmdbResponse): List<Movie> {
         return data.results.map {
+            println(it)
             Movie(
                 id = it.id,
                 adult = it.adult,
@@ -23,13 +24,13 @@ class MovieFetcher {
                 release_date = it.release_date!!,
                 vote_average = it.vote_average,
                 video = it.video!!,
-                backdrop_path = it.backdrop_path,
-                poster_path = it.poster_path
+                backdrop_path = it.backdrop_path ?: "NO_BACKDROP",
+                poster_path = it.poster_path ?: "NO_POSTER"
             )
         }
     }
 
-    private suspend fun fetch(name: String?, page: Int = 1, type: FetchType): List<Movie> {
+    private suspend fun fetch(name: String?, page: Int = 1, type: FetchType, adult: Boolean): List<Movie> {
         var statusCode: Int?
         var body: TmdbResponse?
 
@@ -39,14 +40,14 @@ class MovieFetcher {
                 FetchType.Feed -> api.fetchFeed(
                     TmdbRequestBody(
                         type = "movie",
-                        name = null,
-                        page = page
+                        query = null,
+                        page = page,
+                        adult = adult
                     )
                 )
-
                 FetchType.Search -> api.fetchMedia(
                     TmdbRequestBody(
-                        type = "movie", name = name, page = page
+                        type = "movie", query = name, page = page
                     )
                 )
             }
@@ -72,11 +73,11 @@ class MovieFetcher {
         }
     }
 
-    suspend fun searchShow(name: String, page: Int = 1): List<Movie> {
-        return fetch(name, page, FetchType.Search)
+    suspend fun search(name: String, page: Int = 1, adult: Boolean = false): List<Movie> {
+        return fetch(name, page, FetchType.Search, adult)
     }
 
-    suspend fun getFeed(page: Int = 1): List<Movie> {
-        return fetch(null, page, FetchType.Feed)
+    suspend fun getFeed(page: Int = 1, adult: Boolean = false): List<Movie> {
+        return fetch(null, page, FetchType.Feed, adult)
     }
 }

@@ -9,6 +9,6 @@ sealed interface FeedEvent {
     data class search(val name: String) : FeedEvent
     object closeSearch : FeedEvent
     object refresh : FeedEvent
-    object clearRefreshFail: FeedEvent
+    object clearFailure: FeedEvent
     object nextPage: FeedEvent
 }
