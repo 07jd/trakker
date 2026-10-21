@@ -44,6 +44,9 @@ android {
 }
 
 dependencies {
+    // Fonts from google
+    implementation(libs.androidx.compose.ui.text.google.fonts)
+
     // Coil
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
