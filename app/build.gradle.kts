@@ -69,14 +69,11 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.datastore.preferences)
 
+    // Retrofit + json parser
     implementation(libs.retrofit)
     implementation("com.squareup.retrofit2:converter-gson:3.0.0")
+
     implementation(libs.converter.scalars)
-    testImplementation(libs.junit)
-    //androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(libs.androidx.junit)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
 }
