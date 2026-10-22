@@ -279,7 +279,6 @@ class feedViewModel(
                     _state.update {
                         it.copy(
                             loading = true,
-                            searchResult = emptyList(),
                             showingSearchResults = true
                         )
                     }

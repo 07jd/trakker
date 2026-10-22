@@ -1,6 +1,16 @@
 package com.jd.trakker.App.Feed
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -90,11 +100,8 @@ fun Feed(
             FocusedScreen(uiState.focused, onEvent)
         } else {
             // Reset grid scroll position on search/back to feed from search
-            LaunchedEffect(uiState.showingSearchResults) {
-                if (previousShowingSearchResults != uiState.showingSearchResults) {
-                    gridState.scrollToItem(0)
-                    previousShowingSearchResults = uiState.showingSearchResults
-                }
+            LaunchedEffect(uiState.showingSearchResults, uiState.loading) {
+                gridState.scrollToItem(0)
             }
 
             // Show info when something fails
@@ -107,6 +114,23 @@ fun Feed(
 
                     onEvent(FeedEvent.clearFailure)
                 }
+            }
+
+            // Trigger to load next page of feed when at the bottom of the grid
+            LaunchedEffect(gridState) {
+                snapshotFlow {
+                    val totalItems = gridState.layoutInfo.totalItemsCount - 1
+                    val lastItem = gridState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+
+                    lastItem >= totalItems
+                }
+                    .distinctUntilChanged()
+                    .filter { it }
+                    .collect {
+                        if (!uiState.showingSearchResults && !uiState.usingOfflineDataFeed) onEvent(
+                            FeedEvent.nextPage
+                        )
+                    }
             }
 
             FeedScreen(
@@ -151,25 +175,33 @@ fun FeedScreen(
                 feedType,
                 showingSearchResults,
                 if (showingSearchResults) usingOfflineDataSearch else usingOfflineDataFeed,
-                gridState,
                 onEvent
             )
         },
         bottomBar = {
-            if (!nextPageLoading) {
-                Spacer(modifier = Modifier.height(loadingBarHeight))
-            }
-            AnimatedVisibility(nextPageLoading) {
+            AnimatedVisibility(
+                visible = nextPageLoading,
+                enter = expandVertically(),
+                exit = shrinkVertically()
+            ) {
                 LinearProgressIndicator(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(loadingBarHeight)
                 )
             }
+
+            if(!nextPageLoading) {
+                Spacer(modifier = Modifier.height(0.dp))
+            }
         },
     ) { innerPadding ->
         // Show infinite loading circle
-        if (loading) {
+        AnimatedVisibility(
+            visible = loading,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -183,87 +215,75 @@ fun FeedScreen(
                     strokeWidth = 4.dp
                 )
             }
-
-            return@Scaffold
         }
 
-        PullToRefreshBox(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
-            onRefresh = {
-                onEvent(FeedEvent.refresh)
-            },
-            isRefreshing = isRefreshing
+        AnimatedVisibility(
+            visible = !loading,
+            enter = fadeIn() + scaleIn(),
+            exit = fadeOut() + scaleOut()
         ) {
-            // Empty Feed/Search Results
-            if (showingSearchResults && searchResults.isEmpty() || !showingSearchResults && feed.isEmpty()) {
-                val text =
-                    if (showingSearchResults) "No results found" else "Nothing to show\nTry refreshing"
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState()),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.emoji_frown_fill),
-                        contentDescription = "Frown Emoji",
-                        modifier = Modifier.size(150.dp),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                    Text(
-                        text = text,
-                        style = MaterialTheme.typography.displaySmallEmphasized,
-                        textAlign = TextAlign.Center
-                    )
-                }
-            } else {
-                // Display cover art
-                LazyVerticalGrid(
-                    modifier = Modifier.padding(horizontal = 8.dp),
-                    state = gridState,
-                    columns = GridCells.Adaptive(minSize = 150.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
-                    items(
-                        items = if (showingSearchResults) searchResults else feed,
-                        key = {
-                            when (it) {
-                                is FeedGame  -> it.game.id
-                                is FeedMovie -> it.movie.id
-                                is FeedShow  -> it.show.id
-                            }
-                        }
+            PullToRefreshBox(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+                onRefresh = {
+                    onEvent(FeedEvent.refresh)
+                },
+                isRefreshing = isRefreshing
+            ) {
+                // Empty Feed/Search Results
+                if (!loading && (showingSearchResults && searchResults.isEmpty() || !showingSearchResults && feed.isEmpty())) {
+                    val text =
+                        if (showingSearchResults) "No results found" else "Nothing to show\nTry refreshing"
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState()),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
                     ) {
-                        FeedItemCard(it, onEvent)
+                        Icon(
+                            painter = painterResource(R.drawable.emoji_frown_fill),
+                            contentDescription = "Frown Emoji",
+                            modifier = Modifier.size(150.dp),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                        Text(
+                            text = text,
+                            style = MaterialTheme.typography.displaySmallEmphasized,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                } else {
+                    // Display cover art
+                    LazyVerticalGrid(
+                        modifier = Modifier.padding(horizontal = 8.dp),
+                        state = gridState,
+                        columns = GridCells.Adaptive(minSize = 150.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        items(
+                            items = if (showingSearchResults) searchResults else feed,
+                            key = {
+                                when (it) {
+                                    is FeedGame -> it.game.id
+                                    is FeedMovie -> it.movie.id
+                                    is FeedShow -> it.show.id
+                                }
+                            }
+                        ) {
+                            FeedItemCard(it, onEvent)
+                        }
                     }
                 }
             }
-        }
-
-
-        // Trigger to load next page of feed when at the bottom of the grid
-        LaunchedEffect(gridState) {
-            snapshotFlow {
-                val totalItems = gridState.layoutInfo.totalItemsCount - 1
-                val lastItem = gridState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
-
-                lastItem >= totalItems
-            }
-                .distinctUntilChanged()
-                .filter { it }
-                .collect { if (!showingSearchResults && !usingOfflineDataFeed) onEvent(FeedEvent.nextPage) }
         }
     }
 }
 
 @Composable
-fun FeedScreenChips(feedType: FeedType, gridState: LazyGridState, onEvent: (FeedEvent) -> Unit) {
-    val scope = rememberCoroutineScope()
-
+fun FeedScreenChips(feedType: FeedType, onEvent: (FeedEvent) -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(
@@ -280,14 +300,6 @@ fun FeedScreenChips(feedType: FeedType, gridState: LazyGridState, onEvent: (Feed
                 },
                 onClick = {
                     onEvent(FeedEvent.changeFeedType(it))
-                    // Reset grid scroll position
-                    scope.launch {
-                        if (it == feedType) {
-                            gridState.animateScrollToItem(0)
-                        } else {
-                            gridState.scrollToItem(0)
-                        }
-                    }
                 },
                 leadingIcon = if (feedType == it) {
                     {
@@ -310,7 +322,6 @@ fun FeedTopScreen(
     feedType: FeedType = FeedType.Games,
     showingSearchResults: Boolean,
     usingOfflineData: Boolean,
-    gridState: LazyGridState,
     onEvent: (FeedEvent) -> Unit
 ) {
     val focus = LocalFocusManager.current
@@ -372,7 +383,7 @@ fun FeedTopScreen(
 
         // Hide ships when showing search results
         AnimatedVisibility(!showingSearchResults) {
-            FeedScreenChips(feedType, gridState, onEvent)
+            FeedScreenChips(feedType, onEvent)
         }
 
         // Inform user that is using local data
