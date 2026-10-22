@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">trakker</string>
+    <string name="setup_title">Initial\nConfiguration</string>
+    <string name="setup_next">Next</string>
+    <string name="setup_back">Back</string>
+    <string name="setup_finish">Finish</string>
+    <string name="setup_confirm_screen_text">Everything is ready, you can later change your preferences in the app settings.</string>
+    <string name="setup_useSystemColors">Use system colors</string>
 </resources>
