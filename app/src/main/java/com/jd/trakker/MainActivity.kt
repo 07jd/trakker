@@ -14,11 +14,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
-import com.jd.trakker.App.AppScreen
-import com.jd.trakker.App.AppViewModel
-import com.jd.trakker.setup.SetupScreen
-import com.jd.trakker.setup.SetupState
-import com.jd.trakker.setup.SetupViewModel
+import com.jd.trakker.ui.AppScreen
+import com.jd.trakker.ui.AppViewModel
+import com.jd.trakker.ui.setup.SetupScreen
+import com.jd.trakker.ui.setup.SetupState
+import com.jd.trakker.ui.setup.SetupViewModel
 import com.jd.trakker.ui.theme.ThemeType
 import com.jd.trakker.ui.theme.TrakkerTheme
 
