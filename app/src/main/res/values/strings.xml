@@ -22,4 +22,13 @@
     <string name="frown_emoji">Frown emoji</string>
     <string name="search_no_results">No results found</string>
     <string name="feed_empty">Nothing to show\\nTry refreshing</string>
+    <string name="go_back">Go back</string>
+    <string name="setup_welcome">Welcome to Trakker! With this app you can explore all kinds of media from games to movies and shows, track them and also add your personal thoughts about them!</string>
+    <string name="setup_app_theme">App theme</string>
+    <string name="setup_choose_app_look">Choose how the app looks</string>
+    <string name="setup_useSystemColors_detailed">Uses the colors provided by your phone</string>
+    <string name="theme_auto">Auto</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_light">Light</string>
+
 </resources>

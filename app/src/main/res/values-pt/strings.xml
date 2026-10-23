@@ -19,5 +19,13 @@
     <string name="search_for_show">Pesquisar por uma série</string>
     <string name="frown_emoji">Emoji de má cara</string>
     <string name="search_no_results">Nenhum resultado encontrado</string>
-    <string name="feed_empty">Nada a mostrar\\nTente atualizar o feed</string>
+    <string name="feed_empty">Nada a mostrar\nTente atualizar o feed</string>
+    <string name="go_back">Voltar</string>
+    <string name="setup_welcome">Bem-vindo ao Trakker! Com esta aplicação consegues explorar todos tipos de media desde jogos até séries e filmes, consegues tambem fazer tracking destas e adicionar as tuas opiniões sobre estas!</string>
+    <string name="setup_app_theme">Tema da aplicação</string>
+    <string name="setup_choose_app_look">Escolhe o visual da aplicação</string>
+    <string name="setup_useSystemColors_detailed">Usa as cores provenientes do teu telemovel</string>
+    <string name="theme_auto">Auto</string>
+    <string name="theme_dark">Escuro</string>
+    <string name="theme_light">Claro</string>
 </resources>

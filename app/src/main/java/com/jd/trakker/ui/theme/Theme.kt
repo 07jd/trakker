@@ -1,6 +1,7 @@
 package com.jd.trakker.ui.theme
 
 import android.os.Build
+import androidx.annotation.StringRes
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -11,11 +12,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import com.jd.trakker.R
 
 enum class ThemeType {
     AUTO,
     DARK,
     LIGHT
+}
+
+@StringRes
+fun ThemeType.toStringRes(): Int {
+    return when(this) {
+        ThemeType.AUTO  -> R.string.theme_auto
+        ThemeType.DARK  -> R.string.theme_dark
+        ThemeType.LIGHT -> R.string.theme_light
+    }
 }
 
 @Composable

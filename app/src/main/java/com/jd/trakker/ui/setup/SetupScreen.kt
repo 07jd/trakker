@@ -52,6 +52,7 @@ import com.jd.trakker.R
 import com.jd.trakker.ui.theme.ThemeType
 import com.jd.trakker.ui.theme.getPrimaryAndSecondayColors
 import com.jd.trakker.ui.theme.isDynamicColorAvailable
+import com.jd.trakker.ui.theme.toStringRes
 
 enum class Screens(
     val route: String
@@ -143,9 +144,9 @@ fun SetupScreen(
     Scaffold(topBar = {
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp)
-                .padding(top = 60.dp)
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+                    .padding(top = 60.dp)
         ) {
             Text(
                 text = stringResource(R.string.setup_title),
@@ -168,8 +169,8 @@ fun SetupScreen(
             LinearWavyProgressIndicator(
                 progress = { progress },
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(7.dp),
+                        .fillMaxWidth()
+                        .height(7.dp),
                 color = MaterialTheme.colorScheme.primary,
                 trackColor = MaterialTheme.colorScheme.surfaceVariant,
                 stopSize = 0.dp
@@ -179,10 +180,10 @@ fun SetupScreen(
     }, bottomBar = {
         BoxWithConstraints(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(70.dp)
-                .padding(bottom = 25.dp)
-                .padding(horizontal = 25.dp)
+                    .fillMaxWidth()
+                    .height(70.dp)
+                    .padding(bottom = 25.dp)
+                    .padding(horizontal = 25.dp)
         ) {
             // This is to avoid buggy animation when one button expands
             val spaceBetweenButtons = 15.dp
@@ -193,12 +194,12 @@ fun SetupScreen(
             ) {
                 Button(
                     modifier = Modifier
-                        .fillMaxHeight()
-                        .animateContentSize()
-                        .width(
-                            if (currentScreen != Screens.WELCOME_SCREEN) backButtonWidth
-                            else 0.dp
-                        ), colors = ButtonDefaults.buttonColors(
+                            .fillMaxHeight()
+                            .animateContentSize()
+                            .width(
+                                if (currentScreen != Screens.WELCOME_SCREEN) backButtonWidth
+                                else 0.dp
+                            ), colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.secondaryContainer,
                         contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                     ), onClick = {
@@ -209,11 +210,11 @@ fun SetupScreen(
 
                 Spacer(
                     modifier = Modifier
-                        .animateContentSize()
-                        .width(
-                            if (currentScreen != Screens.WELCOME_SCREEN) spaceBetweenButtons
-                            else 0.dp
-                        )
+                            .animateContentSize()
+                            .width(
+                                if (currentScreen != Screens.WELCOME_SCREEN) spaceBetweenButtons
+                                else 0.dp
+                            )
                 )
 
 
@@ -238,10 +239,10 @@ fun SetupScreen(
     }) { padding ->
         Box(
             modifier = Modifier
-                .padding(padding)
-                .padding(bottom = 25.dp)
-                .padding(horizontal = 25.dp)
-                .fillMaxSize()
+                    .padding(padding)
+                    .padding(bottom = 25.dp)
+                    .padding(horizontal = 25.dp)
+                    .fillMaxSize()
         ) {
             SetupNavHost(navController, uiState, onEvent)
         }
@@ -253,11 +254,11 @@ fun SetupScreen(
 fun WelcomeScreen() {
     Row(
         modifier = Modifier
-            .padding(top = 20.dp)
-            .fillMaxSize()
+                .padding(top = 20.dp)
+                .fillMaxSize()
     ) {
         Text(
-            text = "\tBem vindo ao Trakker, afim de utilizar o aplicativo " + "ao seu melhor deverá conectar-se a varios serviços " + "provenientes de metadados.\n\tCaso não queira poderá sempre " + "importar e criar metadados de media localmente no seu dispositvo.",
+            text = stringResource(R.string.setup_welcome),
             lineHeight = 25.sp,
         )
     }
@@ -267,8 +268,8 @@ fun WelcomeScreen() {
 fun ThemeScreen(currentTheme: ThemeType, dynColor: Boolean, onEvent: (SetupEvent) -> Unit) {
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 20.dp, vertical = 24.dp),
+                .fillMaxSize()
+                .padding(horizontal = 20.dp, vertical = 24.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         // Theme selection
@@ -276,12 +277,12 @@ fun ThemeScreen(currentTheme: ThemeType, dynColor: Boolean, onEvent: (SetupEvent
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
-                text = "Tema da aplicação",
+                text = stringResource(R.string.setup_app_theme),
                 style = MaterialTheme.typography.titleLarge
             )
 
             Text(
-                text = "Escolhe o aspeto da aplicação.",
+                text = stringResource(R.string.setup_choose_app_look),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -297,10 +298,10 @@ fun ThemeScreen(currentTheme: ThemeType, dynColor: Boolean, onEvent: (SetupEvent
 
                     Card(
                         modifier = Modifier
-                            .weight(1f)
-                            .clickable {
-                                onEvent(SetupEvent.changeTheme(theme))
-                            },
+                                .weight(1f)
+                                .clickable {
+                                    onEvent(SetupEvent.changeTheme(theme))
+                                },
                         shape = RoundedCornerShape(16.dp),
                         border = if (selected) {
                             BorderStroke(
@@ -326,28 +327,27 @@ fun ThemeScreen(currentTheme: ThemeType, dynColor: Boolean, onEvent: (SetupEvent
                             // Color preview
                             Column(
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(125.dp)
-                                    .clip(RoundedCornerShape(10.dp))
+                                        .fillMaxWidth()
+                                        .height(125.dp)
+                                        .clip(RoundedCornerShape(10.dp))
                             ) {
                                 Box(
                                     modifier = Modifier
-                                        .fillMaxWidth()
-                                        .weight(1f)
-                                        .background(primary)
+                                            .fillMaxWidth()
+                                            .weight(1f)
+                                            .background(primary)
                                 )
                                 Box(
                                     modifier = Modifier
-                                        .fillMaxWidth()
-                                        .weight(1f)
-                                        .background(secondary)
+                                            .fillMaxWidth()
+                                            .weight(1f)
+                                            .background(secondary)
                                 )
                             }
 
                             // Theme name
                             Text(
-                                text = theme.name.lowercase()
-                                    .replaceFirstChar { it.uppercase() },
+                                text = stringResource(theme.toStringRes()),
                                 style = MaterialTheme.typography.labelLarge,
                                 color = if (selected) {
                                     MaterialTheme.colorScheme.primary
@@ -359,15 +359,15 @@ fun ThemeScreen(currentTheme: ThemeType, dynColor: Boolean, onEvent: (SetupEvent
                             // Selection indicator
                             Box(
                                 modifier = Modifier
-                                    .size(24.dp)
-                                    .clip(CircleShape)
-                                    .background(
-                                        if (selected) {
-                                            MaterialTheme.colorScheme.primary
-                                        } else {
-                                            MaterialTheme.colorScheme.surfaceVariant
-                                        }
-                                    ),
+                                        .size(24.dp)
+                                        .clip(CircleShape)
+                                        .background(
+                                            if (selected) {
+                                                MaterialTheme.colorScheme.primary
+                                            } else {
+                                                MaterialTheme.colorScheme.surfaceVariant
+                                            }
+                                        ),
                                 contentAlignment = Alignment.Center
                             ) {
                                 if (selected) {
@@ -409,7 +409,7 @@ fun ThemeScreen(currentTheme: ThemeType, dynColor: Boolean, onEvent: (SetupEvent
                             style = MaterialTheme.typography.titleMedium
                         )
                         Text(
-                            text = "Usar as cores do sistema",
+                            text = stringResource(R.string.setup_useSystemColors_detailed),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -436,11 +436,11 @@ fun FeedScreen(onEvent: SetupState, onEvent1: (SetupEvent) -> Unit) {
 fun ConfirmScreen() {
     Row(
         modifier = Modifier
-            .padding(top = 20.dp)
-            .fillMaxSize()
+                .padding(top = 20.dp)
+                .fillMaxSize()
     ) {
         Text(
-            text = R.string.setup_confirm_screen_text.toString(),
+            text = stringResource(R.string.setup_confirm_screen_text),
             lineHeight = 25.sp,
         )
     }
