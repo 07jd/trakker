@@ -21,7 +21,7 @@ import com.jd.trakker.ui.feed.FeedShow
 
 // TODO: In case of load image error besides displaying a icon also display the name of the item
 @Composable
-fun ItemCard(item: FeedItem, onClick: () -> Unit) {
+fun ItemCard(item: FeedItem, onClick: (() -> Unit)? = null) {
     val imageDescription = when(item) {
         is FeedGame -> stringResource(
             R.string.item_card_image_description_game,
@@ -47,7 +47,7 @@ fun ItemCard(item: FeedItem, onClick: () -> Unit) {
                     }
                 )
                 .background(MaterialTheme.colorScheme.secondaryContainer)
-                .clickable(true) { onClick() },
+                .clickable(true) { onClick?.invoke() },
     ) {
         AsyncImage(
             model = when(item) {
