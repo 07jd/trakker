@@ -67,10 +67,6 @@ import com.jd.trakker.R
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 
-const val igdb_cover_img_url =
-    "https://images.igdb.com/igdb/image/upload/t_cover_big/" // In aspect ratio of 3:4
-const val tmdb_image_endpoint = "https://image.tmdb.org/t/p/w500"
-
 @Composable
 fun Feed(
     innerPadding: PaddingValues,
@@ -396,12 +392,6 @@ fun FeedTopScreen(
 
 @Composable
 fun FeedItemCard(item: FeedItem, onEvent: (FeedEvent) -> Unit) {
-    val coverImageLink = when(item) {
-        is FeedGame     -> "${igdb_cover_img_url}${item.game.cover}.png"
-        is FeedMovie    -> "${tmdb_image_endpoint}${item.movie.poster_path}"
-        is FeedShow     -> "${tmdb_image_endpoint}${item.show.poster_path}"
-    }
-
     val imageDescription = when(item) {
         is FeedGame     -> "Cover art of ${item.game.name}"
         is FeedMovie    -> "Poster art of ${item.movie.title}"
@@ -423,7 +413,11 @@ fun FeedItemCard(item: FeedItem, onEvent: (FeedEvent) -> Unit) {
             },
         ) {
         AsyncImage(
-            model = coverImageLink,
+            model = when(item) {
+                is FeedGame  -> item.game.getCoverURL()
+                is FeedMovie -> item.movie.getCoverURL()
+                is FeedShow  -> item.show.getCoverURL()
+            },
             contentDescription = imageDescription,
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Fit,

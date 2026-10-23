@@ -3,6 +3,8 @@ package com.jd.trakker.data.local.game
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
+private const val imageEndpoint = "https://images.igdb.com/igdb/image/upload/t_"
+
 @Entity(tableName = "game")
 data class Game(
     @PrimaryKey(autoGenerate = false)
@@ -16,4 +18,12 @@ data class Game(
     val cover: String,                  // Image ID of the cover of the game
     val platforms: List<String>?,       // Platforms that the game can be play (X360,PS3,PC,...)
     val similarGames: List<Int>?        // List of similar games IDS
-)
+) {
+    fun getCoverURL(): String {
+        return "${imageEndpoint}cover_big/${cover}.jpg"
+    }
+
+    fun getBannerURL(artworkID: String): String {
+        return "${imageEndpoint}1080p/${artworkID}.jpg"
+    }
+}
