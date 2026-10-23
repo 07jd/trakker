@@ -1,9 +1,25 @@
 <resources>
-    <string name="app_name">trakker</string>
+
     <string name="setup_title">Initial\nConfiguration</string>
     <string name="setup_next">Next</string>
     <string name="setup_back">Back</string>
     <string name="setup_finish">Finish</string>
     <string name="setup_confirm_screen_text">Everything is ready, you can later change your preferences in the app settings.</string>
     <string name="setup_useSystemColors">Use system colors</string>
+
+    <string name="feed_using_offline_data">Using Offline Data</string>
+    <string name="item_card_image_description_game">Cover art of %1$s</string>
+    <string name="item_card_image_description_movie_or_show">Poster art of %1$s</string>
+    <string name="app_name" translatable="false">Trakker</string>
+    <string name="feed_type_games">Games</string>
+    <string name="feed_type_movies">Movies</string>
+    <string name="feed_type_shows">Shows</string>
+    <string name="selected">Selected</string>
+    <string name="search_icon">Search icon</string>
+    <string name="search_for_game">Search for a game</string>
+    <string name="search_for_movie">Search for a movie</string>
+    <string name="search_for_show">Search for a show</string>
+    <string name="frown_emoji">Frown emoji</string>
+    <string name="search_no_results">No results found</string>
+    <string name="feed_empty">Nothing to show\\nTry refreshing</string>
 </resources>

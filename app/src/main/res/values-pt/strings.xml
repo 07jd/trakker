@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="setup_title">Configuração Inicial</string>
+    <string name="setup_next">Próximo</string>
+    <string name="setup_back">Anterior</string>
+    <string name="setup_finish">Terminar</string>
+    <string name="setup_confirm_screen_text">Tudo pronto, podes mais tarde mudar as preferencias nas definições da aplicação.</string>
+    <string name="setup_useSystemColors">Usar cores do sistema</string>
+    <string name="feed_using_offline_data">A usar data offline</string>
+    <string name="item_card_image_description_game">Capa de %1$s</string>
+    <string name="item_card_image_description_movie_or_show">Poster de %1$s</string>
+    <string name="feed_type_games">Jogos</string>
+    <string name="feed_type_movies">Filmes</string>
+    <string name="feed_type_shows">Séries</string>
+    <string name="selected">Selecionado</string>
+    <string name="search_icon">Icone de pesquisa</string>
+    <string name="search_for_game">Pesquisar por um jogo</string>
+    <string name="search_for_movie">Pesquisar por um filme</string>
+    <string name="search_for_show">Pesquisar por uma série</string>
+    <string name="frown_emoji">Emoji de má cara</string>
+    <string name="search_no_results">Nenhum resultado encontrado</string>
+    <string name="feed_empty">Nada a mostrar\\nTente atualizar o feed</string>
+</resources>
