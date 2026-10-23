@@ -136,6 +136,7 @@ fun SetupScreen(
         it.route == backStackEntry?.destination?.route
     } ?: Screens.WELCOME_SCREEN
 
+    // TODO: FIX-ME, user can still go back via back button
     // Interact only by the provided buttons
     BackHandler(enabled = true) {}
 
@@ -270,47 +271,6 @@ fun ThemeScreen(currentTheme: ThemeType, dynColor: Boolean, onEvent: (SetupEvent
             .padding(horizontal = 20.dp, vertical = 24.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
-        // Dynamic colors setting
-        if (isDynamicColorAvailable()) {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer
-                )
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 12.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(
-                        modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        Text(
-                            text = stringResource(R.string.setup_useSystemColors),
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        Text(
-                            text = "Usar as cores do sistema",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-
-                    Switch(
-                        checked = dynColor,
-                        onCheckedChange = {
-                            onEvent(SetupEvent.useSystemColor(it))
-                        }
-                    )
-                }
-            }
-        }
-
         // Theme selection
         Column(
             verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -420,6 +380,47 @@ fun ThemeScreen(currentTheme: ThemeType, dynColor: Boolean, onEvent: (SetupEvent
                             }
                         }
                     }
+                }
+            }
+        }
+
+        // Dynamic colors setting
+        if (isDynamicColorAvailable()) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                )
+            ) {
+                Row(
+                    modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.setup_useSystemColors),
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Text(
+                            text = "Usar as cores do sistema",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+
+                    Switch(
+                        checked = dynColor,
+                        onCheckedChange = {
+                            onEvent(SetupEvent.useSystemColor(it))
+                        }
+                    )
                 }
             }
         }
