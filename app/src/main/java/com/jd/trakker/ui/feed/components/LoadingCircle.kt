@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -16,19 +16,17 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun LoadingCircle(
     padding: PaddingValues = PaddingValues(0.dp),
-    size: Dp = 64.dp,
-    strokeWidth: Dp = 4.dp
+    size: Dp = 64.dp
 ) {
     Box(
         modifier = Modifier
                 .fillMaxSize()
                 .padding(padding), contentAlignment = Alignment.Center
     ) {
-        CircularProgressIndicator(
+        CircularWavyProgressIndicator(
             modifier = Modifier.size(size),
             color = MaterialTheme.colorScheme.secondary,
             trackColor = MaterialTheme.colorScheme.surfaceVariant,
-            strokeWidth = strokeWidth
         )
     }
 }
