@@ -24,7 +24,10 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
@@ -45,15 +48,27 @@ fun Feed(
     val gridState = rememberLazyGridState()
     val snackbarHostState = remember { SnackbarHostState() }
 
+    var previousFeedType        by remember { mutableStateOf(uiState.feedType) }
+    var wasShowingSearchResults by remember { mutableStateOf(uiState.showingSearchResults) }
+    var wasLoading              by remember { mutableStateOf(uiState.loading) }
+
     Box(modifier = Modifier
             .fillMaxSize()
             .padding(innerPadding)) {
         when {
             uiState.focused != null -> FocusedItem(uiState.focused, onBack = { onEvent(FeedEvent.unfocus) })
             else                    -> {
-                // Reset grid scroll position on search/back to feed from search
-                LaunchedEffect(uiState.showingSearchResults, uiState.loading) {
-                    gridState.scrollToItem(0)
+                // Reset grid scroll only when new search results appears (they alter the loading state) or feed type changes
+                LaunchedEffect(uiState.showingSearchResults, uiState.feedType, uiState.loading) {
+                    if(uiState.feedType != previousFeedType ||
+                       uiState.showingSearchResults != wasShowingSearchResults ||
+                       uiState.loading != wasLoading
+                    ) {
+                        previousFeedType        = uiState.feedType
+                        wasShowingSearchResults = uiState.showingSearchResults
+                        wasLoading              = uiState.loading
+                        gridState.scrollToItem(0)
+                    }
                 }
 
                 // Show info when something fails
