@@ -26,7 +26,9 @@ class GameFetcher {
                 storyline = game.storyline,
                 summary = game.summary,
                 url = game.url,
-                artworks = game.artworks?.filter { it.imageType.image_type == "Artwork" }?.map{ it.image_id } ?: emptyList(),
+                artworks = game.artworks?.filter { val type = it.image_type?.name
+                    (type == "Artwork" || type == "Infographic" || type == "Screenshot" || type == "Concept art")
+                }?.map { it.image_id } ?: emptyList(),
                 cover = game.cover?.image_id ?: "NO_COVER_IMAGE",
                 platforms = game.platforms?.map { it.abbreviation } ?: emptyList(),
                 similarGames = game.similar_games?.map { it.id } ?: emptyList()
@@ -58,7 +60,7 @@ class GameFetcher {
         try {
             return parseGames(body)
         } catch (e: Exception) {
-            println("Failed to parse games: $body")
+            println("Failed to parse games: ${e.message}")
             throw ExceptionAPI.fromException(e)
         }
     }

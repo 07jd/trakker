@@ -19,13 +19,13 @@ data class Cover(
 
 data class ImageType(
     val id: Int,
-    val image_type: String
+    val name: String?
 )
 
 data class Artwork(
     val id: Int,
     val image_id: String,
-    val imageType: ImageType
+    val image_type: ImageType?
 )
 
 data class Platform(
