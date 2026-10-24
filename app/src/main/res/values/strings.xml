@@ -30,5 +30,8 @@
     <string name="theme_auto">Auto</string>
     <string name="theme_dark">Dark</string>
     <string name="theme_light">Light</string>
+    <string name="navbar_tracked_label">Tracked</string>
+    <string name="navbar_feed_label">Feed</string>
+    <string name="navbar_settings_label">Settings</string>
 
 </resources>

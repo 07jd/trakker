@@ -46,5 +46,5 @@ class AppViewModel(
             .build()
     }
 
-    val settings = PreferencesManager(context)
+    val preferences = PreferencesManager(context)
 }

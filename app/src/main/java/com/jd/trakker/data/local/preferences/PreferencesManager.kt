@@ -2,6 +2,7 @@ package com.jd.trakker.data.local.preferences
 
 import android.content.Context
 import androidx.datastore.preferences.core.edit
+import com.jd.trakker.ui.Destination
 import com.jd.trakker.ui.theme.ThemeType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -22,6 +23,11 @@ class PreferencesManager(
         preferences[Preferences.useDynamicColor] ?: false
     }
 
+    val initialAppScreen: Flow<Destination> = context.appDataStore.data.map { preferences ->
+        val rawString = preferences[Preferences.initialAppScreen]
+        Destination.entries.firstOrNull { it.route == rawString } ?: Destination.Tracked
+    }
+
     suspend fun setInitialSetupDone(state: Boolean) {
         context.appDataStore.edit { preferences ->
             preferences[Preferences.isInitalSetupDone] = state
@@ -37,6 +43,12 @@ class PreferencesManager(
     suspend fun setDynamicColor(state: Boolean) {
         context.appDataStore.edit { preferences ->
             preferences[Preferences.useDynamicColor] = state
+        }
+    }
+
+    suspend fun setInitialAppScreen(screen: Destination) {
+        context.appDataStore.edit { preferences ->
+            preferences[Preferences.initialAppScreen] = screen.route
         }
     }
 

@@ -30,13 +30,13 @@ class MainActivity : ComponentActivity() {
             val context = LocalContext.current
             val viewModel: AppViewModel = viewModel { AppViewModel(context) }
 
-            val setupViewModel: SetupViewModel = viewModel { SetupViewModel(viewModel.settings) }
+            val setupViewModel: SetupViewModel = viewModel { SetupViewModel(viewModel.preferences) }
             val setupNavController             = rememberNavController()
             val setupUI by setupViewModel.uiState.collectAsStateWithLifecycle(SetupState())
 
-            val theme           by viewModel.settings.theme.collectAsStateWithLifecycle(ThemeType.AUTO)
-            val useDynamicColor by viewModel.settings.useDynamicColor.collectAsStateWithLifecycle(false)
-            val setupDone       by viewModel.settings.initialSetupDone.collectAsStateWithLifecycle(null)
+            val theme           by viewModel.preferences.theme.collectAsStateWithLifecycle(ThemeType.AUTO)
+            val useDynamicColor by viewModel.preferences.useDynamicColor.collectAsStateWithLifecycle(false)
+            val setupDone       by viewModel.preferences.initialSetupDone.collectAsStateWithLifecycle(null)
 
             TrakkerTheme(
                 type            = theme,

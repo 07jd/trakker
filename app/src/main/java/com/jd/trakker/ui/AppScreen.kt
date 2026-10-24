@@ -19,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -31,17 +32,15 @@ import com.jd.trakker.ui.feed.Feed
 import com.jd.trakker.ui.feed.FeedViewModel
 import com.jd.trakker.R
 
-//@DrawableRes
 enum class Destination(
     val route: String,
-    val label: String,
+    val stringResLabel: Int,
     val activeIcon: Int,
     val inactiveIcon: Int,
 ) {
-    Setup("setup", "Configuração inicial", 0, 0),
-    Favorites("favorite", "Favoritos", R.drawable.heart_fill, R.drawable.heart),
-    Media("media", "Media", R.drawable.collection_fill, R.drawable.collection),
-    Settings("settings", "Definições", R.drawable.settings_fill, R.drawable.settings)
+    Tracked("tracked", R.string.navbar_tracked_label, R.drawable.heart_fill, R.drawable.heart),
+    Feed("feed", R.string.navbar_feed_label, R.drawable.collection_fill, R.drawable.collection),
+    Settings("settings", R.string.navbar_settings_label, R.drawable.settings_fill, R.drawable.settings)
 }
 
 @Composable
@@ -50,7 +49,6 @@ fun BottomNavigationBar(controller: NavHostController, startDestination: Destina
 
     NavigationBar {
         Destination.entries.forEachIndexed { index, destination ->
-            if (destination.route == Destination.Setup.route) return@forEachIndexed
             val isDestinationSelected = (selectedDestination == index)
 
             NavigationBarItem(
@@ -62,23 +60,16 @@ fun BottomNavigationBar(controller: NavHostController, startDestination: Destina
                     }
                 },
                 icon = {
-                    val asset = if (isDestinationSelected) {
-                        destination.activeIcon
-                    } else {
-                        destination.inactiveIcon
-                    }
+                    val asset = if (isDestinationSelected) destination.activeIcon
+                                else destination.inactiveIcon
 
                     Icon(
                         imageVector = ImageVector.vectorResource(asset),
-                        modifier = Modifier.size(22.dp),
-                        contentDescription = ""
+                        modifier = Modifier.size(20.dp),
+                        contentDescription = null
                     )
                 },
-                label = {
-                    Text(
-                        text = destination.label
-                    )
-                }
+                label = { Text(text = stringResource(destination.stringResLabel)) }
             )
         }
     }
@@ -137,10 +128,9 @@ fun AppNavHost(
         Destination.entries.forEach { destination ->
             composable(destination.route) {
                 when (destination) {
-                    Destination.Setup -> TODO()
-                    Destination.Favorites -> Home()
-                    Destination.Media -> {
-                        val feedVM: FeedViewModel = viewModel {
+                    Destination.Tracked -> TempScreen()
+                    Destination.Feed -> {
+                        val feedViewModel: FeedViewModel = viewModel {
                             FeedViewModel(
                                 movieDao = viewModel.moviesDB.dao,
                                 showDao = viewModel.showsDB.dao,
@@ -151,11 +141,10 @@ fun AppNavHost(
                             )
                         }
 
-                        val uiState by feedVM.uiState.collectAsStateWithLifecycle()
-                        Feed(innerPadding, uiState, feedVM::onEvent)
+                        val uiState by feedViewModel.uiState.collectAsStateWithLifecycle()
+                        Feed(innerPadding, uiState, feedViewModel::onEvent)
                     }
-
-                    Destination.Settings -> Settings()
+                    Destination.Settings -> TempScreen()
                 }
             }
         }
@@ -168,7 +157,7 @@ fun AppScreen(
     viewModel: AppViewModel
 ) {
     val navController = rememberNavController()
-    val startDestination = Destination.Favorites
+    val startDestination by viewModel.preferences.initialAppScreen.collectAsStateWithLifecycle(Destination.Tracked)
     Scaffold(
         bottomBar = {
             BottomNavigationBar(navController, startDestination)
@@ -179,19 +168,12 @@ fun AppScreen(
 }
 
 @Composable
-fun Home() {
+fun TempScreen() {
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Red)
-    ) {}
-}
-
-@Composable
-fun Settings() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-    ) {}
+    ) {
+        Text("TODO!")
+    }
 }

@@ -25,7 +25,7 @@ object Preferences {
     val useDynamicColor   = booleanPreferencesKey("useDynamicColor")
 
     // Feed settings
-    val enableGameFeed    = booleanPreferencesKey("gameFeedEnabled")
-    val enableMovieFeed   = booleanPreferencesKey("movieFeedEnabled")
-    val enableShowFeed    = booleanPreferencesKey("showFeedEnabled")
+    val gameFeedEnabled    = booleanPreferencesKey("gameFeedEnabled")
+    val movieFeedEnabled   = booleanPreferencesKey("movieFeedEnabled")
+    val showFeedEnabled    = booleanPreferencesKey("showFeedEnabled")
 }
