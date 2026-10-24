@@ -4,31 +4,23 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface GameDao{
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(games: List<Game>)
+    suspend fun insert(games: List<Game>)
 
     @Query("SELECT * FROM game WHERE id = :gameID")
-    fun getGameByID(gameID: Int): Flow<Game?>
+    suspend fun getGameByID(gameID: Int): Game?
 
     @Query("SELECT * FROM game WHERE name = :gameName")
-    fun getGameByExactName(gameName: String): Flow<Game?>
+    suspend fun getGameByExactName(gameName: String): Game?
 
     @Query("SELECT * FROM game WHERE name LIKE :gameName")
-    fun getGamesByName(gameName: String): List<Game>
+    suspend fun getGamesByName(gameName: String): List<Game>
 
     @Query("SELECT * FROM game ORDER BY rating DESC")
-    fun getAll(): List<Game>
-
-    @Query("""
-        SELECT EXISTS(
-            SELECT 1 FROM game 
-            where id = :gameID and summary IS NOT NULL
-        )""")
-    suspend fun hasCompleteData(gameID: Int): Boolean
+    suspend fun getAll(): List<Game>
 
     // The API query returns sorted DESC by rating so to keep consistency returns sorted
     @Query("SELECT * FROM game WHERE id IN (:ids) ORDER BY rating DESC")
