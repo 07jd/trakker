@@ -24,8 +24,8 @@ class MovieFetcher {
                 release_date = it.release_date!!,
                 vote_average = it.vote_average,
                 video = it.video!!,
-                backdrop_path = it.backdrop_path ?: "NO_BACKDROP",
-                poster_path = it.poster_path ?: "NO_POSTER"
+                backdrop_path = it.backdrop_path,
+                poster_path = it.poster_path
             )
         }
     }

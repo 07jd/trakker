@@ -24,8 +24,8 @@ class ShowFetcher {
                 genre_ids = it.genre_ids,
                 overview = it.overview,
                 vote_average = it.vote_average,
-                backdrop_path = it.backdrop_path ?: "NO_BACKDROP",
-                poster_path = it.poster_path ?: "NO_POSTER",
+                backdrop_path = it.backdrop_path,
+                poster_path = it.poster_path,
                 adult = it.adult,
                 name = it.name!!,
                 first_air_date = it.first_air_date!!

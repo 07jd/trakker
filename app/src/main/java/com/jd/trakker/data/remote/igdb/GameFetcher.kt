@@ -29,7 +29,7 @@ class GameFetcher {
                 artworks = game.artworks?.filter { val type = it.image_type?.name
                     (type == "Artwork" || type == "Infographic" || type == "Screenshot" || type == "Concept art")
                 }?.map { it.image_id } ?: emptyList(),
-                cover = game.cover?.image_id ?: "NO_COVER_IMAGE",
+                cover = game.cover?.image_id,
                 platforms = game.platforms?.map { it.abbreviation } ?: emptyList(),
                 similarGames = game.similar_games?.map { it.id } ?: emptyList()
             )

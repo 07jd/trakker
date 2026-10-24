@@ -16,14 +16,14 @@ data class Show(
     val first_air_date: String,
     val overview: String,
     val vote_average: Double,
-    val backdrop_path: String,
-    val poster_path: String,
+    val backdrop_path: String?,
+    val poster_path: String?,
 ) {
-    fun getCoverURL(): String {
-        return "${imageEndpoint}w500${poster_path}"
+    fun getCoverURL(): String? {
+        return if(poster_path == null) null else "${imageEndpoint}w500${poster_path}"
     }
 
-    fun getBannerURL(): String {
-        return "${imageEndpoint}w1280${backdrop_path}"
+    fun getBannerURL(): String? {
+        return if(backdrop_path == null) null else "${imageEndpoint}w1280${backdrop_path}"
     }
 }

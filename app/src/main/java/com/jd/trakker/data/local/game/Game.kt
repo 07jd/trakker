@@ -15,15 +15,15 @@ data class Game(
     val summary: String?,               // Talks about the game (more gameplaywise)
     val url: String?,                   // igdb game url page
     val artworks: List<String>?,        // Image IDS of the artworks
-    val cover: String,                  // Image ID of the cover of the game
+    val cover: String?,                 // Image ID of the cover of the game
     val platforms: List<String>?,       // Platforms that the game can be play (X360,PS3,PC,...)
     val similarGames: List<Int>?        // List of similar games IDS
 ) {
-    fun getCoverURL(): String {
-        return "${imageEndpoint}cover_big/${cover}.jpg"
+    fun getCoverURL(): String? {
+        return if(cover == null) null else "${imageEndpoint}cover_big/${cover}.jpg"
     }
 
-    fun getBannerURL(artworkID: String): String {
-        return "${imageEndpoint}1080p/${artworkID}.jpg"
+    fun getBannerURL(artworkID: String?): String? {
+        return if(artworkID == null) null else "${imageEndpoint}1080p/${artworkID}.jpg"
     }
 }
