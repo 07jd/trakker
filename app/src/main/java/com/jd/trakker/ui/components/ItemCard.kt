@@ -1,4 +1,4 @@
-package com.jd.trakker.ui.feed.components
+package com.jd.trakker.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,10 +23,6 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.jd.trakker.R
-import com.jd.trakker.ui.components.GameItem
-import com.jd.trakker.ui.components.Item
-import com.jd.trakker.ui.components.MovieItem
-import com.jd.trakker.ui.components.ShowItem
 
 @Composable
 private fun ItemCardBackup(item: Item) {

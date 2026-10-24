@@ -1,4 +1,4 @@
-package com.jd.trakker.ui.feed.components
+package com.jd.trakker.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.padding
@@ -11,10 +11,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.jd.trakker.ui.components.GameItem
-import com.jd.trakker.ui.components.Item
-import com.jd.trakker.ui.components.MovieItem
-import com.jd.trakker.ui.components.ShowItem
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 
