@@ -11,18 +11,18 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.jd.trakker.ui.feed.FeedGame
-import com.jd.trakker.ui.feed.FeedItem
-import com.jd.trakker.ui.feed.FeedMovie
-import com.jd.trakker.ui.feed.FeedShow
+import com.jd.trakker.ui.components.GameItem
+import com.jd.trakker.ui.components.Item
+import com.jd.trakker.ui.components.MovieItem
+import com.jd.trakker.ui.components.ShowItem
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 
 @Composable
 fun ItemGrid(
     state: LazyGridState,
-    items: List<FeedItem>,
-    onClick: (FeedItem) -> Unit,
+    items: List<Item>,
+    onClick: (Item) -> Unit,
     onLoadMore: (() -> Unit)? = null,
     // When reaches last_element - bottomOffset, invokes onReachedBottom()
     bottomOffset: Int = 5,
@@ -39,9 +39,9 @@ fun ItemGrid(
             items = items,
             key = {
                 when (it) {
-                    is FeedGame  -> "game_${it.game.id}"
-                    is FeedMovie -> "movie_${it.movie.id}"
-                    is FeedShow  -> "show_${it.show.id}"
+                    is GameItem  -> "game_${it.game.id}"
+                    is MovieItem -> "movie_${it.movie.id}"
+                    is ShowItem  -> "show_${it.show.id}"
                 }
             }
         ) {

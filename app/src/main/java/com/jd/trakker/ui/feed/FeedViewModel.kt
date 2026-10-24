@@ -15,6 +15,10 @@ import com.jd.trakker.data.local.movie.MovieDao
 import com.jd.trakker.data.local.genre.MovieGenreDao
 import com.jd.trakker.data.local.show.ShowDao
 import com.jd.trakker.data.local.genre.ShowGenreDao
+import com.jd.trakker.ui.components.GameItem
+import com.jd.trakker.ui.components.Item
+import com.jd.trakker.ui.components.MovieItem
+import com.jd.trakker.ui.components.ShowItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -72,33 +76,33 @@ class FeedViewModel(
         val cachedFeed = withContext(Dispatchers.IO) { feedResultDao.getFeedResult(time, feedType, page) }
 
         // Retrive Cached Feed data
-        val cachedFeedData: List<FeedItem>? = if (cachedFeed != null && !forceFetch) {
+        val cachedFeedData: List<Item>? = if (cachedFeed != null && !forceFetch) {
             println("Requested Feed Page is cached")
             withContext(Dispatchers.IO) {
                 when (feedType) {
-                    FeedType.Games  -> gameDao.getBatchByID(cachedFeed.ids).map { FeedGame(it) }
-                    FeedType.Movies -> movieDao.getBatchByID(cachedFeed.ids).map { FeedMovie(it) }
-                    FeedType.Shows  -> showDao.getBatchByID(cachedFeed.ids).map { FeedShow(it) }
+                    FeedType.Games  -> gameDao.getBatchByID(cachedFeed.ids).map { GameItem(it) }
+                    FeedType.Movies -> movieDao.getBatchByID(cachedFeed.ids).map { MovieItem(it) }
+                    FeedType.Shows  -> showDao.getBatchByID(cachedFeed.ids).map { ShowItem(it) }
                 }
             }
         } else { null }
 
-        val feedData: List<FeedItem> = if (cachedFeedData == null) {
+        val feedData: List<Item> = if (cachedFeedData == null) {
             val (ids, data) = when (feedType) {
                 FeedType.Games -> {
                     val games = gameFetcher.getFeed(page)
                     withContext(Dispatchers.IO) { gameDao.insert(games) }
-                    Pair(games.map { it.id }, games.map { FeedGame(it) })
+                    Pair(games.map { it.id }, games.map { GameItem(it) })
                 }
                 FeedType.Movies -> {
                     val movies = movieFetcher.getFeed(page)
                     withContext(Dispatchers.IO) { movieDao.insert(movies) }
-                    Pair(movies.map { it.id }, movies.map { FeedMovie(it) })
+                    Pair(movies.map { it.id }, movies.map { MovieItem(it) })
                 }
                 FeedType.Shows -> {
                     val shows = showFetcher.getFeed(page)
                     withContext(Dispatchers.IO) { showDao.insert(shows) }
-                    Pair(shows.map { it.id }, shows.map { FeedShow(it) })
+                    Pair(shows.map { it.id }, shows.map { ShowItem(it) })
                 }
             }
 
@@ -123,9 +127,9 @@ class FeedViewModel(
                     feed = (_state.value.feed + feedData)
                     .distinctBy { item ->
                         when (item) {
-                            is FeedGame -> item.game.id
-                            is FeedMovie -> item.movie.id
-                            is FeedShow -> item.show.id
+                            is GameItem -> item.game.id
+                            is MovieItem -> item.movie.id
+                            is ShowItem -> item.show.id
                         }
                     }, pageOffset = page
                 )
@@ -137,9 +141,9 @@ class FeedViewModel(
         val feedType = _state.value.feedType
         val offlineFeedData = withContext(Dispatchers.IO) {
             when (feedType) {
-                FeedType.Games  -> gameDao.getAll().map { FeedGame(it) }
-                FeedType.Movies -> movieDao.getAll().map { FeedMovie(it) }
-                FeedType.Shows  -> showDao.getAll().map { FeedShow(it) }
+                FeedType.Games  -> gameDao.getAll().map { GameItem(it) }
+                FeedType.Movies -> movieDao.getAll().map { MovieItem(it) }
+                FeedType.Shows  -> showDao.getAll().map { ShowItem(it) }
             }
         }
 
@@ -149,25 +153,25 @@ class FeedViewModel(
     // Search for something via a query
     // Caches results on the respective DB
     // Throws when fails to search (always searches online)
-    suspend fun search(query: String): List<FeedItem> {
+    suspend fun search(query: String): List<Item> {
         // Fetch and Cache data
         val data = when (_state.value.feedType) {
             FeedType.Games  -> {
                 val data = gameFetcher.searchGameByName(query, 1)
                 withContext(Dispatchers.IO) { gameDao.insert(data) }
-                data.map { FeedGame(it) }
+                data.map { GameItem(it) }
             }
             FeedType.Movies -> {
                 println("MOVIES: im going to fetch the data!")
                 val data = movieFetcher.search(query, 1)
                 println("MOVIES: data $data")
                 withContext(Dispatchers.IO) { movieDao.insert(data) }
-                data.map { FeedMovie(it) }
+                data.map { MovieItem(it) }
             }
             FeedType.Shows  -> {
                 val data = showFetcher.search(query, 1)
                 withContext(Dispatchers.IO) { showDao.insert(data) }
-                data.map { FeedShow(it) }
+                data.map { ShowItem(it) }
             }
         }
 
@@ -298,9 +302,9 @@ class FeedViewModel(
                         println("Failed fetch search results, using local results from db due to: \"${e.message}\"")
                         val localSearchData = withContext(Dispatchers.IO) {
                             when (_state.value.feedType) {
-                                FeedType.Games  -> gameDao.getGamesByName(event.name).map { FeedGame(it) }
-                                FeedType.Movies -> movieDao.getByName(event.name).map { FeedMovie(it) }
-                                FeedType.Shows  -> showDao.getByName(event.name).map { FeedShow(it) }
+                                FeedType.Games  -> gameDao.getGamesByName(event.name).map { GameItem(it) }
+                                FeedType.Movies -> movieDao.getByName(event.name).map { MovieItem(it) }
+                                FeedType.Shows  -> showDao.getByName(event.name).map { ShowItem(it) }
                             }
                         }
 

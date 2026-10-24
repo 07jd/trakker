@@ -23,17 +23,17 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.jd.trakker.R
-import com.jd.trakker.ui.feed.FeedGame
-import com.jd.trakker.ui.feed.FeedItem
-import com.jd.trakker.ui.feed.FeedMovie
-import com.jd.trakker.ui.feed.FeedShow
+import com.jd.trakker.ui.components.GameItem
+import com.jd.trakker.ui.components.Item
+import com.jd.trakker.ui.components.MovieItem
+import com.jd.trakker.ui.components.ShowItem
 
 @Composable
-private fun ItemCardBackup(item: FeedItem) {
+private fun ItemCardBackup(item: Item) {
     val itemTitle = when(item) {
-        is FeedGame  -> item.game.name
-        is FeedMovie -> item.movie.title
-        is FeedShow  -> item.show.name
+        is GameItem  -> item.game.name
+        is MovieItem -> item.movie.title
+        is ShowItem  -> item.show.name
     }
 
     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
@@ -48,27 +48,19 @@ private fun ItemCardBackup(item: FeedItem) {
 }
 
 @Composable
-fun ItemCard(item: FeedItem, onClick: (() -> Unit)? = null) {
+fun ItemCard(item: Item, onClick: (() -> Unit)? = null) {
     var imageFailedToLoad by remember { mutableStateOf(false) }
 
     val imageURL = when(item) {
-        is FeedGame  -> item.game.getCoverURL()
-        is FeedMovie -> item.movie.getCoverURL()
-        is FeedShow  -> item.show.getCoverURL()
+        is GameItem  -> item.game.getCoverURL()
+        is MovieItem -> item.movie.getCoverURL()
+        is ShowItem  -> item.show.getCoverURL()
     }
 
     val imageDescription = when(item) {
-        is FeedGame  -> stringResource(
-            R.string.item_card_image_description_game, item.game.name
-        )
-
-        is FeedMovie -> stringResource(
-            R.string.item_card_image_description_movie_or_show, item.movie.title
-        )
-
-        is FeedShow  -> stringResource(
-            R.string.item_card_image_description_movie_or_show, item.show.name
-        )
+        is GameItem  -> stringResource(R.string.item_card_image_description_game, item.game.name)
+        is MovieItem -> stringResource(R.string.item_card_image_description_movie_or_show, item.movie.title)
+        is ShowItem  -> stringResource(R.string.item_card_image_description_movie_or_show, item.show.name)
     }
 
     Box(
@@ -76,7 +68,7 @@ fun ItemCard(item: FeedItem, onClick: (() -> Unit)? = null) {
                 .fillMaxWidth()
                 .aspectRatio(
                     when(item) {
-                        is FeedGame -> 3 / 4f
+                        is GameItem -> 3 / 4f
                         else        -> 2 / 3f
                     }
                 )
