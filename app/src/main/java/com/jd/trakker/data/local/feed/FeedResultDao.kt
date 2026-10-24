@@ -3,6 +3,7 @@ package com.jd.trakker.data.local.feed
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import com.jd.trakker.ui.components.ItemType
 
 @Dao
 interface FeedResultDao {
@@ -20,7 +21,7 @@ interface FeedResultDao {
     )
     suspend fun getFeedResult(
         minutes: Int,
-        type: FeedType,
+        type: ItemType,
         page: Int = 1,
         now: Long = System.currentTimeMillis()
     ): FeedResult?

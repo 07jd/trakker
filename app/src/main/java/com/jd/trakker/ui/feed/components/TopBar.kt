@@ -7,12 +7,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.jd.trakker.R
-import com.jd.trakker.data.local.feed.FeedType
+import com.jd.trakker.ui.components.ItemType
 import com.jd.trakker.ui.feed.FeedEvent
 
 @Composable
 fun TopBar(
-    feedType: FeedType,
+    feedType: ItemType,
     showingSearchResults: Boolean,
     usingOfflineData: Boolean,
     onEvent: (FeedEvent) -> Unit
@@ -22,9 +22,9 @@ fun TopBar(
         SearchBar(
             showingSearchResults,
             placeholderText = when(feedType) {
-                FeedType.Games  -> stringResource(R.string.search_for_game)
-                FeedType.Movies -> stringResource(R.string.search_for_movie)
-                FeedType.Shows  -> stringResource(R.string.search_for_show)
+                ItemType.Game  -> stringResource(R.string.search_for_game)
+                ItemType.Movie -> stringResource(R.string.search_for_movie)
+                ItemType.Show  -> stringResource(R.string.search_for_show)
             },
             onSearch = { onEvent(FeedEvent.search(it)) },
             onBack   = { onEvent(FeedEvent.closeSearch) }

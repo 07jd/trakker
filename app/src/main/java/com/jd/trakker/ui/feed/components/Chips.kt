@@ -16,17 +16,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.jd.trakker.R
-import com.jd.trakker.data.local.feed.FeedType
-import com.jd.trakker.data.local.feed.toStringRes
+import com.jd.trakker.ui.components.ItemType
+import com.jd.trakker.ui.components.toStringRes
 
 @Composable
-fun FeedTypeChips(feedType: FeedType, onClick: (FeedType) -> Unit) {
+fun FeedTypeChips(feedType: ItemType, onClick: (ItemType) -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(space = 5.dp, alignment = Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        FeedType.entries.forEach {
+        ItemType.entries.forEach {
             FilterChip(
                 selected = feedType == it,
                 label = { Text(stringResource(it.toStringRes())) },

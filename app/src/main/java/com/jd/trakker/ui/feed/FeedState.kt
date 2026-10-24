@@ -1,11 +1,11 @@
 package com.jd.trakker.ui.feed
 
-import com.jd.trakker.data.local.feed.FeedType
 import com.jd.trakker.ui.components.Item
+import com.jd.trakker.ui.components.ItemType
 
 data class FeedState(
     val feed: List<Item> = emptyList(),
-    val feedType: FeedType = FeedType.Games,
+    val feedType: ItemType = ItemType.Game,
     val pageOffset: Int = 1,
     val nextPageLoading: Boolean = false,
 
