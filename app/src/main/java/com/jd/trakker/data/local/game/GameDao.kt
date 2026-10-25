@@ -17,7 +17,7 @@ interface GameDao{
     suspend fun getGameByExactName(gameName: String): Game?
 
     @Query("SELECT * FROM game WHERE name LIKE :gameName")
-    suspend fun getGamesByName(gameName: String): List<Game>
+    suspend fun getByName(gameName: String): List<Game>
 
     @Query("SELECT * FROM game ORDER BY rating DESC")
     suspend fun getAll(): List<Game>

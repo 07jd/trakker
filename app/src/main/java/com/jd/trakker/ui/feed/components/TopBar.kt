@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.jd.trakker.R
-import com.jd.trakker.ui.components.ItemType
+import com.jd.trakker.data.local.ItemType
 import com.jd.trakker.ui.feed.FeedEvent
 
 @Composable

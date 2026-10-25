@@ -37,6 +37,7 @@ class GameFetcher {
 
         return games
     }
+
     private suspend fun fetch(name: String?, id: Int?, page: Int?): List<Game> {
         var statusCode: Int?
         var body: List<GameResponse>?
@@ -64,13 +65,11 @@ class GameFetcher {
             throw ExceptionAPI.fromException(e)
         }
     }
-    suspend fun searchGameByName(name: String, page: Int = 1): List<Game> {
+
+    suspend fun search(name: String, page: Int = 1): List<Game> {
         return fetch(name, null, page)
     }
 
-    suspend fun searchGameByID(id: Int): Game? {
-        return fetch(null, id, null).firstOrNull()
-    }
     suspend fun getFeed(page: Int): List<Game> {
         return fetch(null, null, page)
     }

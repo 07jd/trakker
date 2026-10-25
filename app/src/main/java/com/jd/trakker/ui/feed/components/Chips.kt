@@ -1,8 +1,5 @@
 package com.jd.trakker.ui.feed.components
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,8 +16,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.jd.trakker.R
-import com.jd.trakker.ui.components.ItemType
-import com.jd.trakker.ui.components.toStringRes
+import com.jd.trakker.data.local.ItemType
+import com.jd.trakker.data.local.toStringRes
 
 @Composable
 fun FeedTypeChips(enabledFeeds: List<ItemType>, feedType: ItemType, onClick: (ItemType) -> Unit) {

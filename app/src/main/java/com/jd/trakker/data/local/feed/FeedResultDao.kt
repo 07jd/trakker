@@ -3,7 +3,7 @@ package com.jd.trakker.data.local.feed
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import com.jd.trakker.ui.components.ItemType
+import com.jd.trakker.data.local.ItemType
 
 @Dao
 interface FeedResultDao {

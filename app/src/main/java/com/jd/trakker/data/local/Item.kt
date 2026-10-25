@@ -1,4 +1,4 @@
-package com.jd.trakker.ui.components
+package com.jd.trakker.data.local
 
 import androidx.annotation.StringRes
 import com.jd.trakker.R

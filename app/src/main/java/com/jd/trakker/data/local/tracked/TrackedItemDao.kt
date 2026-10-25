@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.jd.trakker.ui.components.ItemType
+import com.jd.trakker.data.local.ItemType
 
 @Dao
 interface TrackedItemDao {

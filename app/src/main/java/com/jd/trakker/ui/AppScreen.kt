@@ -31,6 +31,7 @@ import androidx.navigation.compose.rememberNavController
 import com.jd.trakker.ui.feed.Feed
 import com.jd.trakker.ui.feed.FeedViewModel
 import com.jd.trakker.R
+import com.jd.trakker.data.repository.ItemRepository
 
 enum class Destination(
     val route: String,
@@ -133,11 +134,14 @@ fun AppNavHost(
                         val feedViewModel: FeedViewModel = viewModel {
                             FeedViewModel(
                                 preferences = viewModel.preferences,
-                                movieDao = viewModel.moviesDB.dao,
-                                showDao = viewModel.showsDB.dao,
+                                itemRepository = ItemRepository(
+                                    gameDao = viewModel.gamesDB.dao,
+                                    movieDao = viewModel.moviesDB.dao,
+                                    showDao = viewModel.showsDB.dao
+                                ),
                                 showGenreDao = viewModel.showGenreDB.dao,
                                 movieGenreDao = viewModel.movieGenreDB.dao,
-                                gameDao = viewModel.gamesDB.dao,
+                                trackedItemDao = viewModel.trackedItemDB.dao,
                                 feedResultDao = viewModel.feedDB.dao
                             )
                         }

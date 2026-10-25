@@ -1,7 +1,7 @@
 package com.jd.trakker.ui.feed
 
-import com.jd.trakker.ui.components.Item
-import com.jd.trakker.ui.components.ItemType
+import com.jd.trakker.data.local.Item
+import com.jd.trakker.data.local.ItemType
 
 sealed interface FeedEvent {
     data class focus(val item: Item)                : FeedEvent

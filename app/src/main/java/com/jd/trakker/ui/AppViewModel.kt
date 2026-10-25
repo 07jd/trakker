@@ -11,6 +11,7 @@ import com.jd.trakker.data.local.movie.MovieDatabase
 import com.jd.trakker.data.local.genre.MovieGenreDatabase
 import com.jd.trakker.data.local.show.ShowDatabase
 import com.jd.trakker.data.local.genre.ShowGenreDatabase
+import com.jd.trakker.data.local.tracked.TrackedItemDatabase
 
 class AppViewModel(
     context: Context
@@ -29,6 +30,11 @@ class AppViewModel(
         Room.databaseBuilder<ShowDatabase>(context.applicationContext, "shows")
             .setDriver(AndroidSQLiteDriver())
             .build()
+    }
+    val trackedItemDB: TrackedItemDatabase by lazy {
+        Room.databaseBuilder<TrackedItemDatabase>(context.applicationContext, "tracked")
+                .setDriver(AndroidSQLiteDriver())
+                .build()
     }
     val movieGenreDB: MovieGenreDatabase by lazy {
         Room.databaseBuilder<MovieGenreDatabase>(context.applicationContext, "movieGenre")

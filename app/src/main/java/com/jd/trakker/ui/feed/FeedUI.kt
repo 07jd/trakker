@@ -68,7 +68,7 @@ fun Feed(
                 focusedItem != null -> FocusedItem(focusedItem, onBack = { onEvent(FeedEvent.unfocus) })
                 else -> {
                     // Reset grid scroll only when new search results appears (they alter the loading state) or feed type changes
-                    LaunchedEffect(uiState.showingSearchResults, uiState.feedType, uiState.loading) {
+                    LaunchedEffect(uiState.showingSearchResults, uiState.feedType, uiState.loading, uiState.isRefreshing) {
                         if(uiState.feedType != previousFeedType ||
                            uiState.showingSearchResults != wasShowingSearchResults ||
                            uiState.loading != wasLoading

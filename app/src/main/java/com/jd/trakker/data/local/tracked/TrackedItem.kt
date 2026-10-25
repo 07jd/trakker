@@ -1,7 +1,7 @@
 package com.jd.trakker.data.local.tracked
 
 import androidx.room.Entity
-import com.jd.trakker.ui.components.ItemType
+import com.jd.trakker.data.local.ItemType
 
 enum class TrackedStatus{
     PENDING,

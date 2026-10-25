@@ -2,7 +2,7 @@ package com.jd.trakker.data.local.feed
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.jd.trakker.ui.components.ItemType
+import com.jd.trakker.data.local.ItemType
 
 @Entity(tableName = "feedResult")
 data class FeedResult(

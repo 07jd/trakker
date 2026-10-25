@@ -23,6 +23,10 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.jd.trakker.R
+import com.jd.trakker.data.local.GameItem
+import com.jd.trakker.data.local.Item
+import com.jd.trakker.data.local.MovieItem
+import com.jd.trakker.data.local.ShowItem
 
 @Composable
 private fun ItemCardBackup(item: Item) {

@@ -2,30 +2,23 @@ package com.jd.trakker.ui.feed
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jd.trakker.data.remote.igdb.GameFetcher
-import com.jd.trakker.data.local.game.GameDao
 import com.jd.trakker.data.local.feed.FeedResult
 import com.jd.trakker.data.local.feed.FeedResultDao
 import com.jd.trakker.data.remote.ExceptionAPI
-import com.jd.trakker.data.remote.tmdb.GenreFetcher
-import com.jd.trakker.data.remote.tmdb.MovieFetcher
-import com.jd.trakker.data.remote.tmdb.ShowFetcher
-import com.jd.trakker.data.local.movie.MovieDao
 import com.jd.trakker.data.local.genre.MovieGenreDao
-import com.jd.trakker.data.local.show.ShowDao
 import com.jd.trakker.data.local.genre.ShowGenreDao
 import com.jd.trakker.data.local.preferences.PreferencesManager
-import com.jd.trakker.ui.components.GameItem
-import com.jd.trakker.ui.components.Item
-import com.jd.trakker.ui.components.ItemType
-import com.jd.trakker.ui.components.MovieItem
-import com.jd.trakker.ui.components.ShowItem
+import com.jd.trakker.data.local.tracked.TrackedItemDao
+import com.jd.trakker.data.local.GameItem
+import com.jd.trakker.data.local.Item
+import com.jd.trakker.data.repository.ItemRepository
+import com.jd.trakker.data.local.ItemType
+import com.jd.trakker.data.local.MovieItem
+import com.jd.trakker.data.local.ShowItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
@@ -35,17 +28,13 @@ import kotlinx.coroutines.withContext
 
 class FeedViewModel(
     private val preferences: PreferencesManager,
-    private val gameDao: GameDao,
-    private val movieDao: MovieDao,
-    private val showDao: ShowDao,
+    private val itemRepository: ItemRepository,
+    private val feedResultDao: FeedResultDao,
+    // Needed for focusedItem
+    val trackedItemDao: TrackedItemDao,
     val showGenreDao: ShowGenreDao,
     val movieGenreDao: MovieGenreDao,
-    private val feedResultDao: FeedResultDao
 ) : ViewModel() {
-    // Online Data fetchers
-    private val gameFetcher: GameFetcher by lazy { GameFetcher() }
-    private val movieFetcher: MovieFetcher by lazy { MovieFetcher() }
-    private val showFetcher: ShowFetcher by lazy { ShowFetcher() }
 
     val feedExpirationTimeInMinutes = 5
     private val _state = MutableStateFlow(FeedState())
@@ -97,7 +86,7 @@ class FeedViewModel(
     }
 
     // Gets a new feed and caches it on the feedDB
-    // Throws when fails to fetch from online sources and can't
+    // ItemRepository throw's ExceptionApi on error
     // This function updates the feed content of the ui state by itself, no need to update it
     suspend fun getFeedPage(
         page: Int,
@@ -113,40 +102,22 @@ class FeedViewModel(
         // Retrive Cached Feed data
         val cachedFeedData: List<Item>? = if (cachedFeed != null && !forceFetch) {
             println("Requested Feed Page is cached")
-            withContext(Dispatchers.IO) {
-                when (feedType) {
-                    ItemType.Game  -> gameDao.getBatchByID(cachedFeed.ids).map { GameItem(it) }
-                    ItemType.Movie -> movieDao.getBatchByID(cachedFeed.ids).map { MovieItem(it) }
-                    ItemType.Show  -> showDao.getBatchByID(cachedFeed.ids).map { ShowItem(it) }
-                }
-            }
+            itemRepository.getItemBatch(feedType, cachedFeed.ids)
         } else { null }
 
         val feedData: List<Item> = if (cachedFeedData == null) {
-            val (ids, data) = when (feedType) {
-                ItemType.Game -> {
-                    val games = gameFetcher.getFeed(page)
-                    withContext(Dispatchers.IO) { gameDao.insert(games) }
-                    Pair(games.map { it.id }, games.map { GameItem(it) })
-                }
-                ItemType.Movie -> {
-                    val movies = movieFetcher.getFeed(page)
-                    withContext(Dispatchers.IO) { movieDao.insert(movies) }
-                    Pair(movies.map { it.id }, movies.map { MovieItem(it) })
-                }
-                ItemType.Show -> {
-                    val shows = showFetcher.getFeed(page)
-                    withContext(Dispatchers.IO) { showDao.insert(shows) }
-                    Pair(shows.map { it.id }, shows.map { ShowItem(it) })
-                }
-            }
+            val data = itemRepository.getFeed(feedType, page)
 
             // Cache new feed
             withContext(Dispatchers.IO) {
                 feedResultDao.insertFeedResult(FeedResult(
                     type = feedType,
                     page = page,
-                    ids = ids.distinct()
+                    ids = data.map { when(it) {
+                        is GameItem  -> it.game.id
+                        is MovieItem -> it.movie.id
+                        is ShowItem  -> it.show.id
+                    } }.distinct()
                 ))
             }
 
@@ -174,41 +145,16 @@ class FeedViewModel(
 
     suspend fun getOfflineFeed() {
         val feedType = _state.value.feedType
-        val offlineFeedData = withContext(Dispatchers.IO) {
-            when (feedType) {
-                ItemType.Game  -> gameDao.getAll().map { GameItem(it) }
-                ItemType.Movie -> movieDao.getAll().map { MovieItem(it) }
-                ItemType.Show  -> showDao.getAll().map { ShowItem(it) }
-            }
-        }
+        val offlineFeedData = itemRepository.getAll(feedType)
 
         _state.update { it.copy(feed = offlineFeedData, usingOfflineDataFeed = true) }
     }
 
     // Search for something via a query
-    // Caches results on the respective DB
-    // Throws when fails to search (always searches online)
+    // ItemRepository throw's ExceptionApi on error
     suspend fun search(query: String): List<Item> {
-        // Fetch and Cache data
-        val data = when (_state.value.feedType) {
-            ItemType.Game  -> {
-                val data = gameFetcher.searchGameByName(query, 1)
-                withContext(Dispatchers.IO) { gameDao.insert(data) }
-                data.map { GameItem(it) }
-            }
-            ItemType.Movie -> {
-                val data = movieFetcher.search(query, 1)
-                withContext(Dispatchers.IO) { movieDao.insert(data) }
-                data.map { MovieItem(it) }
-            }
-            ItemType.Show  -> {
-                val data = showFetcher.search(query, 1)
-                withContext(Dispatchers.IO) { showDao.insert(data) }
-                data.map { ShowItem(it) }
-            }
-        }
-
-        return data
+        val feedType = _state.value.feedType
+        return itemRepository.search(feedType, query)
     }
 
     fun onEvent(event: FeedEvent) {
@@ -333,13 +279,7 @@ class FeedViewModel(
                         }
                     } catch (e: Exception) {
                         println("Failed fetch search results, using local results from db due to: \"${e.message}\"")
-                        val localSearchData = withContext(Dispatchers.IO) {
-                            when (_state.value.feedType) {
-                                ItemType.Game  -> gameDao.getGamesByName(event.name).map { GameItem(it) }
-                                ItemType.Movie -> movieDao.getByName(event.name).map { MovieItem(it) }
-                                ItemType.Show  -> showDao.getByName(event.name).map { ShowItem(it) }
-                            }
-                        }
+                        val localSearchData = itemRepository.searchLocally(_state.value.feedType, event.name)
 
                         // Inform the user the reason of using offline data
                         _state.update {
