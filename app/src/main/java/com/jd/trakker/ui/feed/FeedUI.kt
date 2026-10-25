@@ -33,7 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.jd.trakker.R
-import com.jd.trakker.ui.focused.FocusedItem
+import com.jd.trakker.ui.focusedItem.FocusedItem
 import com.jd.trakker.ui.components.ItemGrid
 import com.jd.trakker.ui.components.LoadingCircle
 import com.jd.trakker.ui.feed.components.SadScreen
@@ -106,6 +106,7 @@ fun FeedScreen(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             TopBar(
+                uiState.enabledFeeds,
                 uiState.feedType,
                 uiState.showingSearchResults,
                 if (uiState.showingSearchResults) uiState.usingOfflineDataSearch

@@ -4,12 +4,16 @@ import com.jd.trakker.ui.components.Item
 import com.jd.trakker.ui.components.ItemType
 
 data class FeedState(
+    // From user preferences
+    val useVibrations: Boolean = true,
+    val enabledFeeds: List<ItemType> = emptyList(),
+
     val feed: List<Item> = emptyList(),
     val feedType: ItemType = ItemType.Game,
     val pageOffset: Int = 1,
     val nextPageLoading: Boolean = false,
 
-    val loading: Boolean = false,
+    val loading: Boolean = true,
     val focused: Item? = null,
 
     val showingSearchResults: Boolean = false,

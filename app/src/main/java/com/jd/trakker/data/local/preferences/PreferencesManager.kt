@@ -28,6 +28,22 @@ class PreferencesManager(
         Destination.entries.firstOrNull { it.route == rawString } ?: Destination.Tracked
     }
 
+    val useVibrations: Flow<Boolean> = context.appDataStore.data.map { preferences ->
+        preferences[Preferences.useVibrations] ?: true
+    }
+
+    val gameFeedEnabled: Flow<Boolean> = context.appDataStore.data.map { preferences ->
+        preferences[Preferences.gameFeedEnabled] ?: true
+    }
+
+    val movieFeedEnabled: Flow<Boolean> = context.appDataStore.data.map { preferences ->
+        preferences[Preferences.movieFeedEnabled] ?: true
+    }
+
+    val showFeedEnabled: Flow<Boolean> = context.appDataStore.data.map { preferences ->
+        preferences[Preferences.showFeedEnabled] ?: true
+    }
+
     suspend fun setInitialSetupDone(state: Boolean) {
         context.appDataStore.edit { preferences ->
             preferences[Preferences.isInitalSetupDone] = state
@@ -52,5 +68,27 @@ class PreferencesManager(
         }
     }
 
-    // TODO: Do the other set and gets when the interface for them is stable
+    suspend fun setVibrations(state: Boolean) {
+        context.appDataStore.edit { preferences ->
+            preferences[Preferences.useVibrations] = state
+        }
+    }
+
+    suspend fun setGameFeed(state: Boolean) {
+        context.appDataStore.edit { preferences ->
+            preferences[Preferences.gameFeedEnabled] = state
+        }
+    }
+
+    suspend fun setMovieFeed(state: Boolean) {
+        context.appDataStore.edit { preferences ->
+            preferences[Preferences.movieFeedEnabled] = state
+        }
+    }
+
+    suspend fun setShowFeed(state: Boolean) {
+        context.appDataStore.edit { preferences ->
+            preferences[Preferences.showFeedEnabled] = state
+        }
+    }
 }

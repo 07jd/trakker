@@ -132,6 +132,7 @@ fun AppNavHost(
                     Destination.Feed -> {
                         val feedViewModel: FeedViewModel = viewModel {
                             FeedViewModel(
+                                preferences = viewModel.preferences,
                                 movieDao = viewModel.moviesDB.dao,
                                 showDao = viewModel.showsDB.dao,
                                 showGenreDao = viewModel.showGenreDB.dao,

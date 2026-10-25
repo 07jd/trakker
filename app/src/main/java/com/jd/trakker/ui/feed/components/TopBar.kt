@@ -1,6 +1,8 @@
 package com.jd.trakker.ui.feed.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
@@ -11,11 +13,11 @@ import com.jd.trakker.ui.components.ItemType
 import com.jd.trakker.ui.feed.FeedEvent
 
 @Composable
-fun TopBar(
-    feedType: ItemType,
-    showingSearchResults: Boolean,
-    usingOfflineData: Boolean,
-    onEvent: (FeedEvent) -> Unit
+fun TopBar(enabledFeeds: List<ItemType>,
+           feedType: ItemType,
+           showingSearchResults: Boolean,
+           usingOfflineData: Boolean,
+           onEvent: (FeedEvent) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         // This is the search box, the material3 provided one is kinda buggy and unstable
@@ -30,9 +32,13 @@ fun TopBar(
             onBack   = { onEvent(FeedEvent.closeSearch) }
         )
 
-        // Hide ships when showing search results
-        AnimatedVisibility(!showingSearchResults) {
-            FeedTypeChips(feedType, onClick = { onEvent(FeedEvent.changeFeedType(it)) } )
+        // Hide ships when showing search results or only 1 feed type enabled
+        AnimatedVisibility(
+            visible  = !showingSearchResults && enabledFeeds.size > 1,
+            enter    = slideInVertically(),
+            exit     = slideOutVertically()
+        ) {
+            FeedTypeChips(enabledFeeds, feedType, onClick = { onEvent(FeedEvent.changeFeedType(it)) } )
         }
 
         // Inform user that is using local data

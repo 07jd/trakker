@@ -1,5 +1,8 @@
 package com.jd.trakker.ui.feed.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,13 +23,13 @@ import com.jd.trakker.ui.components.ItemType
 import com.jd.trakker.ui.components.toStringRes
 
 @Composable
-fun FeedTypeChips(feedType: ItemType, onClick: (ItemType) -> Unit) {
+fun FeedTypeChips(enabledFeeds: List<ItemType>, feedType: ItemType, onClick: (ItemType) -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(space = 5.dp, alignment = Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        ItemType.entries.forEach {
+        enabledFeeds.forEach {
             FilterChip(
                 selected = feedType == it,
                 label = { Text(stringResource(it.toStringRes())) },

@@ -14,6 +14,7 @@ import com.jd.trakker.data.local.movie.MovieDao
 import com.jd.trakker.data.local.genre.MovieGenreDao
 import com.jd.trakker.data.local.show.ShowDao
 import com.jd.trakker.data.local.genre.ShowGenreDao
+import com.jd.trakker.data.local.preferences.PreferencesManager
 import com.jd.trakker.ui.components.GameItem
 import com.jd.trakker.ui.components.Item
 import com.jd.trakker.ui.components.ItemType
@@ -21,35 +22,69 @@ import com.jd.trakker.ui.components.MovieItem
 import com.jd.trakker.ui.components.ShowItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class FeedViewModel(
+    private val preferences: PreferencesManager,
     private val gameDao: GameDao,
     private val movieDao: MovieDao,
     private val showDao: ShowDao,
-    private val showGenreDao: ShowGenreDao,
-    private val movieGenreDao: MovieGenreDao,
+    val showGenreDao: ShowGenreDao,
+    val movieGenreDao: MovieGenreDao,
     private val feedResultDao: FeedResultDao
 ) : ViewModel() {
     // Online Data fetchers
     private val gameFetcher: GameFetcher by lazy { GameFetcher() }
     private val movieFetcher: MovieFetcher by lazy { MovieFetcher() }
     private val showFetcher: ShowFetcher by lazy { ShowFetcher() }
-    private val genreFetcher: GenreFetcher by lazy { GenreFetcher() }
 
-
-    private val _state = MutableStateFlow(FeedState())
-    val uiState: StateFlow<FeedState> = _state.asStateFlow()
     val feedExpirationTimeInMinutes = 5
+    private val _state = MutableStateFlow(FeedState())
+    val uiState: StateFlow<FeedState> = combine(
+        _state,
+        preferences.useVibrations,
+        preferences.gameFeedEnabled,
+        preferences.movieFeedEnabled,
+        preferences.showFeedEnabled
+    ){ state, useVibrations, gameFeedEnabled, movieFeedEnabled, showFeedEnabled ->
+        state.copy(
+            useVibrations = useVibrations,
+            enabledFeeds = buildList {
+                if (gameFeedEnabled)  add(ItemType.Game)
+                if (movieFeedEnabled) add(ItemType.Movie)
+                if (showFeedEnabled)  add(ItemType.Show)
+            }
+        )
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5_000),
+        FeedState()
+    )
+
 
     // On init behavior
     init {
         viewModelScope.launch {
-            _state.update { it.copy(loading = true) }
+            // Get enabled feeds
+            val gameFeedEnabled = preferences.gameFeedEnabled.first()
+            val movieFeedEnabled = preferences.movieFeedEnabled.first()
+            val showFeedEnabled = preferences.showFeedEnabled.first()
+            val enabledFeeds = buildList {
+                if (gameFeedEnabled) add(ItemType.Game)
+                if (movieFeedEnabled) add(ItemType.Movie)
+                if (showFeedEnabled) add(ItemType.Show)
+            }
+
+            _state.update { it.copy(enabledFeeds = enabledFeeds, feedType = enabledFeeds.first()) }
             try {
                 getFeedPage(1, feedExpirationTimeInMinutes, true)
             } catch (e: ExceptionAPI) {
@@ -306,9 +341,7 @@ class FeedViewModel(
                             }
                         }
 
-                        // TODO: Maybe do this be a setting, that user can set?
-                        // Do not set operation failed, user is already informed visually via a
-                        // banner on the top telling him that its using 'offline data'
+                        // Inform the user the reason of using offline data
                         _state.update {
                             it.copy(
                                 loading = false,
