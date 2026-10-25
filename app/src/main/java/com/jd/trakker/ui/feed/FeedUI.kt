@@ -1,5 +1,6 @@
 package com.jd.trakker.ui.feed
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -7,6 +8,9 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -55,42 +59,47 @@ fun Feed(
     Box(modifier = Modifier
             .fillMaxSize()
             .padding(innerPadding)) {
-        when {
-            uiState.focused != null -> FocusedItem(uiState.focused, onBack = { onEvent(FeedEvent.unfocus) })
-            else                    -> {
-                // Reset grid scroll only when new search results appears (they alter the loading state) or feed type changes
-                LaunchedEffect(uiState.showingSearchResults, uiState.feedType, uiState.loading) {
-                    if(uiState.feedType != previousFeedType ||
-                       uiState.showingSearchResults != wasShowingSearchResults ||
-                       uiState.loading != wasLoading
-                    ) {
-                        previousFeedType        = uiState.feedType
-                        wasShowingSearchResults = uiState.showingSearchResults
-                        wasLoading              = uiState.loading
-                        gridState.scrollToItem(0)
+        AnimatedContent(targetState = uiState.focused,
+                        transitionSpec = { when {
+                                targetState != null -> slideInHorizontally { it } togetherWith slideOutHorizontally { -it }
+                                else                -> slideInHorizontally { -it } togetherWith slideOutHorizontally { it }
+                        }}
+        ) { focusedItem -> when {
+                focusedItem != null -> FocusedItem(focusedItem, onBack = { onEvent(FeedEvent.unfocus) })
+                else -> {
+                    // Reset grid scroll only when new search results appears (they alter the loading state) or feed type changes
+                    LaunchedEffect(uiState.showingSearchResults, uiState.feedType, uiState.loading) {
+                        if(uiState.feedType != previousFeedType ||
+                           uiState.showingSearchResults != wasShowingSearchResults ||
+                           uiState.loading != wasLoading
+                        ) {
+                            previousFeedType        = uiState.feedType
+                            wasShowingSearchResults = uiState.showingSearchResults
+                            wasLoading              = uiState.loading
+                            gridState.scrollToItem(0)
+                        }
                     }
-                }
 
-                // Show info when something fails
-                LaunchedEffect(uiState.operationFailed) {
-                    if (uiState.operationFailed) {
-                        snackbarHostState.showSnackbar(
-                            message = uiState.failureMessage,
-                            duration = SnackbarDuration.Short
-                        )
+                    // Show info when something fails
+                    LaunchedEffect(uiState.operationFailed) {
+                        if (uiState.operationFailed) {
+                            snackbarHostState.showSnackbar(
+                                message = uiState.failureMessage,
+                                duration = SnackbarDuration.Short
+                            )
 
-                        onEvent(FeedEvent.clearFailure)
+                            onEvent(FeedEvent.clearFailure)
+                        }
                     }
-                }
 
-                FeedScreen(
-                    uiState,
-                    gridState,
-                    snackbarHostState,
-                    onEvent
-                )
-            }
-        }
+                    FeedScreen(
+                        uiState,
+                        gridState,
+                        snackbarHostState,
+                        onEvent
+                    )
+                }
+        } }
     }
 }
 
