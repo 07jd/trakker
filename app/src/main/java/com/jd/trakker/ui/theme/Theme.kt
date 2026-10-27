@@ -3,6 +3,7 @@ package com.jd.trakker.ui.theme
 import android.os.Build
 import androidx.annotation.StringRes
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
@@ -30,7 +31,7 @@ fun ThemeType.toStringRes(): Int {
 }
 
 @Composable
-fun getPrimaryAndSecondayColors(theme: ThemeType, dynColor: Boolean): Pair<Color, Color> {
+fun getPrimaryAndSecondaryColors(theme: ThemeType, dynColor: Boolean): Pair<Color, Color> {
     val context = LocalContext.current
     val useDynamicColors = dynColor && isDynamicColorAvailable()
 
@@ -117,11 +118,6 @@ private val darkScheme = darkColorScheme(
     surfaceContainer = surfaceContainerDark,
     surfaceContainerHigh = surfaceContainerHighDark,
     surfaceContainerHighest = surfaceContainerHighestDark,
-)
-
-@Immutable
-data class ColorFamily(
-    val color: Color, val onColor: Color, val colorContainer: Color, val onColorContainer: Color
 )
 
 fun isDynamicColorAvailable(): Boolean {

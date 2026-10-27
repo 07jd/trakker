@@ -50,7 +50,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.jd.trakker.R
 import com.jd.trakker.ui.theme.ThemeType
-import com.jd.trakker.ui.theme.getPrimaryAndSecondayColors
+import com.jd.trakker.ui.theme.getPrimaryAndSecondaryColors
 import com.jd.trakker.ui.theme.isDynamicColorAvailable
 import com.jd.trakker.ui.theme.toStringRes
 
@@ -270,7 +270,7 @@ fun ThemeScreen(currentTheme: ThemeType, dynColor: Boolean, onEvent: (SetupEvent
         modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 20.dp, vertical = 24.dp),
-        verticalArrangement = Arrangement.spacedBy(24.dp)
+            verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         // Theme selection
         Column(
@@ -294,7 +294,7 @@ fun ThemeScreen(currentTheme: ThemeType, dynColor: Boolean, onEvent: (SetupEvent
                 ThemeType.entries.forEach { theme ->
                     val selected = theme == currentTheme
                     val (primary, secondary) =
-                        getPrimaryAndSecondayColors(theme, dynColor)
+                        getPrimaryAndSecondaryColors(theme, dynColor)
 
                     Card(
                         modifier = Modifier
