@@ -73,7 +73,7 @@ fun ItemCard(item: Item, onClick: (() -> Unit)? = null) {
                     }
                 )
                 .background(MaterialTheme.colorScheme.secondaryContainer)
-                .clickable(true) { onClick?.invoke() },
+                .clickable(onClick != null) { onClick?.invoke() },
     ) {
         // Backup Item Card on fail to load image
         if (imageFailedToLoad) {
