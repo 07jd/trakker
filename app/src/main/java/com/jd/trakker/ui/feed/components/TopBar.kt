@@ -5,6 +5,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -17,6 +18,7 @@ fun TopBar(enabledFeeds: List<ItemType>,
            feedType: ItemType,
            showingSearchResults: Boolean,
            usingOfflineData: Boolean,
+           searchBarState: TextFieldState,
            onEvent: (FeedEvent) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -28,6 +30,7 @@ fun TopBar(enabledFeeds: List<ItemType>,
                 ItemType.Movie -> stringResource(R.string.search_for_movie)
                 ItemType.Show  -> stringResource(R.string.search_for_show)
             },
+            searchBarState,
             onSearch = { onEvent(FeedEvent.search(it)) },
             onBack   = { onEvent(FeedEvent.closeSearch) }
         )

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.FilterChipDefaults
@@ -30,9 +31,14 @@ import androidx.compose.ui.unit.dp
 import com.jd.trakker.R
 
 @Composable
-fun SearchBar(showingSearchResults: Boolean, placeholderText: String, onSearch: (String) -> Unit, onBack: () -> Unit) {
+fun SearchBar(showingSearchResults: Boolean,
+              placeholderText: String,
+              state: TextFieldState? = null,
+              onSearch: (String) -> Unit,
+              onBack: () -> Unit
+) {
     val focus                   = LocalFocusManager.current
-    val state                   = rememberTextFieldState()
+    val textBarState            = state ?: rememberTextFieldState()
     var isFocused               by remember{ mutableStateOf(false) }
 
     // TODO: Improve this, i couldn't find a viable way of getting if the keyboard is open or not, this is kinda of a hack
@@ -49,7 +55,7 @@ fun SearchBar(showingSearchResults: Boolean, placeholderText: String, onSearch: 
                 .fillMaxWidth()
                 .padding(vertical = if (showingSearchResults) 15.dp else 5.dp, horizontal = 15.dp)
                 .onFocusChanged { isFocused = it.isFocused },
-        state = state,
+        state = textBarState,
         lineLimits = TextFieldLineLimits.SingleLine,
         placeholder = { Text(placeholderText) },
         shape = MaterialTheme.shapes.small,
@@ -61,7 +67,7 @@ fun SearchBar(showingSearchResults: Boolean, placeholderText: String, onSearch: 
                     modifier = Modifier
                             .size(FilterChipDefaults.IconSize)
                             .clickable {
-                                state.clearText()
+                                textBarState.clearText()
                                 onBack()
                             })
             } else {
@@ -73,7 +79,7 @@ fun SearchBar(showingSearchResults: Boolean, placeholderText: String, onSearch: 
         },
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
         onKeyboardAction = {
-            val userInput = state.text.toString().trim()
+            val userInput = textBarState.text.toString().trim()
             focus.clearFocus()
             if (!userInput.isEmpty()) {
                 onSearch(userInput)

@@ -20,6 +20,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -56,50 +58,49 @@ fun Feed(
     var wasShowingSearchResults by remember { mutableStateOf(uiState.showingSearchResults) }
     var wasLoading              by remember { mutableStateOf(uiState.loading) }
 
-    Box(modifier = Modifier
-            .fillMaxSize()
-            .padding(innerPadding)) {
-        AnimatedContent(targetState = uiState.focused,
-                        transitionSpec = { when {
-                                targetState != null -> slideInHorizontally { it } togetherWith slideOutHorizontally { -it }
-                                else                -> slideInHorizontally { -it } togetherWith slideOutHorizontally { it }
-                        }}
-        ) { focusedItem -> when {
-                focusedItem != null -> FocusedItem(focusedItem, onBack = { onEvent(FeedEvent.unfocus) })
-                else -> {
-                    // Reset grid scroll only when new search results appears (they alter the loading state) or feed type changes
-                    LaunchedEffect(uiState.showingSearchResults, uiState.feedType, uiState.loading, uiState.isRefreshing) {
-                        if(uiState.feedType != previousFeedType ||
-                           uiState.showingSearchResults != wasShowingSearchResults ||
-                           uiState.loading != wasLoading
-                        ) {
-                            previousFeedType        = uiState.feedType
-                            wasShowingSearchResults = uiState.showingSearchResults
-                            wasLoading              = uiState.loading
-                            gridState.scrollToItem(0)
-                        }
+    val searchBarState          = rememberTextFieldState()
+
+
+    AnimatedContent(targetState = uiState.focused,
+                    transitionSpec = { when {
+                        targetState != null -> slideInHorizontally { it } togetherWith slideOutHorizontally { -it }
+                        else                -> slideInHorizontally { -it } togetherWith slideOutHorizontally { it }
+                    } })
+    { focusedItem ->
+        when {
+            focusedItem != null -> FocusedItem(focusedItem, onBack = { onEvent(FeedEvent.unfocus) })
+            else                -> {
+                // Reset grid scroll only when new search results appears (they alter the loading state) or feed type changes
+                LaunchedEffect(
+                    uiState.showingSearchResults,
+                    uiState.feedType,
+                    uiState.loading,
+                    uiState.isRefreshing
+                ) {
+                    if (uiState.feedType != previousFeedType || uiState.showingSearchResults != wasShowingSearchResults || uiState.loading != wasLoading) {
+                        previousFeedType = uiState.feedType
+                        wasShowingSearchResults = uiState.showingSearchResults
+                        wasLoading = uiState.loading
+                        gridState.scrollToItem(0)
                     }
-
-                    // Show info when something fails
-                    LaunchedEffect(uiState.operationFailed) {
-                        if (uiState.operationFailed) {
-                            snackbarHostState.showSnackbar(
-                                message = uiState.failureMessage,
-                                duration = SnackbarDuration.Short
-                            )
-
-                            onEvent(FeedEvent.clearFailure)
-                        }
-                    }
-
-                    FeedScreen(
-                        uiState,
-                        gridState,
-                        snackbarHostState,
-                        onEvent
-                    )
                 }
-        } }
+
+                // Show info when something fails
+                LaunchedEffect(uiState.operationFailed) {
+                    if (uiState.operationFailed) {
+                        snackbarHostState.showSnackbar(
+                            message = uiState.failureMessage, duration = SnackbarDuration.Short
+                        )
+
+                        onEvent(FeedEvent.clearFailure)
+                    }
+                }
+
+                Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+                    FeedScreen(uiState, gridState, snackbarHostState, searchBarState, onEvent)
+                }
+            }
+        }
     }
 }
 
@@ -108,6 +109,7 @@ fun FeedScreen(
     uiState: FeedState,
     gridState: LazyGridState,
     snackbarHostState: SnackbarHostState,
+    searchBarState: TextFieldState,
     onEvent: (FeedEvent) -> Unit,
     loadingBarHeight: Dp = 5.dp
 ) {
@@ -120,6 +122,7 @@ fun FeedScreen(
                 uiState.showingSearchResults,
                 if (uiState.showingSearchResults) uiState.usingOfflineDataSearch
                 else uiState.usingOfflineDataFeed,
+                searchBarState,
                 onEvent
             )
         },
