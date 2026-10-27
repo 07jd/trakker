@@ -61,8 +61,12 @@ private fun DynamicColorCard(dynColor: Boolean, onEvent: (SetupEvent) -> Unit) {
 }
 
 @Composable
-fun ThemeScreen(currentTheme: ThemeType, dynColor: Boolean, onEvent: (SetupEvent) -> Unit) {
-    Column(modifier = Modifier.fillMaxSize().padding(horizontal = 20.dp, vertical = 24.dp),
+fun ThemeScreen(
+    currentTheme: ThemeType,
+    dynColor: Boolean,
+    onEvent: (SetupEvent) -> Unit)
+{
+    Column(modifier = Modifier.fillMaxSize().padding(horizontal = 25.dp, vertical = 25.dp),
            verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         // Theme selection

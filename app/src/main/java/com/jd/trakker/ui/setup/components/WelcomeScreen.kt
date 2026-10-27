@@ -16,6 +16,7 @@ fun WelcomeScreen() {
     Row(
         modifier = Modifier
                 .padding(top = 20.dp)
+                .padding(horizontal = 25.dp)
                 .fillMaxSize()
     ) {
         Text(

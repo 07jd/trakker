@@ -1,6 +1,5 @@
 package com.jd.trakker.ui.setup
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
@@ -37,6 +36,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.jd.trakker.R
+import com.jd.trakker.ui.setup.components.ConfirmScreen
+import com.jd.trakker.ui.setup.components.FeedScreen
 import com.jd.trakker.ui.setup.components.ThemeScreen
 import com.jd.trakker.ui.setup.components.WelcomeScreen
 
@@ -91,13 +92,15 @@ fun SetupNavHost(
                     Screens.entries.find { it.route == initialState.destination.route },
                     Screens.entries.find { it.route == targetState.destination.route })
             )
-        }, exitTransition = {
+        },
+        exitTransition = {
             slideOutOfContainer(
                 (transitionDirection(
                     Screens.entries.find { it.route == initialState.destination.route },
                     Screens.entries.find { it.route == targetState.destination.route }))
             )
-        }) {
+        })
+    {
         Screens.entries.forEach { screen ->
             composable(screen.route) {
                 when (screen) {
@@ -122,10 +125,6 @@ fun SetupScreen(
     val currentScreen = Screens.entries.firstOrNull {
         it.route == backStackEntry?.destination?.route
     } ?: Screens.WELCOME_SCREEN
-
-    // TODO: FIX-ME, user can still go back via back button
-    // Interact only by the provided buttons
-    BackHandler(enabled = true) {}
 
     Scaffold(topBar = {
         Column(
@@ -206,7 +205,8 @@ fun SetupScreen(
 
                 // Next button
                 Button(
-                    modifier = Modifier.fillMaxSize(), onClick = {
+                    modifier = Modifier.fillMaxSize(),
+                    onClick = {
                         if (currentScreen == Screens.CONFIRM) {
                             onEvent(SetupEvent.finish)
                         } else {
@@ -223,33 +223,10 @@ fun SetupScreen(
 
         }
     }) { padding ->
-        Box(
-            modifier = Modifier
-                    .padding(padding)
-                    .padding(bottom = 25.dp)
-                    .padding(horizontal = 25.dp)
-                    .fillMaxSize()
-        ) {
+        Box(modifier = Modifier
+                .padding(padding)
+                .fillMaxSize()) {
             SetupNavHost(navController, uiState, onEvent)
         }
-    }
-}
-
-@Composable
-fun FeedScreen(onEvent: SetupState, onEvent1: (SetupEvent) -> Unit) {
-    Text("TODO :)")
-}
-
-@Composable
-fun ConfirmScreen() {
-    Row(
-        modifier = Modifier
-                .padding(top = 20.dp)
-                .fillMaxSize()
-    ) {
-        Text(
-            text = stringResource(R.string.setup_confirm_screen_text),
-            lineHeight = 25.sp,
-        )
     }
 }
