@@ -21,6 +21,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.jd.trakker.R
@@ -30,7 +32,14 @@ import com.jd.trakker.ui.theme.getPrimaryAndSecondaryColors
 import com.jd.trakker.ui.theme.toStringRes
 
 @Composable
-fun ThemeCards(currentTheme: ThemeType, dynColor: Boolean, onEvent: (SetupEvent) -> Unit) {
+fun ThemeCards(
+    currentTheme: ThemeType,
+    dynColor: Boolean,
+    useVibrations: Boolean,
+    onEvent: (SetupEvent) -> Unit)
+{
+    val haptics = LocalHapticFeedback.current
+
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         ThemeType.entries.forEach { theme ->
             val selected = theme == currentTheme
@@ -40,6 +49,7 @@ fun ThemeCards(currentTheme: ThemeType, dynColor: Boolean, onEvent: (SetupEvent)
                 modifier = Modifier
                         .weight(1f)
                         .clickable {
+                            if (useVibrations) haptics.performHapticFeedback(HapticFeedbackType.Confirm)
                             onEvent(SetupEvent.changeTheme(theme))
                         }, shape = RoundedCornerShape(16.dp), border = if (selected) {
                     BorderStroke(

@@ -25,6 +25,8 @@ import androidx.compose.material3.WavyProgressIndicatorDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -41,7 +43,7 @@ import com.jd.trakker.ui.setup.components.FeedScreen
 import com.jd.trakker.ui.setup.components.ThemeScreen
 import com.jd.trakker.ui.setup.components.WelcomeScreen
 
-enum class Screens(
+private enum class Screens(
     val route: String
 ) {
     WELCOME_SCREEN("welcome"),
@@ -80,8 +82,10 @@ private fun transitionDirection(
 }
 
 @Composable
-fun SetupNavHost(
-    controller: NavHostController, uiState: SetupState, onEvent: (SetupEvent) -> Unit
+private fun SetupNavHost(
+    controller: NavHostController,
+    uiState: SetupState,
+    onEvent: (SetupEvent) -> Unit
 ) {
     NavHost(
         startDestination = Screens.WELCOME_SCREEN.route,
@@ -105,7 +109,7 @@ fun SetupNavHost(
             composable(screen.route) {
                 when (screen) {
                     Screens.WELCOME_SCREEN -> WelcomeScreen()
-                    Screens.THEME -> ThemeScreen(uiState.theme, uiState.useSystemColor, onEvent)
+                    Screens.THEME -> ThemeScreen(uiState.theme, uiState.useSystemColor, uiState.useVibrations, onEvent)
                     Screens.FEED -> FeedScreen(uiState, onEvent)
                     Screens.CONFIRM -> ConfirmScreen()
                 }
@@ -121,6 +125,7 @@ fun SetupScreen(
     onEvent: (SetupEvent) -> Unit,
     navController: NavHostController
 ) {
+    val haptics = LocalHapticFeedback.current
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentScreen = Screens.entries.firstOrNull {
         it.route == backStackEntry?.destination?.route
@@ -188,6 +193,7 @@ fun SetupScreen(
                         containerColor = MaterialTheme.colorScheme.secondaryContainer,
                         contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                     ), onClick = {
+                        if(uiState.useVibrations) haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                         previousScreen(navController, currentScreen)
                     }) {
                     Text(stringResource(R.string.setup_back))
@@ -207,6 +213,7 @@ fun SetupScreen(
                 Button(
                     modifier = Modifier.fillMaxSize(),
                     onClick = {
+                        if(uiState.useVibrations) haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                         if (currentScreen == Screens.CONFIRM) {
                             onEvent(SetupEvent.finish)
                         } else {
