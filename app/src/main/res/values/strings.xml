@@ -4,7 +4,7 @@
     <string name="setup_next">Next</string>
     <string name="setup_back">Back</string>
     <string name="setup_finish">Finish</string>
-    <string name="setup_confirm_screen_text">Everything is ready, you can later change your preferences in the app settings.</string>
+    <string name="setup_confirm_screen_text">Everything is ready!</string>
     <string name="setup_useSystemColors">Use system colors</string>
 
     <string name="feed_using_offline_data">Using Offline Data</string>
@@ -30,11 +30,13 @@
     <string name="theme_auto">Auto</string>
     <string name="theme_dark">Dark</string>
     <string name="theme_light">Light</string>
-    <string name="navbar_tracked_label">Tracked</string>
-    <string name="navbar_feed_label">Feed</string>
+    <string name="navbar_tracked_label" translatable="false">Tracked</string>
+    <string name="navbar_feed_label" translatable="false">Feed</string>
     <string name="navbar_settings_label">Settings</string>
     <string name="add_to_tracked_media">Mark media as tracked</string>
-    <string name="checkmark">✓</string>
-    <string name="vibrations_option">Use vibrations</string>
+    <string name="checkmark" translatable="false">✓</string>
+    <string name="vibrations_option">Vibrate</string>
+    <string name="setup_feed_types">Feed types</string>
+    <string name="setup_feed_types_label">Select at least one feed type</string>
 
 </resources>

@@ -109,7 +109,7 @@ private fun SetupNavHost(
                 when (screen) {
                     Screens.WELCOME_SCREEN -> WelcomeScreen()
                     Screens.THEME -> ThemeScreen(uiState.theme, uiState.useSystemColor, uiState.useVibrations) { onEvent(it) }
-                    Screens.FEED -> FeedScreen(uiState) { onEvent(it) }
+                    Screens.FEED -> FeedScreen(uiState.enabledFeeds, uiState.useVibrations) { onEvent(it) }
                     Screens.CONFIRM -> ConfirmScreen()
                 }
             }

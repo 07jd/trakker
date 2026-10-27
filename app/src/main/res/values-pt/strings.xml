@@ -4,7 +4,7 @@
     <string name="setup_next">Próximo</string>
     <string name="setup_back">Anterior</string>
     <string name="setup_finish">Terminar</string>
-    <string name="setup_confirm_screen_text">Tudo pronto, podes mais tarde mudar as preferencias nas definições da aplicação.</string>
+    <string name="setup_confirm_screen_text">Tudo pronto!</string>
     <string name="setup_useSystemColors">Usar cores do sistema</string>
     <string name="feed_using_offline_data">A usar data offline</string>
     <string name="item_card_image_description_game">Capa de %1$s</string>
@@ -28,4 +28,9 @@
     <string name="theme_auto">Auto</string>
     <string name="theme_dark">Escuro</string>
     <string name="theme_light">Claro</string>
+    <string name="vibrations_option">Vibrar</string>
+    <string name="setup_feed_types">Tipos de Feed</string>
+    <string name="setup_feed_types_label">Selecione no mínimo um tipo de feed</string>
+    <string name="navbar_settings_label">Definições</string>
+    <string name="add_to_tracked_media">Marcar media como tracked</string>
 </resources>
