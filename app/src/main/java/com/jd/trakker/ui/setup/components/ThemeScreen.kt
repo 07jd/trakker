@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.jd.trakker.R
+import com.jd.trakker.ui.components.ToggleCard
 import com.jd.trakker.ui.setup.SetupEvent
 import com.jd.trakker.ui.theme.ThemeType
 import com.jd.trakker.ui.theme.isDynamicColorAvailable
@@ -47,8 +48,7 @@ fun ThemeScreen(
         ToggleCard(
             title = stringResource(R.string.vibrations_option),
             state = useVibrations,
-            onStateChange = { onEvent(SetupEvent.changeVibrationUsage(it)) }
-        )
+            onStateChange = { onEvent(SetupEvent.changeVibrationUsage(it)) })
 
         // Dynamic color card
         if(isDynamicColorAvailable()) {
