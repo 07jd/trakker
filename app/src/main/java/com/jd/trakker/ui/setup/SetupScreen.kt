@@ -16,13 +16,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.LinearWavyProgressIndicator
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.WavyProgressIndicatorDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -36,7 +36,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import com.jd.trakker.R
 import com.jd.trakker.ui.setup.components.ConfirmScreen
 import com.jd.trakker.ui.setup.components.FeedScreen
@@ -109,8 +108,8 @@ private fun SetupNavHost(
             composable(screen.route) {
                 when (screen) {
                     Screens.WELCOME_SCREEN -> WelcomeScreen()
-                    Screens.THEME -> ThemeScreen(uiState.theme, uiState.useSystemColor, uiState.useVibrations, onEvent)
-                    Screens.FEED -> FeedScreen(uiState, onEvent)
+                    Screens.THEME -> ThemeScreen(uiState.theme, uiState.useSystemColor, uiState.useVibrations) { onEvent(it) }
+                    Screens.FEED -> FeedScreen(uiState) { onEvent(it) }
                     Screens.CONFIRM -> ConfirmScreen()
                 }
             }
@@ -118,7 +117,6 @@ private fun SetupNavHost(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SetupScreen(
     uiState: SetupState,
@@ -126,7 +124,7 @@ fun SetupScreen(
     navController: NavHostController
 ) {
     val haptics = LocalHapticFeedback.current
-    val backStackEntry by navController.currentBackStackEntryAsState()
+    val backStackEntry by navController.currentBackStackEntryFlow.collectAsState(initial = navController.currentBackStackEntry)
     val currentScreen = Screens.entries.firstOrNull {
         it.route == backStackEntry?.destination?.route
     } ?: Screens.WELCOME_SCREEN
@@ -151,21 +149,20 @@ fun SetupScreen(
                 modifier = Modifier.height(10.dp)
             )
 
-            val progress by animateFloatAsState(
+            val progressAnimated by animateFloatAsState(
                 targetValue = currentScreen.ordinal.toFloat() / (Screens.entries.size.toFloat() - 1.0f),
-                animationSpec = WavyProgressIndicatorDefaults.ProgressAnimationSpec
+                animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec
             )
 
-            LinearWavyProgressIndicator(
-                progress = { progress },
+            LinearProgressIndicator(
+                progress = { progressAnimated },
                 modifier = Modifier
                         .fillMaxWidth()
                         .height(7.dp),
                 color = MaterialTheme.colorScheme.primary,
                 trackColor = MaterialTheme.colorScheme.surfaceVariant,
-                stopSize = 0.dp
+                drawStopIndicator = {}
             )
-
         }
     }, bottomBar = {
         BoxWithConstraints(
@@ -179,9 +176,7 @@ fun SetupScreen(
             val spaceBetweenButtons = 15.dp
             val backButtonWidth = maxWidth * 0.3f
 
-            Row(
-                modifier = Modifier.fillMaxSize()
-            ) {
+            Row(modifier = Modifier.fillMaxSize()) {
                 Button(
                     modifier = Modifier
                             .fillMaxHeight()
