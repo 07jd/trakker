@@ -4,10 +4,6 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -18,26 +14,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.WavyProgressIndicatorDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -49,10 +37,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.jd.trakker.R
-import com.jd.trakker.ui.theme.ThemeType
-import com.jd.trakker.ui.theme.getPrimaryAndSecondaryColors
-import com.jd.trakker.ui.theme.isDynamicColorAvailable
-import com.jd.trakker.ui.theme.toStringRes
+import com.jd.trakker.ui.setup.components.ThemeScreen
+import com.jd.trakker.ui.setup.components.WelcomeScreen
 
 enum class Screens(
     val route: String
@@ -133,7 +119,7 @@ fun SetupScreen(
     navController: NavHostController
 ) {
     val backStackEntry by navController.currentBackStackEntryAsState()
-    val currentScreen = Screens.entries.firstOrNull() {
+    val currentScreen = Screens.entries.firstOrNull {
         it.route == backStackEntry?.destination?.route
     } ?: Screens.WELCOME_SCREEN
 
@@ -245,184 +231,6 @@ fun SetupScreen(
                     .fillMaxSize()
         ) {
             SetupNavHost(navController, uiState, onEvent)
-        }
-    }
-}
-
-// Setup stages
-@Composable
-fun WelcomeScreen() {
-    Row(
-        modifier = Modifier
-                .padding(top = 20.dp)
-                .fillMaxSize()
-    ) {
-        Text(
-            text = stringResource(R.string.setup_welcome),
-            lineHeight = 25.sp,
-        )
-    }
-}
-
-@Composable
-fun ThemeScreen(currentTheme: ThemeType, dynColor: Boolean, onEvent: (SetupEvent) -> Unit) {
-    Column(
-        modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 20.dp, vertical = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
-    ) {
-        // Theme selection
-        Column(
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.setup_app_theme),
-                style = MaterialTheme.typography.titleLarge
-            )
-
-            Text(
-                text = stringResource(R.string.setup_choose_app_look),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                ThemeType.entries.forEach { theme ->
-                    val selected = theme == currentTheme
-                    val (primary, secondary) =
-                        getPrimaryAndSecondaryColors(theme, dynColor)
-
-                    Card(
-                        modifier = Modifier
-                                .weight(1f)
-                                .clickable {
-                                    onEvent(SetupEvent.changeTheme(theme))
-                                },
-                        shape = RoundedCornerShape(16.dp),
-                        border = if (selected) {
-                            BorderStroke(
-                                2.dp,
-                                MaterialTheme.colorScheme.primary
-                            )
-                        } else {
-                            null
-                        },
-                        colors = CardDefaults.cardColors(
-                            containerColor = if (selected) {
-                                MaterialTheme.colorScheme.primaryContainer
-                            } else {
-                                MaterialTheme.colorScheme.surfaceContainer
-                            }
-                        )
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(8.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(10.dp)
-                        ) {
-                            // Color preview
-                            Column(
-                                modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(125.dp)
-                                        .clip(RoundedCornerShape(10.dp))
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                            .fillMaxWidth()
-                                            .weight(1f)
-                                            .background(primary)
-                                )
-                                Box(
-                                    modifier = Modifier
-                                            .fillMaxWidth()
-                                            .weight(1f)
-                                            .background(secondary)
-                                )
-                            }
-
-                            // Theme name
-                            Text(
-                                text = stringResource(theme.toStringRes()),
-                                style = MaterialTheme.typography.labelLarge,
-                                color = if (selected) {
-                                    MaterialTheme.colorScheme.primary
-                                } else {
-                                    MaterialTheme.colorScheme.onSurface
-                                }
-                            )
-
-                            // Selection indicator
-                            Box(
-                                modifier = Modifier
-                                        .size(24.dp)
-                                        .clip(CircleShape)
-                                        .background(
-                                            if (selected) {
-                                                MaterialTheme.colorScheme.primary
-                                            } else {
-                                                MaterialTheme.colorScheme.surfaceVariant
-                                            }
-                                        ),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                if (selected) {
-                                    Text(
-                                        text = "✓",
-                                        color = MaterialTheme.colorScheme.onPrimary,
-                                        style = MaterialTheme.typography.labelMedium
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // Dynamic colors setting
-        if (isDynamicColorAvailable()) {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer
-                )
-            ) {
-                Row(
-                    modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 12.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(
-                        modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        Text(
-                            text = stringResource(R.string.setup_useSystemColors),
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        Text(
-                            text = stringResource(R.string.setup_useSystemColors_detailed),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-
-                    Switch(
-                        checked = dynColor,
-                        onCheckedChange = {
-                            onEvent(SetupEvent.useSystemColor(it))
-                        }
-                    )
-                }
-            }
         }
     }
 }
