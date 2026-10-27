@@ -38,5 +38,7 @@
     <string name="vibrations_option">Vibrate</string>
     <string name="setup_feed_types">Feed types</string>
     <string name="setup_feed_types_label">Select at least one feed type</string>
+    <string name="smile_emoji">Smile emoji</string>
+    <string name="setup_more_on_settings">You can later change your choices on the app settings</string>
 
 </resources>

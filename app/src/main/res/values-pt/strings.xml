@@ -33,4 +33,6 @@
     <string name="setup_feed_types_label">Selecione no mínimo um tipo de feed</string>
     <string name="navbar_settings_label">Definições</string>
     <string name="add_to_tracked_media">Marcar media como tracked</string>
+    <string name="smile_emoji">Emoji a sorrir</string>
+    <string name="setup_more_on_settings">Podes mais tarde mudar isto nas configurações da aplicação</string>
 </resources>
