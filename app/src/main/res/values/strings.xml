@@ -33,5 +33,6 @@
     <string name="navbar_tracked_label">Tracked</string>
     <string name="navbar_feed_label">Feed</string>
     <string name="navbar_settings_label">Settings</string>
+    <string name="add_to_tracked_media">Mark media as tracked</string>
 
 </resources>

@@ -2,20 +2,15 @@ package com.jd.trakker.ui.feed
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jd.trakker.data.local.feed.FeedResult
-import com.jd.trakker.data.local.feed.FeedResultDao
 import com.jd.trakker.data.remote.ExceptionAPI
-import com.jd.trakker.data.local.genre.MovieGenreDao
-import com.jd.trakker.data.local.genre.ShowGenreDao
 import com.jd.trakker.data.local.preferences.PreferencesManager
-import com.jd.trakker.data.local.tracked.TrackedItemDao
 import com.jd.trakker.data.local.GameItem
 import com.jd.trakker.data.local.Item
 import com.jd.trakker.data.repository.ItemRepository
 import com.jd.trakker.data.local.ItemType
 import com.jd.trakker.data.local.MovieItem
 import com.jd.trakker.data.local.ShowItem
-import kotlinx.coroutines.Dispatchers
+import com.jd.trakker.data.repository.FeedRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -24,16 +19,11 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class FeedViewModel(
     private val preferences: PreferencesManager,
     private val itemRepository: ItemRepository,
-    private val feedResultDao: FeedResultDao,
-    // Needed for focusedItem
-    val trackedItemDao: TrackedItemDao,
-    val showGenreDao: ShowGenreDao,
-    val movieGenreDao: MovieGenreDao,
+    private val feedRepository: FeedRepository
 ) : ViewModel() {
 
     val feedExpirationTimeInMinutes = 5
@@ -97,29 +87,26 @@ class FeedViewModel(
         // Try to fetch from cached feeds
         val feedType = _state.value.feedType
         println("Getting a feed page of type: ${feedType.name}")
-        val cachedFeed = withContext(Dispatchers.IO) { feedResultDao.getFeedResult(time, feedType, page) }
+        val cachedFeed = feedRepository.getCachedFeed(feedType, page, time)
 
-        // Retrive Cached Feed data
+        // Retrieve Cached Feed data
         val cachedFeedData: List<Item>? = if (cachedFeed != null && !forceFetch) {
             println("Requested Feed Page is cached")
-            itemRepository.getItemBatch(feedType, cachedFeed.ids)
+            itemRepository.getItemBatch(feedType, cachedFeed)
         } else { null }
 
         val feedData: List<Item> = if (cachedFeedData == null) {
             val data = itemRepository.getFeed(feedType, page)
 
-            // Cache new feed
-            withContext(Dispatchers.IO) {
-                feedResultDao.insertFeedResult(FeedResult(
-                    type = feedType,
-                    page = page,
-                    ids = data.map { when(it) {
-                        is GameItem  -> it.game.id
-                        is MovieItem -> it.movie.id
-                        is ShowItem  -> it.show.id
-                    } }.distinct()
-                ))
-            }
+            feedRepository.cacheFeed(
+                type = feedType,
+                page = page,
+                ids = data.map { when(it) {
+                    is GameItem  -> it.game.id
+                    is MovieItem -> it.movie.id
+                    is ShowItem  -> it.show.id
+                } }.distinct()
+            )
 
             data
         } else { cachedFeedData }

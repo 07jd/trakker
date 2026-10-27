@@ -12,36 +12,39 @@ import com.jd.trakker.data.local.genre.MovieGenreDatabase
 import com.jd.trakker.data.local.show.ShowDatabase
 import com.jd.trakker.data.local.genre.ShowGenreDatabase
 import com.jd.trakker.data.local.tracked.TrackedItemDatabase
+import com.jd.trakker.data.repository.FeedRepository
+import com.jd.trakker.data.repository.ItemRepository
+import com.jd.trakker.data.repository.TrackedItemRepository
 
 class AppViewModel(
     context: Context
 ) : ViewModel() {
-    val gamesDB: GameDatabase by lazy {
+    private val gamesDB: GameDatabase by lazy {
         Room.databaseBuilder<GameDatabase>(context.applicationContext, "games")
             .setDriver(AndroidSQLiteDriver())
             .build()
     }
-    val moviesDB: MovieDatabase by lazy {
+    private val moviesDB: MovieDatabase by lazy {
         Room.databaseBuilder<MovieDatabase>(context.applicationContext, "movies")
             .setDriver(AndroidSQLiteDriver())
             .build()
     }
-    val showsDB: ShowDatabase by lazy {
+    private val showsDB: ShowDatabase by lazy {
         Room.databaseBuilder<ShowDatabase>(context.applicationContext, "shows")
             .setDriver(AndroidSQLiteDriver())
             .build()
     }
-    val trackedItemDB: TrackedItemDatabase by lazy {
+    private val trackedItemDB: TrackedItemDatabase by lazy {
         Room.databaseBuilder<TrackedItemDatabase>(context.applicationContext, "tracked")
                 .setDriver(AndroidSQLiteDriver())
                 .build()
     }
-    val movieGenreDB: MovieGenreDatabase by lazy {
+    private val movieGenreDB: MovieGenreDatabase by lazy {
         Room.databaseBuilder<MovieGenreDatabase>(context.applicationContext, "movieGenre")
             .setDriver(AndroidSQLiteDriver())
             .build()
     }
-    val showGenreDB: ShowGenreDatabase by lazy {
+    private val showGenreDB: ShowGenreDatabase by lazy {
         Room.databaseBuilder<ShowGenreDatabase>(context.applicationContext, "showGenre")
             .setDriver(AndroidSQLiteDriver())
             .build()
@@ -52,5 +55,27 @@ class AppViewModel(
             .build()
     }
 
+    // Public
     val preferences = PreferencesManager(context)
+
+    val itemRepository: ItemRepository by lazy {
+        ItemRepository(
+            gameDao  = gamesDB.dao,
+            movieDao = moviesDB.dao,
+            showDao  = showsDB.dao,
+        )
+    }
+
+    val feedRepository: FeedRepository by lazy {
+        FeedRepository(feedDB.dao)
+    }
+
+    val trackedItemRepository: TrackedItemRepository by lazy {
+        TrackedItemRepository(
+            trackedItemDao = trackedItemDB.dao,
+            gameDao = gamesDB.dao,
+            movieDao = moviesDB.dao,
+            showDao = showsDB.dao
+        )
+    }
 }

@@ -13,6 +13,9 @@ interface TrackedItemDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(item: TrackedItem)
 
+    @Query("SELECT * FROM tracked WHERE id = :id AND type = :type LIMIT 1")
+    suspend fun find(id: Int, type: ItemType): TrackedItem?
+
     @Delete
     suspend fun remove(item: TrackedItem)
 

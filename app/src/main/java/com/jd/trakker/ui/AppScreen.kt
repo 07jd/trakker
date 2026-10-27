@@ -1,6 +1,10 @@
 package com.jd.trakker.ui
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -32,6 +36,8 @@ import com.jd.trakker.ui.feed.Feed
 import com.jd.trakker.ui.feed.FeedViewModel
 import com.jd.trakker.R
 import com.jd.trakker.data.repository.ItemRepository
+import com.jd.trakker.ui.feed.FeedEvent
+import com.jd.trakker.ui.focusedItem.FocusedItem
 
 enum class Destination(
     val route: String,
@@ -134,20 +140,28 @@ fun AppNavHost(
                         val feedViewModel: FeedViewModel = viewModel {
                             FeedViewModel(
                                 preferences = viewModel.preferences,
-                                itemRepository = ItemRepository(
-                                    gameDao = viewModel.gamesDB.dao,
-                                    movieDao = viewModel.moviesDB.dao,
-                                    showDao = viewModel.showsDB.dao
-                                ),
-                                showGenreDao = viewModel.showGenreDB.dao,
-                                movieGenreDao = viewModel.movieGenreDB.dao,
-                                trackedItemDao = viewModel.trackedItemDB.dao,
-                                feedResultDao = viewModel.feedDB.dao
+                                itemRepository = viewModel.itemRepository,
+                                feedRepository = viewModel.feedRepository
                             )
                         }
 
                         val uiState by feedViewModel.uiState.collectAsStateWithLifecycle()
-                        Feed(innerPadding, uiState, feedViewModel::onEvent)
+
+                        AnimatedContent(targetState = uiState.focused,
+                                        transitionSpec = { when {
+                                            targetState != null -> slideInHorizontally { it } togetherWith  slideOutHorizontally { -it }
+                                            else                -> slideInHorizontally { -it } togetherWith slideOutHorizontally { it }
+                                        } }
+                        ) { focusedItem ->
+                            when {
+                                focusedItem != null -> {
+                                    // TODO: make view model and state
+
+                                    FocusedItem(focusedItem, { feedViewModel.onEvent(FeedEvent.unfocus) })
+                                }
+                                else -> Feed(innerPadding, uiState, feedViewModel::onEvent)
+                            }
+                        }
                     }
                     Destination.Settings -> TempScreen()
                 }
@@ -176,8 +190,8 @@ fun AppScreen(
 fun TempScreen() {
     Box(
         modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Red)
+                .fillMaxSize()
+                .background(Color.Red)
     ) {
         Text("TODO!")
     }
