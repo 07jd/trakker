@@ -5,7 +5,8 @@ import androidx.room.RoomDatabase
 
 @Database(
     entities = [MovieGenre::class],
-    version = 1
+    version = 1,
+    exportSchema = false
 )
 abstract class MovieGenreDatabase: RoomDatabase() {
     abstract val dao: MovieGenreDao
@@ -13,7 +14,8 @@ abstract class MovieGenreDatabase: RoomDatabase() {
 
 @Database(
     entities = [ShowGenre::class],
-    version = 1
+    version = 1,
+    exportSchema = false
 )
 abstract class ShowGenreDatabase: RoomDatabase() {
     abstract val dao: ShowGenreDao

@@ -7,7 +7,8 @@ import com.jd.trakker.data.local.ListConverter
 
 @Database(
     entities = [Movie::class],
-    version = 1
+    version = 1,
+    exportSchema = false
 )
 @TypeConverters(ListConverter::class)
 abstract class MovieDatabase: RoomDatabase() {
