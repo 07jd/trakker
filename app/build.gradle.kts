@@ -17,8 +17,6 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
         buildConfigField(
             type = "String",
             name = "BASE_URL",
@@ -28,6 +26,8 @@ android {
 
     buildTypes {
         release {
+            isMinifyEnabled = true
+            isShrinkResources = true
             optimization {
                 enable = false
             }
@@ -71,7 +71,7 @@ dependencies {
 
     // Retrofit + json parser
     implementation(libs.retrofit)
-    implementation("com.squareup.retrofit2:converter-gson:3.0.0")
+    implementation(libs.retrofit.converter.gson)
 
     implementation(libs.converter.scalars)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
