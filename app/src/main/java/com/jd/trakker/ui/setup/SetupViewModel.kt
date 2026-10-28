@@ -37,15 +37,15 @@ class SetupViewModel(
     fun onEvent(event: SetupEvent) {
         viewModelScope.launch {
             when(event) {
-                is SetupEvent.changeTheme -> settings.setTheme(event.theme)
-                is SetupEvent.useSystemColor -> settings.setDynamicColor(event.state)
-                is SetupEvent.changeVibrationUsage -> settings.setVibrations(event.state)
-                is SetupEvent.changeFeedTypes -> when(event.type) {
+                is SetupEvent.ChangeTheme          -> settings.setTheme(event.theme)
+                is SetupEvent.UseSystemColor       -> settings.setDynamicColor(event.state)
+                is SetupEvent.ChangeVibrationUsage -> settings.setVibrations(event.state)
+                is SetupEvent.ChangeFeedTypes -> when(event.type) {
                     ItemType.Game  -> settings.setGameFeed(event.state)
                     ItemType.Movie -> settings.setMovieFeed(event.state)
                     ItemType.Show  -> settings.setShowFeed(event.state)
                 }
-                SetupEvent.finish -> settings.setInitialSetupDone(true)
+                SetupEvent.Finish             -> settings.setInitialSetupDone(true)
             }
         }
     }

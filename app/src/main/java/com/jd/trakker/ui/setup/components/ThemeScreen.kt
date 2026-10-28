@@ -48,7 +48,7 @@ fun ThemeScreen(
         ToggleCard(
             title = stringResource(R.string.vibrations_option),
             state = useVibrations,
-            onStateChange = { onEvent(SetupEvent.changeVibrationUsage(it)) })
+            onStateChange = { onEvent(SetupEvent.ChangeVibrationUsage(it)) })
 
         // Dynamic color card
         if(isDynamicColorAvailable()) {
@@ -56,7 +56,7 @@ fun ThemeScreen(
                 title = stringResource(R.string.setup_useSystemColors),
                 label = stringResource(R.string.setup_useSystemColors_detailed),
                 state = dynColor,
-                onStateChange = { onEvent(SetupEvent.useSystemColor(it)) },
+                onStateChange = { onEvent(SetupEvent.UseSystemColor(it)) },
                 useVibrations = useVibrations
             )
         }

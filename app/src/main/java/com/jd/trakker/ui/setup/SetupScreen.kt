@@ -210,7 +210,7 @@ fun SetupScreen(
                     onClick = {
                         if(uiState.useVibrations) haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                         if (currentScreen == Screens.CONFIRM) {
-                            onEvent(SetupEvent.finish)
+                            onEvent(SetupEvent.Finish)
                         } else {
                             nextScreen(navController, currentScreen)
                         }

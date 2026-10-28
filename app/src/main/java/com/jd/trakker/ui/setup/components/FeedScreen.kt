@@ -38,6 +38,6 @@ fun FeedScreen(
         FeedTypeCards(
             currentSelected = selected,
             useVibrations = useVibrations
-        ) { type, state -> onEvent(SetupEvent.changeFeedTypes(type, state)) }
+        ) { type, state -> onEvent(SetupEvent.ChangeFeedTypes(type, state)) }
     }
 }

@@ -50,7 +50,7 @@ fun ThemeCards(
                         .weight(1f)
                         .clickable {
                             if (useVibrations) haptics.performHapticFeedback(HapticFeedbackType.Confirm)
-                            onEvent(SetupEvent.changeTheme(theme))
+                            onEvent(SetupEvent.ChangeTheme(theme))
                         }, shape = RoundedCornerShape(16.dp), border = if (selected) {
                     BorderStroke(
                         2.dp, MaterialTheme.colorScheme.primary
