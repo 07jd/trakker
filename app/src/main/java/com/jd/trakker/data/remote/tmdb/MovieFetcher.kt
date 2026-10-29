@@ -19,7 +19,7 @@ class MovieFetcher {
                 id = it.id,
                 adult = it.adult,
                 title = it.title!!,
-                genre_ids = it.genre_ids,
+                genres = it.genres,
                 overview = it.overview,
                 release_date = it.release_date!!,
                 vote_average = it.vote_average,

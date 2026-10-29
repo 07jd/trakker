@@ -21,7 +21,7 @@ class ShowFetcher {
         return data.results.map {
             Show(
                 id = it.id,
-                genre_ids = it.genre_ids,
+                genres = it.genres,
                 overview = it.overview,
                 vote_average = it.vote_average,
                 backdrop_path = it.backdrop_path,

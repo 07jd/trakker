@@ -11,7 +11,7 @@ data class Show(
     @PrimaryKey(autoGenerate = false)
     val id: Int,
     val adult: Boolean,
-    val genre_ids: List<Int>,
+    val genres: List<String>,
     val name: String,
     val first_air_date: String,
     val overview: String,

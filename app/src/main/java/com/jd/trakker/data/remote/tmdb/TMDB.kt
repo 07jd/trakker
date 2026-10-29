@@ -4,7 +4,6 @@ import com.jd.trakker.data.local.genre.MovieGenre
 import com.jd.trakker.data.local.genre.ShowGenre
 import retrofit2.Response
 import retrofit2.http.Body
-import retrofit2.http.GET
 import retrofit2.http.POST
 
 // Body sent to the API
@@ -23,7 +22,7 @@ data class TmdbResponse(
 data class TmdbDataResponse(
     val id: Int,
     val adult: Boolean,
-    val genre_ids: List<Int>,
+    val genres: List<String>,
 
     // Title = Movie
     // Name  = Show
@@ -59,7 +58,4 @@ interface TMDB {
     suspend fun fetchMedia(
         @Body requestBody: TmdbRequestBody
     ): Response<TmdbResponse>
-
-    @GET("/api/tmdb/genres")
-    suspend fun fetchGenres(): Response<TmdbGenresResponse>
 }

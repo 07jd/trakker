@@ -12,7 +12,7 @@ data class Movie(
     val id: Int,
     val title: String,
     val adult: Boolean,
-    val genre_ids: List<Int>,
+    val genres: List<String>,
     val overview: String,
     val release_date: String,
     val vote_average: Double,
