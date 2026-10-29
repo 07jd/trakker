@@ -42,8 +42,14 @@ class TrackedItemRepository(
         }
     }
 
-    suspend fun getAll(): List<Item> {
+    suspend fun findAll(items: List<Item>): List<TrackedItem> {
         return withContext(Dispatchers.IO) {
+            items.mapNotNull { trackedItemDao.find(getID(it), getType(it)) }
+        }
+    }
+
+    suspend fun getAll(): List<TrackedItem> {
+        val allItems =  withContext(Dispatchers.IO) {
             val list = mutableListOf<Item>()
 
             list.addAll(gameDao.getAll().map { toItem(it) })
@@ -52,33 +58,38 @@ class TrackedItemRepository(
 
             list
         }
+
+        return findAll(allItems)
     }
 
-    suspend fun favorite(item: Item) {
-        withContext(Dispatchers.IO) {
-            trackedItemDao.insert(TrackedItem(
-                id = getID(item),
-                type = getType(item)
-            ))
-        }
-    }
-
-    suspend fun isFavorite(item: Item): Boolean {
+    suspend fun getTrackedInfo(item: Item): TrackedItem? {
         return withContext(Dispatchers.IO) {
-            trackedItemDao.exists(
-                id = getID(item),
-                type = getType(item)
-            )
+            trackedItemDao.find(getID(item), getType(item))
         }
     }
 
-    suspend fun unFavorite(item: Item) {
-        withContext(Dispatchers.IO) {
-            val trackedItem = trackedItemDao.find(
+    suspend fun createDefault(item: Item): TrackedItem {
+        return withContext(Dispatchers.IO) {
+            val trackedItem = TrackedItem(
                 id = getID(item),
-                type = getType(item)
+                type = getType(item),
             )
 
+            trackedItemDao.insert(trackedItem)
+
+            trackedItem
+        }
+    }
+
+    suspend fun update(trackedItem: TrackedItem) {
+        withContext(Dispatchers.IO) {
+            trackedItemDao.update(trackedItem)
+        }
+    }
+
+    suspend fun delete(item: Item) {
+        withContext(Dispatchers.IO) {
+            val trackedItem = trackedItemDao.find(getID(item), getType(item))
             if(trackedItem != null) trackedItemDao.remove(trackedItem)
         }
     }

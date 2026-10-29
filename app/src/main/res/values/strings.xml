@@ -52,5 +52,15 @@
     <string name="plataforms">Plataforms</string>
     <string name="expand_text">Expand text</string>
     <string name="shrink_text">Shrink text</string>
+    <string name="favorite">Favorite</string>
+    <string name="notes">Notes</string>
+    <string name="rate_it">Rate it</string>
+    <string name="warning">Warning</string>
+    <string name="only_on_theatres">Only on theatres</string>
+    <string name="rated">Rated</string>
+    <string name="favorited">Favorited</string>
+    <string name="no_notes">No notes</string>
+    <string name="untitled_note">Untitled note %1$d</string>
+    <string name="add_note">Add note</string>
 
 </resources>

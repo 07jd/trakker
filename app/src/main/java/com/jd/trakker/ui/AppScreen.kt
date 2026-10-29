@@ -35,8 +35,13 @@ import androidx.navigation.compose.rememberNavController
 import com.jd.trakker.ui.feed.Feed
 import com.jd.trakker.ui.feed.FeedViewModel
 import com.jd.trakker.R
+import com.jd.trakker.data.local.GameItem
+import com.jd.trakker.data.local.ItemType
+import com.jd.trakker.data.local.MovieItem
+import com.jd.trakker.data.local.ShowItem
 import com.jd.trakker.ui.feed.FeedEvent
 import com.jd.trakker.ui.focusedItem.FocusedItem
+import com.jd.trakker.ui.focusedItem.FocusedItemViewModel
 
 enum class Destination(
     val route: String,
@@ -154,9 +159,30 @@ fun AppNavHost(
                         ) { focusedItem ->
                             when {
                                 focusedItem != null -> {
-                                    // TODO: make view model and state
+                                    val id = when(focusedItem){
+                                        is GameItem  -> focusedItem.game.id
+                                        is MovieItem -> focusedItem.movie.id
+                                        is ShowItem  -> focusedItem.show.id
+                                    }
 
-                                    FocusedItem(innerPadding, focusedItem, { feedViewModel.onEvent(FeedEvent.unfocus) })
+                                    val type = when(focusedItem) {
+                                        is GameItem  -> ItemType.Game
+                                        is MovieItem -> ItemType.Movie
+                                        is ShowItem  -> ItemType.Show
+                                    }
+
+                                    val focusedItemViewModel: FocusedItemViewModel = viewModel(
+                                        key = "focused_item_${type}_${id}"
+                                    ) {
+                                        FocusedItemViewModel(
+                                            item = focusedItem,
+                                            trackedItemRepository = viewModel.trackedItemRepository,
+                                            goBack = { feedViewModel.onEvent(FeedEvent.unfocus) }
+                                        )
+                                    }
+
+                                    val focusedItemUiState by focusedItemViewModel.uiState.collectAsStateWithLifecycle()
+                                    FocusedItem(innerPadding, focusedItemUiState, focusedItemViewModel::onEvent)
                                 }
                                 else -> Feed(innerPadding, uiState, feedViewModel::onEvent)
                             }
