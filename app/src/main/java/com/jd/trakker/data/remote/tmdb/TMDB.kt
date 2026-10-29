@@ -1,7 +1,5 @@
 package com.jd.trakker.data.remote.tmdb
 
-import com.jd.trakker.data.local.genre.MovieGenre
-import com.jd.trakker.data.local.genre.ShowGenre
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
@@ -19,6 +17,7 @@ data class TmdbResponse(
     val results: List<TmdbDataResponse>
 )
 
+@Suppress("PropertyName")
 data class TmdbDataResponse(
     val id: Int,
     val adult: Boolean,
@@ -29,7 +28,7 @@ data class TmdbDataResponse(
     val name: String?,
     val title: String?,
 
-    // Only for movies, indicates if its available to watch online or only on theaters
+    // Only for movies, indicates if It's available to watch online or only on theaters
     val video: Boolean?,
 
     // Release date for movies
@@ -41,11 +40,6 @@ data class TmdbDataResponse(
     val vote_average: Double,
     val backdrop_path: String?,
     val poster_path: String?,
-)
-
-data class TmdbGenresResponse(
-    val movies: List<MovieGenre>,
-    val tv: List<ShowGenre>
 )
 
 interface TMDB {

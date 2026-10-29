@@ -8,9 +8,7 @@ import com.jd.trakker.data.local.game.GameDatabase
 import com.jd.trakker.data.local.feed.FeedResultDatabase
 import com.jd.trakker.data.local.preferences.PreferencesManager
 import com.jd.trakker.data.local.movie.MovieDatabase
-import com.jd.trakker.data.local.genre.MovieGenreDatabase
 import com.jd.trakker.data.local.show.ShowDatabase
-import com.jd.trakker.data.local.genre.ShowGenreDatabase
 import com.jd.trakker.data.local.tracked.TrackedItemDatabase
 import com.jd.trakker.data.repository.FeedRepository
 import com.jd.trakker.data.repository.ItemRepository
@@ -38,16 +36,6 @@ class AppViewModel(
         Room.databaseBuilder<TrackedItemDatabase>(context.applicationContext, "tracked")
                 .setDriver(AndroidSQLiteDriver())
                 .build()
-    }
-    private val movieGenreDB: MovieGenreDatabase by lazy {
-        Room.databaseBuilder<MovieGenreDatabase>(context.applicationContext, "movieGenre")
-            .setDriver(AndroidSQLiteDriver())
-            .build()
-    }
-    private val showGenreDB: ShowGenreDatabase by lazy {
-        Room.databaseBuilder<ShowGenreDatabase>(context.applicationContext, "showGenre")
-            .setDriver(AndroidSQLiteDriver())
-            .build()
     }
     val feedDB: FeedResultDatabase by lazy {
         Room.databaseBuilder<FeedResultDatabase>(context.applicationContext, "feedResult")

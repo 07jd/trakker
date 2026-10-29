@@ -12,6 +12,7 @@ data class RequestBody(
 )
 
 // API responses
+@Suppress("PropertyName")
 data class Cover(
     val id: Int,
     val image_id: String
@@ -22,6 +23,7 @@ data class ImageType(
     val name: String?
 )
 
+@Suppress("PropertyName")
 data class Artwork(
     val id: Int,
     val image_id: String,
@@ -44,6 +46,7 @@ data class ShallowGameResponse(
     val name: String
 )
 
+@Suppress("PropertyName")
 data class GameResponse(
     val id: Int,
     val artworks: List<Artwork>?,
