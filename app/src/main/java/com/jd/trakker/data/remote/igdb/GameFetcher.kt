@@ -29,10 +29,10 @@ class GameFetcher {
                 artworks = game.artworks?.filter { val type = it.image_type?.name
                     (type == "Artwork" || type == "Infographic" || type == "Screenshot" || type == "Concept art")
                 }?.map { it.image_id } ?: emptyList(),
-                genres = game.genres.map {
+                genres = game.genres?.map {
                     // Remove abbreviations from name ex.: Input = Roleplay... (RPG) -> Roleplay...
                     it.name.replace(Regex("""\s*\(.*?\)"""), "").trim()
-                },
+                } ?: emptyList(),
                 first_release_date = game.first_release_date,
                 cover = game.cover?.image_id,
                 platforms = game.platforms?.map { it.abbreviation } ?: emptyList(),

@@ -56,7 +56,7 @@ data class GameResponse(
     val platforms: List<Platform>?,
     val rating: Double,
     val similar_games: List<ShallowGameResponse>?,
-    val genres: List<Genre>,
+    val genres: List<Genre>?,
     val storyline: String,
     val summary: String,
     val url: String
