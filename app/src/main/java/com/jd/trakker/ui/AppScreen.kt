@@ -35,7 +35,6 @@ import androidx.navigation.compose.rememberNavController
 import com.jd.trakker.ui.feed.Feed
 import com.jd.trakker.ui.feed.FeedViewModel
 import com.jd.trakker.R
-import com.jd.trakker.data.repository.ItemRepository
 import com.jd.trakker.ui.feed.FeedEvent
 import com.jd.trakker.ui.focusedItem.FocusedItem
 
@@ -157,7 +156,7 @@ fun AppNavHost(
                                 focusedItem != null -> {
                                     // TODO: make view model and state
 
-                                    FocusedItem(focusedItem, { feedViewModel.onEvent(FeedEvent.unfocus) })
+                                    FocusedItem(innerPadding, focusedItem, { feedViewModel.onEvent(FeedEvent.unfocus) })
                                 }
                                 else -> Feed(innerPadding, uiState, feedViewModel::onEvent)
                             }

@@ -40,5 +40,17 @@
     <string name="setup_feed_types_label">Select at least one feed type</string>
     <string name="smile_emoji">Smile emoji</string>
     <string name="setup_more_on_settings">You can later change your choices on the app settings</string>
+    <string name="banner">Banner</string>
+    <string name="provider_igdb">IGDB™</string>
+    <string name="provider_tmdb">TMDB™</string>
+    <string name="focused_item_metadata_provider">Metadata</string>
+    <string name="airdate">Airdate</string>
+    <string name="releasedate">Release date</string>
+    <string name="unknown">Unknown</string>
+    <string name="visit_media_page">Visit media page</string>
+    <string name="rating">Rating</string>
+    <string name="plataforms">Plataforms</string>
+    <string name="expand_text">Expand text</string>
+    <string name="shrink_text">Shrink text</string>
 
 </resources>
