@@ -33,6 +33,7 @@ class GameFetcher {
                     // Remove abbreviations from name ex.: Input = Roleplay... (RPG) -> Roleplay...
                     it.name.replace(Regex("""\s*\(.*?\)"""), "").trim()
                 },
+                first_release_date = game.first_release_date,
                 cover = game.cover?.image_id,
                 platforms = game.platforms?.map { it.abbreviation } ?: emptyList(),
                 similarGames = game.similar_games?.map { it.id } ?: emptyList()

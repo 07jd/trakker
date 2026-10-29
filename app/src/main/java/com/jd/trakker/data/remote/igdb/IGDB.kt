@@ -51,7 +51,7 @@ data class GameResponse(
     val id: Int,
     val artworks: List<Artwork>?,
     val cover: Cover?,
-    val first_release_date: Int,
+    val first_release_date: Long,
     val name: String,
     val platforms: List<Platform>?,
     val rating: Double,
