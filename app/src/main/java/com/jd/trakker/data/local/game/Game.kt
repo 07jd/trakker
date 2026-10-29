@@ -13,6 +13,7 @@ data class Game(
     val rating: Double?,                // 0-100
     val storyline: String?,             // Talks about the game story
     val summary: String?,               // Talks about the game (more gameplaywise)
+    val genres: List<String>,           // Genres
     val url: String?,                   // igdb game url page
     val artworks: List<String>?,        // Image IDS of the artworks
     val cover: String?,                 // Image ID of the cover of the game

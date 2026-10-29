@@ -33,6 +33,11 @@ data class Platform(
     val abbreviation: String
 )
 
+data class Genre(
+    val id: Int,
+    val name: String,
+)
+
 data class ShallowGameResponse(
     val id: Int,
     val cover: Cover?,
@@ -48,6 +53,7 @@ data class GameResponse(
     val platforms: List<Platform>?,
     val rating: Double,
     val similar_games: List<ShallowGameResponse>?,
+    val genres: List<Genre>,
     val storyline: String,
     val summary: String,
     val url: String
