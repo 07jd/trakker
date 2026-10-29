@@ -30,7 +30,7 @@
     <string name="theme_auto">Auto</string>
     <string name="theme_dark">Dark</string>
     <string name="theme_light">Light</string>
-    <string name="navbar_tracked_label" translatable="false">Tracked</string>
+    <string name="navbar_tracked_label">Tracked</string>
     <string name="navbar_feed_label" translatable="false">Feed</string>
     <string name="navbar_settings_label">Settings</string>
     <string name="add_to_tracked_media">Mark media as tracked</string>
@@ -40,9 +40,9 @@
     <string name="setup_feed_types_label">Select at least one feed type</string>
     <string name="smile_emoji">Smile emoji</string>
     <string name="setup_more_on_settings">You can later change your choices on the app settings</string>
-    <string name="banner">Banner</string>
-    <string name="provider_igdb">IGDB™</string>
-    <string name="provider_tmdb">TMDB™</string>
+    <string name="banner" translatable="false">Banner</string>
+    <string name="provider_igdb" translatable="false">IGDB™</string>
+    <string name="provider_tmdb" translatable="false">TMDB™</string>
     <string name="focused_item_metadata_provider">Metadata</string>
     <string name="airdate">Airdate</string>
     <string name="releasedate">Release date</string>
@@ -52,7 +52,7 @@
     <string name="plataforms">Plataforms</string>
     <string name="expand_text">Expand text</string>
     <string name="shrink_text">Shrink text</string>
-    <string name="favorite">Favorite</string>
+    <string name="favorite">Add to favorite</string>
     <string name="notes">Notes</string>
     <string name="rate_it">Rate it</string>
     <string name="warning">Warning</string>

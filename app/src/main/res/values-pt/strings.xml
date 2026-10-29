@@ -35,4 +35,25 @@
     <string name="add_to_tracked_media">Marcar media como tracked</string>
     <string name="smile_emoji">Emoji a sorrir</string>
     <string name="setup_more_on_settings">Podes mais tarde mudar isto nas configurações da aplicação</string>
+    <string name="focused_item_metadata_provider">Metadados</string>
+    <string name="airdate">Data de exibição</string>
+    <string name="releasedate">Data de lançamento</string>
+    <string name="unknown">Desconhecido</string>
+    <string name="visit_media_page">Visitar página da media</string>
+    <string name="rating">Avaliação</string>
+    <string name="plataforms">Plataformas</string>
+    <string name="expand_text">Expandir texto</string>
+    <string name="shrink_text">Encolher texto</string>
+
+    <string name="favorite">Favoritar</string>
+    <string name="notes">Notas</string>
+    <string name="rate_it">Avale-o</string>
+    <string name="warning">Aviso</string>
+    <string name="only_on_theatres">Só nos cinemas</string>
+    <string name="rated">Avaliado</string>
+    <string name="favorited">Favorito</string>
+    <string name="no_notes">Sem notas</string>
+    <string name="untitled_note">Nota sem título %1$d</string>
+    <string name="add_note">Adicionar nota</string>
+    <string name="navbar_tracked_label">Favoritos</string>
 </resources>
