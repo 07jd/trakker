@@ -1,5 +1,6 @@
 package com.jd.trakker.ui.feed
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -97,6 +98,9 @@ fun FeedScreen(
     onEvent: (FeedEvent) -> Unit,
     loadingBarHeight: Dp = 5.dp
 ) {
+    // Close search on back
+    BackHandler(uiState.showingSearchResults) { onEvent(FeedEvent.closeSearch) }
+    
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
