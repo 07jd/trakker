@@ -1,5 +1,6 @@
 package com.jd.trakker.ui.focusedItem
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -16,6 +17,9 @@ fun FocusedItem(
     uiState: FocusedItemState,
     onEvent: (FocusedItemEvent) -> Unit
 ) {
+    // Go back to previous screen
+    BackHandler(!uiState.onNotesScreen) { onEvent(FocusedItemEvent.GoBack) }
+
     AnimatedContent(uiState.onNotesScreen) { showNoteList ->
         if(showNoteList) {
             Box(modifier = Modifier
@@ -24,6 +28,7 @@ fun FocusedItem(
             ) {
                 NotesScreen(
                     notes = uiState.trackedItem?.notes ?: emptyList(),
+                    index = uiState.noteIndex,
                     selectedNote = uiState.note,
                 ) { onEvent(it) }
             }

@@ -1,5 +1,6 @@
 package com.jd.trakker.ui.focusedItem.components
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,12 +13,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,14 +37,18 @@ import com.jd.trakker.ui.focusedItem.FocusedItemEvent
 @Composable
 fun NotesScreen(
     notes: List<Pair<String, String>>,
+    index: Int?,
     selectedNote: Pair<String, String>?,
     onEvent: (FocusedItemEvent) -> Unit
 ) {
+    // Close this screen on back
+    BackHandler(true) { onEvent(FocusedItemEvent.NotesScreen) }
+
     AnimatedContent(
-        targetState = selectedNote
-    ) { currentNote ->
-        if(currentNote != null) {
-            TODO()
+        targetState = index to selectedNote
+    ) { (idx, note) ->
+        if(idx != null && note != null) {
+            NoteEditing(notes, idx, note) { onEvent(FocusedItemEvent.CloseNote(it)) }
         } else {
            NotesViewing(notes, onBack = { onEvent(FocusedItemEvent.NotesScreen) }) {
                onEvent(FocusedItemEvent.OpenNote(it))
@@ -49,17 +58,16 @@ fun NotesScreen(
 }
 
 @Composable
-fun NotesViewing(
+private fun NotesViewing(
     notes: List<Pair<String, String>>,
     onBack: () -> Unit,
-    onSelect: (Int) -> Unit
+    onSelect: (Int?) -> Unit
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         floatingActionButton = {
             FloatingActionButton(
-                // TODO: this should use the same screen as editing a note
-                onClick = { println("TODO: add note screen!") }
+                onClick = { onSelect(null) }
             ) {
                 Icon(
                     painter = painterResource(R.drawable.plus),
@@ -70,7 +78,9 @@ fun NotesViewing(
             }
         },
         topBar = {
-            Row(modifier = Modifier.fillMaxWidth().padding(start = 12.dp),
+            Row(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Start
             ) {
@@ -122,6 +132,64 @@ fun NotesViewing(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun NoteEditing(
+    notes: List<Pair<String, String>>,
+    index: Int,
+    editingNote: Pair<String, String>,
+    onBack: (List<Pair<String, String>>) -> Unit
+) {
+    val titleState = rememberTextFieldState(initialText = editingNote.first)
+    val contentState = rememberTextFieldState(initialText = editingNote.second)
+
+    // Save the note on back
+    BackHandler(true) {
+        val editedNotes = notes.toMutableList()
+        editedNotes[index] = titleState.text.toString() to contentState.text.toString()
+        onBack(editedNotes)
+    }
+
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            Row(modifier = Modifier
+                    .fillMaxWidth()
+                    .height(30.dp)
+            ) {
+                // Go back button
+                Box(modifier = Modifier
+                        .size(46.dp)
+                        .clickable {
+                            val editedNotes = notes.toMutableList()
+                            editedNotes[index] = titleState.text.toString() to contentState.text.toString()
+                            onBack(editedNotes)
+                        }) {
+                    Icon(
+                        painter = painterResource(R.drawable.chevron_double_left),
+                        contentDescription = stringResource(R.string.go_back)
+                    )
+                }
+
+                TextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    state = titleState,
+                )
+            }
+        }
+    ) { padding ->
+        Box(modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .verticalScroll(rememberScrollState())
+        ) {
+            TextField(
+                modifier = Modifier.fillMaxSize(),
+                state = contentState
+            )
         }
     }
 }

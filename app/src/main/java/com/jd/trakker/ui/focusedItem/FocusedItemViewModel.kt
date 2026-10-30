@@ -62,10 +62,22 @@ class FocusedItemViewModel(
                     ) }
                 }
                 is FocusedItemEvent.OpenNote    -> {
+                    val notes = _state.value.trackedItem?.notes?.toMutableList() ?: mutableListOf()
+                    val selectedNote = if(event.num == null) {
+                        notes.add("" to "")
+                        "" to ""
+                    } else {
+                        notes[event.num]
+                    }
+                    val index = event.num ?: notes.lastIndex
+
                     _state.update { it.copy(
-                        noteIndex = event.num,
-                        note = _state.value.trackedItem?.notes[event.num]
+                        noteIndex = index,
+                        note = selectedNote,
+                        trackedItem = _state.value.trackedItem?.copy(notes = notes)
                     ) }
+
+                    trackedItemRepository.update(_state.value.trackedItem!!)
                 }
                 is FocusedItemEvent.Rate        -> {
                     _state.update { it.copy(
