@@ -76,8 +76,10 @@ fun BackgroundBanner(
     LaunchedEffect(Unit) {
         while(true) {
             delay(timeoutSeconds.seconds)
-            val nextPage = (pagerState.currentPage + 1) % (banners.size)
-            pagerState.animateScrollToPage(nextPage, animationSpec = tween(750))
+            if(!banners.isEmpty()) {
+                val nextPage = (pagerState.currentPage + 1) % (banners.size)
+                pagerState.animateScrollToPage(nextPage, animationSpec = tween(750))
+            }
         }
     }
 }
