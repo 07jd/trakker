@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.jd.trakker.ui.focusedItem.components.FocusedItemScreen
-import com.jd.trakker.ui.focusedItem.components.NotesScreen
+import com.jd.trakker.ui.focusedItem.notes.NotesScreen
 
 @Composable
 fun FocusedItem(

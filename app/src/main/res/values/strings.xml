@@ -62,5 +62,11 @@
     <string name="no_notes">No notes</string>
     <string name="untitled_note">Untitled note %1$d</string>
     <string name="add_note">Add note</string>
+    <string name="delete_note">Delete Note</string>
+    <string name="delete">Delete</string>
+    <string name="delete_note_dialog">Delete note with title \"%1$s\"?</string>
+    <string name="editing_note">Editing Note</string>
+    <string name="content">Content</string>
+    <string name="title">Title</string>
 
 </resources>

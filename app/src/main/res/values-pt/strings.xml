@@ -56,4 +56,7 @@
     <string name="untitled_note">Nota sem título %1$d</string>
     <string name="add_note">Adicionar nota</string>
     <string name="navbar_tracked_label">Favoritos</string>
+    <string name="delete_note">Apagar nota</string>
+    <string name="delete">Apagar</string>
+    <string name="delete_note_dialog">Apagar nota com o título \"%1$s\"?</string>
 </resources>
