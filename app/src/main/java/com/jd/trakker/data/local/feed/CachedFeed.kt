@@ -4,8 +4,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.jd.trakker.data.local.ItemType
 
-@Entity(tableName = "feedResult")
-data class FeedResult(
+@Entity(tableName = "cachedFeed")
+data class CachedFeed(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val timestamp: Long = System.currentTimeMillis(),

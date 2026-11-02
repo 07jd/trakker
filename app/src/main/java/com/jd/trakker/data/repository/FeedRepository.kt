@@ -1,13 +1,13 @@
 package com.jd.trakker.data.repository
 
 import com.jd.trakker.data.local.ItemType
-import com.jd.trakker.data.local.feed.FeedResult
-import com.jd.trakker.data.local.feed.FeedResultDao
+import com.jd.trakker.data.local.feed.CachedFeed
+import com.jd.trakker.data.local.feed.CacheFeedDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 data class FeedRepository(
-    private val cachedFeedsDao: FeedResultDao
+    private val cachedFeedsDao: CacheFeedDao
 ) {
     suspend fun getCachedFeed(type: ItemType, page: Int = 1, minutes: Int = 5): List<Int>? {
         return withContext(Dispatchers.IO) {
@@ -23,7 +23,7 @@ data class FeedRepository(
     suspend fun cacheFeed(type: ItemType, page: Int, ids: List<Int>) {
         withContext(Dispatchers.IO) {
             cachedFeedsDao.insertFeedResult(
-                FeedResult(
+                CachedFeed(
                     type = type,
                     page = page,
                     ids = ids

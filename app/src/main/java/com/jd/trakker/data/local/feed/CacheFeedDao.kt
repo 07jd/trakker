@@ -6,12 +6,12 @@ import androidx.room.Query
 import com.jd.trakker.data.local.ItemType
 
 @Dao
-interface FeedResultDao {
+interface CacheFeedDao {
     @Insert
-    suspend fun insertFeedResult(feed: FeedResult)
+    suspend fun insertFeedResult(feed: CachedFeed)
 
     @Query("""
-        DELETE FROM feedResult 
+        DELETE FROM cachedFeed 
         WHERE type = :type 
         AND timestamp < (:now-:minutes*60*1000)
         AND page = :page
@@ -21,7 +21,7 @@ interface FeedResultDao {
     @Query(
         """
         SELECT *
-        FROM feedResult
+        FROM cachedFeed
         WHERE timestamp >= (:now-:minutes*60*1000) and type = :type and page = :page
         ORDER BY timestamp DESC
         LIMIT 1
@@ -32,5 +32,5 @@ interface FeedResultDao {
         type: ItemType,
         page: Int = 1,
         now: Long = System.currentTimeMillis()
-    ): FeedResult?
+    ): CachedFeed?
 }
