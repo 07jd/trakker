@@ -15,7 +15,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -35,6 +38,7 @@ fun FocusedItemScreen(
     userRating: Double?,
     onEvent: (FocusedItemEvent) -> Unit
 ) {
+    var rateDialogOpen by rememberSaveable { mutableStateOf(false) }
     val scrollState = rememberScrollState()
     val topBarAlpha by remember {
         derivedStateOf {
@@ -76,6 +80,13 @@ fun FocusedItemScreen(
         ) { onEvent(FocusedItemEvent.GoBack) } }
     ) { innerPadding ->
         Box(modifier = Modifier.fillMaxSize()) {
+            // Rate dialog
+            if(rateDialogOpen) {
+                RateDialog(onDismiss = { rateDialogOpen = false }) {
+                    onEvent(FocusedItemEvent.Rate(it))
+                }
+            }
+
             // Background banners
             BackgroundBanner(item)
 
@@ -139,7 +150,7 @@ fun FocusedItemScreen(
                         label = stringResource(R.string.rate_it),
                         activeLabel = userRating?.let { "%.2f".format(Locale.US, it) } ?:
                                       stringResource(R.string.rate_it)
-                    ) { println("TODO: open dialog tor rate item") }
+                    ) { rateDialogOpen = true }
 
 
                     // Button to view notes

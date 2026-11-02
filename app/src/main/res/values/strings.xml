@@ -68,5 +68,6 @@
     <string name="editing_note">Editing Note</string>
     <string name="content">Content</string>
     <string name="title">Title</string>
+    <string name="rate">Rate</string>
 
 </resources>

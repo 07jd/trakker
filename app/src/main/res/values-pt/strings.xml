@@ -21,7 +21,7 @@
     <string name="search_no_results">Nenhum resultado encontrado</string>
     <string name="feed_empty">Nada a mostrar\nTente atualizar o feed</string>
     <string name="go_back">Voltar</string>
-    <string name="setup_welcome">Bem-vindo ao Trakker! Com esta aplicação consegues explorar todos tipos de media desde jogos até séries e filmes, consegues tambem fazer tracking destas e adicionar as tuas opiniões sobre estas!</string>
+    <string name="setup_welcome">Bem-vindo ao Trakker! Com esta aplicação consegues explorar todos tipos de media desde jogos até séries e filmes, consegues também fazer tracking destas e adicionar as tuas opiniões sobre estas!</string>
     <string name="setup_app_theme">Tema da aplicação</string>
     <string name="setup_choose_app_look">Escolhe o visual da aplicação</string>
     <string name="setup_useSystemColors_detailed">Usa as cores provenientes do teu telemovel</string>
@@ -47,7 +47,7 @@
 
     <string name="favorite">Favoritar</string>
     <string name="notes">Notas</string>
-    <string name="rate_it">Avale-o</string>
+    <string name="rate_it">Avalie-o</string>
     <string name="warning">Aviso</string>
     <string name="only_on_theatres">Só nos cinemas</string>
     <string name="rated">Avaliado</string>
@@ -59,4 +59,8 @@
     <string name="delete_note">Apagar nota</string>
     <string name="delete">Apagar</string>
     <string name="delete_note_dialog">Apagar nota com o título \"%1$s\"?</string>
+    <string name="editing_note">A editar nota</string>
+    <string name="content">Conteudo</string>
+    <string name="title">Título</string>
+    <string name="rate">Avaliar</string>
 </resources>
