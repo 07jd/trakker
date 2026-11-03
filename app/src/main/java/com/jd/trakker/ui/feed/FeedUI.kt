@@ -45,8 +45,11 @@ fun Feed(
     uiState: FeedState,
     gridState: LazyGridState,
     searchBarState: TextFieldState,
-    onEvent: (FeedEvent) -> Unit
+    onEvent: (FeedEvent) -> Unit,
+    onBack: () -> Unit
 ) {
+    BackHandler(true) { onBack() }
+
     val snackbarHostState = remember { SnackbarHostState() }
 
     var previousFeedType        by remember { mutableStateOf(uiState.feedType) }
