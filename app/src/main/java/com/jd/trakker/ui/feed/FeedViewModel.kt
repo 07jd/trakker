@@ -25,7 +25,7 @@ class FeedViewModel(
     private val itemRepository: ItemRepository,
     private val feedRepository: FeedRepository
 ) : ViewModel() {
-
+    // TODO: this should be obtained via the PreferencesManager
     val feedExpirationTimeInMinutes = 5
     private val _state = MutableStateFlow(FeedState())
     val uiState: StateFlow<FeedState> = combine(
@@ -167,6 +167,7 @@ class FeedViewModel(
                     _state.update { it.copy(feedType = event.type, loading = true, pageOffset = 1, operationFailed = false, failureMessage = "") }
                     try {
                         getFeedPage(1, feedExpirationTimeInMinutes, true)
+                        _state.update { it.copy(usingOfflineDataFeed = false) }
                     } catch (e: ExceptionAPI) {
                         when(e) {
                             is ExceptionAPI.NoInternet -> {

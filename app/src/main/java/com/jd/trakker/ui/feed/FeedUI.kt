@@ -55,6 +55,7 @@ fun Feed(
     var previousFeedType        by remember { mutableStateOf(uiState.feedType) }
     var wasShowingSearchResults by remember { mutableStateOf(uiState.showingSearchResults) }
     var wasLoading              by remember { mutableStateOf(uiState.loading) }
+    var wasRefreshing           by remember { mutableStateOf(uiState.isRefreshing) }
 
 
     // Reset grid scroll only when new search results appears (they alter the loading state) or feed type changes
@@ -64,10 +65,15 @@ fun Feed(
         uiState.feedType,
         uiState.isRefreshing
     ) {
-        if (uiState.feedType != previousFeedType || uiState.showingSearchResults != wasShowingSearchResults || uiState.loading != wasLoading) {
+        if (uiState.feedType != previousFeedType ||
+            uiState.showingSearchResults != wasShowingSearchResults ||
+            uiState.loading != wasLoading ||
+            uiState.isRefreshing != wasRefreshing
+        ) {
             previousFeedType = uiState.feedType
             wasShowingSearchResults = uiState.showingSearchResults
             wasLoading = uiState.loading
+            wasRefreshing = uiState.isRefreshing
             gridState.scrollToItem(0)
         }
     }
