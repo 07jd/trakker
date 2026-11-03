@@ -59,7 +59,7 @@ fun FocusedItemScreen(
     }
 
     val platforms = when(item) {
-        is GameItem -> item.game.plataformIconRes()
+        is GameItem -> item.game.platformIconRes()
         else -> null
     }
 

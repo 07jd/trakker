@@ -1,7 +1,5 @@
 package com.jd.trakker.data.local.game
 
-import androidx.compose.ui.text.toLowerCase
-import androidx.compose.ui.text.toUpperCase
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.jd.trakker.R
@@ -46,22 +44,23 @@ data class Game(
                 ).replace("/", "-")
     }
 
-    fun plataformIconRes(): List<Pair<Int?, String>> {
+    fun platformIconRes(): List<Pair<Int?, String>> {
         if(platforms.isNullOrEmpty()) return emptyList()
 
         val iconRes = platforms.map {
             when(it) {
-                "XBOX", "X360", "XONE", "Series X|S"             -> R.drawable.xbox to it
-                "PS1", "PS2", "PSP", "Vita", "PS3", "PS4", "PS5" -> R.drawable.playstation to it
-                "Switch 2", "Switch"                             -> R.drawable.nintendo_switch to it
-                "Wii"                                            -> R.drawable.nitendo_wii to it
-                "PSVR", "Steam VR", "Oculus VR", "Gear VR"       -> R.drawable.vr to it
-                "WiiU"                                           -> R.drawable.nitendo_wiiu to it
-                "FireTV", "Android"                              -> R.drawable.android to it
-                "Mobile"                                         -> R.drawable.phone_fill to it
-                "iOS", "Mac"                                     -> R.drawable.apple to it
-                "PC"                                             -> R.drawable.pc to it
-                "Linux"                                          -> R.drawable.linux to it
+                "XBOX", "X360", "XONE", "Series X|S"             -> R.drawable.logo_xbox to it
+                "PS1", "PS2", "PSP", "Vita", "PS3", "PS4", "PS5" -> R.drawable.logo_playstation to it
+                "Switch 2", "Switch"                             -> R.drawable.logo_nintendo_switch to it
+                "Wii"                                            -> R.drawable.logo_nintendo_wii to it
+                "PSVR", "Steam VR", "Oculus VR", "Gear VR"       -> R.drawable.logo_vr to it
+                "WiiU"                                           -> R.drawable.logo_nintendo_wiiu to it
+                "FireTV", "Android"                              -> R.drawable.logo_android to it
+                "Mobile"                                         -> R.drawable.logo_phone_fill to it
+                "iOS", "Mac"                                     -> R.drawable.logo_apple to it
+                "PC"                                             -> R.drawable.logo_windows to it
+                "Stadia"                                         -> R.drawable.logo_stadia to it
+                "Linux"                                          -> R.drawable.logo_linux to it
                 else                                             -> null to it
             }
         }
