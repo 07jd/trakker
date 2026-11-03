@@ -1,4 +1,4 @@
-package com.jd.trakker.ui.setup.components
+package com.jd.trakker.ui.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -26,7 +26,6 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.jd.trakker.R
-import com.jd.trakker.ui.setup.SetupEvent
 import com.jd.trakker.ui.theme.ThemeType
 import com.jd.trakker.ui.theme.getPrimaryAndSecondaryColors
 import com.jd.trakker.ui.theme.toStringRes
@@ -36,7 +35,7 @@ fun ThemeCards(
     currentTheme: ThemeType,
     dynColor: Boolean,
     useVibrations: Boolean,
-    onEvent: (SetupEvent) -> Unit)
+    onEvent: (ThemeType) -> Unit)
 {
     val haptics = LocalHapticFeedback.current
 
@@ -50,7 +49,7 @@ fun ThemeCards(
                         .weight(1f)
                         .clickable {
                             if (useVibrations) haptics.performHapticFeedback(HapticFeedbackType.Confirm)
-                            onEvent(SetupEvent.ChangeTheme(theme))
+                            onEvent(theme)
                         }, shape = RoundedCornerShape(16.dp), border = if (selected) {
                     BorderStroke(
                         2.dp, MaterialTheme.colorScheme.primary

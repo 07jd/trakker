@@ -1,4 +1,4 @@
-package com.jd.trakker.ui.setup.components
+package com.jd.trakker.ui.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background

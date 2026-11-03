@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.jd.trakker.R
+import com.jd.trakker.ui.components.ThemeCards
 import com.jd.trakker.ui.components.ToggleCard
 import com.jd.trakker.ui.setup.SetupEvent
 import com.jd.trakker.ui.theme.ThemeType
@@ -41,7 +42,7 @@ fun ThemeScreen(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            ThemeCards(currentTheme, dynColor, useVibrations, onEvent = { onEvent(it)} )
+            ThemeCards(currentTheme, dynColor, useVibrations, onEvent = { onEvent(SetupEvent.ChangeTheme(it)) })
         }
 
         // Vibrations ON or OFF card

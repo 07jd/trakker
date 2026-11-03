@@ -75,3 +75,7 @@ val surfaceContainerLowDark = Color(0xFF181D12)
 val surfaceContainerDark = Color(0xFF1C2116)
 val surfaceContainerHighDark = Color(0xFF262C20)
 val surfaceContainerHighestDark = Color(0xFF31372A)
+
+fun backgroundAppIconColor(): Color {
+    return primaryDark
+}

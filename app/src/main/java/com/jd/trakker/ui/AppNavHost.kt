@@ -27,6 +27,8 @@ import com.jd.trakker.ui.feed.FeedEvent
 import com.jd.trakker.ui.feed.FeedViewModel
 import com.jd.trakker.ui.focusedItem.FocusedItem
 import com.jd.trakker.ui.focusedItem.FocusedItemViewModel
+import com.jd.trakker.ui.settings.SettingsScreen
+import com.jd.trakker.ui.settings.SettingsViewModel
 
 enum class Destination(
     val route: String,
@@ -151,7 +153,17 @@ fun AppNavHost(
                         }
                     }
                     Destination.Settings -> {
-                        // TODO
+                        val settingsViewModel: SettingsViewModel = viewModel {
+                            SettingsViewModel(viewModel.preferences)
+                        }
+
+                        val uiState by settingsViewModel.uiState.collectAsStateWithLifecycle()
+                        SettingsScreen(
+                            innerRootPadding = innerPadding,
+                            uiState = uiState,
+                            onEvent = settingsViewModel::onEvent,
+                            onBack = { onBack() }
+                        )
                     }
                 }
             }

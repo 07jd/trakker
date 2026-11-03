@@ -12,6 +12,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.jd.trakker.R
 import com.jd.trakker.data.local.ItemType
+import com.jd.trakker.ui.components.FeedTypeCards
 import com.jd.trakker.ui.setup.SetupEvent
 
 @Composable
@@ -36,8 +37,7 @@ fun FeedScreen(
 
         // Feed types
         FeedTypeCards(
-            currentSelected = selected,
-            useVibrations = useVibrations
+            currentSelected = selected, useVibrations = useVibrations
         ) { type, state -> onEvent(SetupEvent.ChangeFeedTypes(type, state)) }
     }
 }
