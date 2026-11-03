@@ -31,8 +31,8 @@ fun TopBar(enabledFeeds: List<ItemType>,
                 ItemType.Show  -> stringResource(R.string.search_for_show)
             },
             searchBarState,
-            onSearch = { onEvent(FeedEvent.search(it)) },
-            onBack   = { onEvent(FeedEvent.closeSearch) }
+            onSearch = { onEvent(FeedEvent.Search(it)) },
+            onBack   = { onEvent(FeedEvent.CloseSearch) }
         )
 
         // Hide ships when showing search results or only 1 feed type enabled
@@ -41,7 +41,7 @@ fun TopBar(enabledFeeds: List<ItemType>,
             enter    = slideInVertically(),
             exit     = slideOutVertically()
         ) {
-            FeedTypeChips(enabledFeeds, feedType, onClick = { onEvent(FeedEvent.changeFeedType(it)) } )
+            FeedTypeChips(enabledFeeds, feedType, onClick = { onEvent(FeedEvent.ChangeFeedType(it)) } )
         }
 
         // Inform user that is using local data

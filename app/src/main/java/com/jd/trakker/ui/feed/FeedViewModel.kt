@@ -150,17 +150,17 @@ class FeedViewModel(
             when (event) {
                 // Switches screen from feed to item detailed screen
                 // Reset any previous errors and its messages
-                is FeedEvent.focus -> {
+                is FeedEvent.Focus -> {
                     _state.update { it.copy(focused = event.item, operationFailed = false, failureMessage = "") }
                 }
 
                 // Remove focused item
-                FeedEvent.unfocus -> {
+                FeedEvent.Unfocus -> {
                     _state.update { it.copy(focused = null, operationFailed = false, failureMessage = "") }
                 }
 
                 // Change feed type
-                is FeedEvent.changeFeedType -> {
+                is FeedEvent.ChangeFeedType -> {
                     // Already on that feed type
                     if (_state.value.feedType == event.type) return@launch
 
@@ -183,7 +183,7 @@ class FeedViewModel(
                 }
 
                 // Refresh current data
-                FeedEvent.refresh -> {
+                FeedEvent.Refresh -> {
                         _state.update { it.copy(isRefreshing = true) }
                         try {
                             // On search screen
@@ -222,12 +222,12 @@ class FeedViewModel(
                 }
 
                 // Clear errors
-                FeedEvent.clearFailure -> {
+                FeedEvent.ClearFailure -> {
                     _state.update { it.copy(operationFailed = false, failureMessage = "") }
                 }
 
                 // On scroll get next page of the content
-                FeedEvent.nextPage -> {
+                FeedEvent.NextPage -> {
                     // Wait for it to load
                     if(_state.value.nextPageLoading || _state.value.loading) return@launch
 
@@ -248,7 +248,7 @@ class FeedViewModel(
                 }
 
                 // Search something
-                is FeedEvent.search -> {
+                is FeedEvent.Search -> {
                     _state.update {
                         it.copy(
                             loading = true,
@@ -288,7 +288,7 @@ class FeedViewModel(
                 }
 
                 // Return to feed 'screen' from search 'screen'
-                FeedEvent.closeSearch -> {
+                FeedEvent.CloseSearch -> {
                     // Can cancel mid-fetch
                     // Reset any errors and its messages since its switches 'screens'
                     _state.update {

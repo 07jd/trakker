@@ -87,7 +87,7 @@ fun Feed(
                 message = feedbackMessage, duration = SnackbarDuration.Short
             )
 
-            onEvent(FeedEvent.clearFailure)
+            onEvent(FeedEvent.ClearFailure)
         }
     }
 
@@ -108,7 +108,7 @@ fun FeedScreen(
     loadingBarHeight: Dp = 5.dp
 ) {
     // Close search on back
-    BackHandler(uiState.showingSearchResults) { onEvent(FeedEvent.closeSearch) }
+    BackHandler(uiState.showingSearchResults) { onEvent(FeedEvent.CloseSearch) }
     
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -159,7 +159,7 @@ fun FeedScreen(
                 modifier = Modifier
                         .fillMaxSize()
                         .padding(innerPadding),
-                onRefresh = { onEvent(FeedEvent.refresh) },
+                onRefresh = { onEvent(FeedEvent.Refresh) },
                 isRefreshing = uiState.isRefreshing
             ) {
                 // PS: I have to do this instead of using directly the variables due to the animation
@@ -170,14 +170,14 @@ fun FeedScreen(
                     onSearchResultsScreen && !uiState.searchResult.isEmpty() -> ItemGrid(
                         gridState,
                         items = uiState.searchResult,
-                        onClick = { onEvent(FeedEvent.focus(it)) }
+                        onClick = { onEvent(FeedEvent.Focus(it)) }
                     )
                     // Show feed
                     !onSearchResultsScreen && !uiState.feed.isEmpty() -> ItemGrid(
                         gridState,
                         items = uiState.feed,
-                        onClick = { onEvent(FeedEvent.focus(it)) },
-                        onLoadMore = { if(!uiState.usingOfflineDataFeed) onEvent(FeedEvent.nextPage) }
+                        onClick = { onEvent(FeedEvent.Focus(it)) },
+                        onLoadMore = { if(!uiState.usingOfflineDataFeed) onEvent(FeedEvent.NextPage) }
                     )
                     else -> {
                         val text = if (uiState.showingSearchResults)

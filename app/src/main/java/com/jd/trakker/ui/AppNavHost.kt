@@ -132,7 +132,7 @@ fun AppNavHost(
                                         FocusedItemViewModel(
                                             item = focusedItem,
                                             trackedItemRepository = viewModel.trackedItemRepository,
-                                            goBack = { feedViewModel.onEvent(FeedEvent.unfocus) }
+                                            goBack = { feedViewModel.onEvent(FeedEvent.Unfocus) }
                                         )
                                     }
 
