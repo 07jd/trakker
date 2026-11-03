@@ -68,7 +68,8 @@ class FeedViewModel(
                 getFeedPage(1, feedExpirationTimeInMinutes, true)
             } catch (e: ExceptionAPI) {
                 // Feed failed to load, so no valid cached feed so failed to fetch from internet
-                println("Failed to get initial feed: \"${e.message}\"")
+                println("Failed to get initial feed!")
+                e.printStackTrace()
                 println("Getting entries from DB")
                 getOfflineFeed()
             } finally { _state.update { it.copy(loading = false) }}
@@ -207,7 +208,9 @@ class FeedViewModel(
                                 }
                             }
                         } catch (e: ExceptionAPI) {
-                            println("Refresh failed due to: \"${e.message}\"")
+                            println("Refresh failed!")
+                            e.printStackTrace()
+
                             when(e) {
                                 // Grab offline data
                                 is ExceptionAPI.NoInternet -> getOfflineFeed()

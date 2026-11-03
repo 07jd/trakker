@@ -79,10 +79,12 @@ fun Feed(
     }
 
     // Show info when something fails
+    val feedbackMessage = uiState.failureMessage.toIntOrNull()?.let { stringResource(it) } ?: ""
     LaunchedEffect(uiState.operationFailed) {
         if (uiState.operationFailed) {
+
             snackbarHostState.showSnackbar(
-                message = uiState.failureMessage, duration = SnackbarDuration.Short
+                message = feedbackMessage, duration = SnackbarDuration.Short
             )
 
             onEvent(FeedEvent.clearFailure)

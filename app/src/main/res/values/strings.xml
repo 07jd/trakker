@@ -69,5 +69,17 @@
     <string name="content">Content</string>
     <string name="title">Title</string>
     <string name="rate">Rate</string>
+    <string name="error_no_internet">No internet connection</string>
+    <string name="error_bad_request">Bad Request</string>
+    <string name="error_no_access">No Access</string>
+    <string name="error_not_found">Not Found</string>
+    <string name="error_rate_limited">Rate Limited</string>
+    <string name="error_too_many_requests">Too many requests</string>
+    <string name="error_server_error">Server Error</string>
+    <string name="error_generic_message">Something went wrong</string>
+    <string name="error_timed_out">Connection Timed out</string>
+    <string name="error_failed_data">Failed to get or parse data</string>
+    <string name="error_invalid_data">Invalid data received</string>
+    <string name="error_data_parsing">Failed to parse data</string>
 
 </resources>

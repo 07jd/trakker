@@ -1,6 +1,7 @@
 package com.jd.trakker.data.remote.igdb
 
 import com.jd.trakker.BuildConfig
+import com.jd.trakker.R
 import com.jd.trakker.data.remote.ExceptionAPI
 import com.jd.trakker.data.local.game.Game
 import retrofit2.Retrofit
@@ -61,13 +62,13 @@ class GameFetcher {
 
         // Verify data
         if(statusCode != 200) throw ExceptionAPI.fromCode(statusCode)
-        if(body == null) throw ExceptionAPI.fromCode(0, "Invalid data received")
+        if(body == null) throw ExceptionAPI.fromCode(0, R.string.error_invalid_data)
 
         try {
             return parseGames(body)
         } catch (e: Exception) {
             println("Failed to parse games: ${e.message}")
-            throw ExceptionAPI.fromException(e)
+            throw ExceptionAPI.fromCode(0, R.string.error_data_parsing)
         }
     }
 

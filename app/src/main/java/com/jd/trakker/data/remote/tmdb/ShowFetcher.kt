@@ -1,6 +1,7 @@
 package com.jd.trakker.data.remote.tmdb
 
 import com.jd.trakker.BuildConfig
+import com.jd.trakker.R
 import com.jd.trakker.data.remote.ExceptionAPI
 import com.jd.trakker.data.local.show.Show
 import retrofit2.Retrofit
@@ -67,13 +68,13 @@ class ShowFetcher {
         if (statusCode != 200) throw ExceptionAPI.fromCode(statusCode)
 
         // Invalid response
-        if (body == null) throw ExceptionAPI.fromCode(0, "Invalid data received")
+        if (body == null) throw ExceptionAPI.fromCode(0, R.string.error_invalid_data)
 
         try {
             return parseShows(body)
         } catch (e: Exception) {
             println("Failed to parse shows: ${e.message}")
-            throw ExceptionAPI.fromCode(0, "Failed to parse data")
+            throw ExceptionAPI.fromCode(0, R.string.error_data_parsing)
         }
     }
 

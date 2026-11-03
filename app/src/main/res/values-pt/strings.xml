@@ -63,4 +63,16 @@
     <string name="content">Conteudo</string>
     <string name="title">Título</string>
     <string name="rate">Avaliar</string>
+    <string name="error_no_internet">Sem ligação à internet</string>
+    <string name="error_bad_request">Requisição inválida</string>
+    <string name="error_no_access">Não autorizado</string>
+    <string name="error_not_found">Não encontrado</string>
+    <string name="error_rate_limited">Pedidos limitados temporariamente</string>
+    <string name="error_too_many_requests">Pedidos em execesso</string>
+    <string name="error_server_error">Erro no servidor</string>
+    <string name="error_generic_message">Algo correu mal</string>
+    <string name="error_timed_out">Coneção expirou</string>
+    <string name="error_failed_data">Falha ao obter ou a fazer parse da data</string>
+    <string name="error_invalid_data">Data recebida inválida</string>
+    <string name="error_data_parsing">Falhar ao fazer parsing da data</string>
 </resources>
