@@ -1,6 +1,9 @@
 package com.jd.trakker.ui
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -26,7 +29,10 @@ fun AppBottomNavBar(
                 selected = isSelected,
                 onClick = { navigateTo(destination) },
                 icon = {
-                    AnimatedContent(targetState = isSelected) { active ->
+                    AnimatedContent(
+                        targetState = isSelected,
+                        transitionSpec = { fadeIn() togetherWith fadeOut() }
+                    ) { active ->
                         if (active) {
                             Icon(
                                 imageVector = ImageVector.vectorResource(destination.activeIcon),
