@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -151,6 +153,12 @@ fun AppNavHost(
 
                         val uiState by feedViewModel.uiState.collectAsStateWithLifecycle()
 
+                        // These are from the Feed() screen
+                        val gridState       = rememberLazyGridState()
+                        val searchBarState  = rememberTextFieldState()
+
+
+
                         AnimatedContent(targetState = uiState.focused,
                                         transitionSpec = { when {
                                             targetState != null -> slideInHorizontally { it } togetherWith  slideOutHorizontally { -it }
@@ -184,7 +192,13 @@ fun AppNavHost(
                                     val focusedItemUiState by focusedItemViewModel.uiState.collectAsStateWithLifecycle()
                                     FocusedItem(innerPadding, focusedItemUiState, focusedItemViewModel::onEvent)
                                 }
-                                else -> Feed(innerPadding, uiState, feedViewModel::onEvent)
+                                else -> Feed(
+                                    innerPadding,
+                                    uiState,
+                                    gridState,
+                                    searchBarState,
+                                    feedViewModel::onEvent
+                                )
                             }
                         }
                     }

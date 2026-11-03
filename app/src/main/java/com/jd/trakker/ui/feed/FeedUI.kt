@@ -16,9 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.LazyGridState
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -45,16 +43,16 @@ import com.jd.trakker.ui.feed.components.TopBar
 fun Feed(
     innerPadding: PaddingValues,
     uiState: FeedState,
+    gridState: LazyGridState,
+    searchBarState: TextFieldState,
     onEvent: (FeedEvent) -> Unit
 ) {
-    val gridState = rememberLazyGridState()
     val snackbarHostState = remember { SnackbarHostState() }
 
     var previousFeedType        by remember { mutableStateOf(uiState.feedType) }
     var wasShowingSearchResults by remember { mutableStateOf(uiState.showingSearchResults) }
     var wasLoading              by remember { mutableStateOf(uiState.loading) }
 
-    val searchBarState          = rememberTextFieldState()
 
     // Reset grid scroll only when new search results appears (they alter the loading state) or feed type changes
     LaunchedEffect(
