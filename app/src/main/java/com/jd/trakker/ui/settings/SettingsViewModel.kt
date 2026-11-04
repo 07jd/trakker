@@ -3,8 +3,11 @@ package com.jd.trakker.ui.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.GsonBuilder
-import com.jd.trakker.data.local.Item
+import com.jd.trakker.R
+import com.jd.trakker.data.local.GameItem
 import com.jd.trakker.data.local.ItemType
+import com.jd.trakker.data.local.MovieItem
+import com.jd.trakker.data.local.ShowItem
 import com.jd.trakker.data.local.preferences.PreferencesManager
 import com.jd.trakker.data.local.tracked.TrackedItem
 import com.jd.trakker.data.repository.ItemRepository
@@ -21,7 +24,9 @@ import kotlinx.coroutines.withContext
 // Json backup format
 private data class Backup(
     val timestamp: Long = System.currentTimeMillis(),
-    val items: List<Item>,
+    val games: List<GameItem>,
+    val movies: List<MovieItem>,
+    val shows: List<ShowItem>,
     val trackedItems: List<TrackedItem>
 )
 
@@ -30,8 +35,14 @@ class SettingsViewModel(
     val trackedItemRepository: TrackedItemRepository,
     val preferences: PreferencesManager
 ): ViewModel() {
-    private val gson by lazy { GsonBuilder().setPrettyPrinting().create() }
+    private val gson by lazy {
+        GsonBuilder()
+                .setPrettyPrinting()
+                .create()
+    }
+
     private val _state = MutableStateFlow(SettingsState())
+
     val uiState = combine(
         _state,
         // Feed settings
@@ -63,22 +74,6 @@ class SettingsViewModel(
         SettingsState()
     )
 
-    // TODO: expose and use this to the ui
-    suspend fun backup(): String = withContext(Dispatchers.IO) {
-        val trackedItems = trackedItemRepository.getAll()
-        val groupedItems = trackedItems.groupBy { it.type }.mapValues { (_, items) -> items.map { it.id } }
-
-        val items = mutableListOf<Item>()
-        groupedItems.forEach { (type, ids) -> itemRepository.getItemBatch(type, ids) }
-
-        val backup = Backup(
-            items = items,
-            trackedItems = trackedItems
-        )
-
-        gson.toJson(backup)
-    }
-
     fun onEvent(event: SettingsEvent) {
         viewModelScope.launch {
             when(event) {
@@ -91,8 +86,75 @@ class SettingsViewModel(
                     ItemType.Show  -> preferences.setShowFeed(event.state)
                 }
                 is SettingsEvent.ChangeInitialScreen -> preferences.setInitialAppScreen(event.state)
-                is SettingsEvent.ClearError -> _state.update { it.copy(errorMessage = null) }
-                is SettingsEvent.Restore -> TODO()
+                is SettingsEvent.ClearFeedbackMessage -> _state.update { it.copy(feedbackMessage = null) }
+                is SettingsEvent.Backup -> {
+                    if(event.stream == null) {
+                        _state.update { it.copy(feedbackMessage = R.string.error_file_creation) }
+                        return@launch
+                    }
+
+                    val feedbackResult = withContext(Dispatchers.IO) {
+                        val trackedItems = trackedItemRepository.getAll()
+                        val groupedItems = trackedItems.groupBy { it.type }.mapValues { (_, items) -> items.map { it.id } }
+
+                        val games = mutableListOf<GameItem>()
+                        val movies = mutableListOf<MovieItem>()
+                        val shows = mutableListOf<ShowItem>()
+                        groupedItems.forEach { (type, ids) ->
+                            val items = itemRepository.getItemBatch(type, ids)
+                            when (type) {
+                                ItemType.Game -> games.addAll(
+                                    items.filterIsInstance<GameItem>()
+                                )
+                                ItemType.Movie -> movies.addAll(
+                                    items.filterIsInstance<MovieItem>()
+                                )
+                                ItemType.Show -> shows.addAll(
+                                    items.filterIsInstance<ShowItem>()
+                                )
+                            }
+                        }
+
+                        val backup = Backup(
+                            games = games,
+                            movies = movies,
+                            shows = shows,
+                            trackedItems = trackedItems
+                        )
+
+                        val data = gson.toJson(backup)
+                        try {
+                            event.stream.write(data.toByteArray())
+                            R.string.backup_creation_success
+                        } catch(e: Exception) {
+                            e.printStackTrace()
+                            R.string.error_backup_creation
+                        } finally {
+                            event.stream.close()
+                        }
+                    }
+
+                    _state.update { it.copy(feedbackMessage = feedbackResult) }
+                }
+                is SettingsEvent.Restore -> {
+                    try {
+                        val parsed = gson.fromJson(event.data, Backup::class.java)
+                        withContext(Dispatchers.IO) {
+                            val items = buildList {
+                                addAll(parsed.games)
+                                addAll(parsed.movies)
+                                addAll(parsed.shows)
+                            }
+
+                            itemRepository.insert(items)
+                            trackedItemRepository.insertBatch(parsed.trackedItems)
+                        }
+                        _state.update { it.copy(feedbackMessage = R.string.backup_restore_success) }
+                    } catch(e: Exception) {
+                        e.printStackTrace()
+                        _state.update { it.copy(feedbackMessage = R.string.error_data_parsing) }
+                    }
+                }
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.jd.trakker.ui.settings.components
 
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
@@ -8,22 +9,34 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.material3.AlertDialogDefaults
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import coil3.imageLoader
 import com.jd.trakker.R
 import com.jd.trakker.ui.components.InteractiveCard
@@ -52,12 +65,70 @@ private fun bytesToString(bytes: Long): String {
     }
 }
 
+// TODO: Make this prettier
+@Composable
+private fun FeedBackDialog(
+    title: String,
+    feedBackMessageRes: Int?,
+    canDismiss: Boolean,
+    onDismiss: () -> Unit
+) {
+    BackHandler(true) { if(canDismiss) onDismiss() }
+
+    BasicAlertDialog(
+        properties = DialogProperties(),
+        onDismissRequest = { if(canDismiss) onDismiss() }
+    ) {
+        Surface(
+            modifier = Modifier
+                    .wrapContentWidth()
+                    .wrapContentHeight(),
+            shape = MaterialTheme.shapes.large,
+            tonalElevation = AlertDialogDefaults.TonalElevation
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(32.dp, Alignment.CenterVertically),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(title)
+
+                if(feedBackMessageRes == null) {
+                    LinearWavyProgressIndicator()
+                } else {
+                    Text(text = stringResource(feedBackMessageRes))
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    TextButton(
+                        enabled = canDismiss,
+                        onClick = { onDismiss() }
+                    ) {
+                        Text(stringResource(R.string.go_back))
+                    }
+                }
+            }
+        }
+    }
+}
+
 @Composable
 fun AppStorage(
     horizontalPadding: Dp = 12.dp,
+    feedBackMessageRes: Int?,
+    useVibrations: Boolean = true,
     onEvent: (SettingsEvent) -> Unit
 ) {
     val context = LocalContext.current
+    val haptics = LocalHapticFeedback.current
+
+    var waitingForFeedback by rememberSaveable{ mutableStateOf(false) }
+    var operation          by rememberSaveable{ mutableStateOf(Operation.Restore) }
+
     fun getDiskCacheSizeString(): String {
         val sizeInBytes = context.imageLoader.diskCache?.size
         return if(sizeInBytes != null) {
@@ -71,12 +142,44 @@ fun AppStorage(
     // Intent handlers
     val pickFile = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument()
-    ) { uri -> uri?.let { TODO() } } // TODO: READ and return the string to the viewModel
+    ) { uri -> uri?.let {
+        waitingForFeedback = true
+        operation = Operation.Restore
+
+        val rawData = context.contentResolver.openInputStream(it)?.use { inStream ->
+            inStream.readBytes().decodeToString()
+        }
+
+        onEvent(SettingsEvent.Restore(rawData))
+    } }
+
     val createFile = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument("application/json")
-    ) { uri -> uri?.let { TODO() } } // TODO: Use the viewModel backup fn
+    ) { uri -> uri?.let {
+        waitingForFeedback = true
+        operation = Operation.Backup
 
-    // TODO: Error dialog when fails
+        val outStream = context.contentResolver.openOutputStream(it)
+        onEvent(SettingsEvent.Backup(outStream))
+    } }
+
+    // When feedback received mark as false
+    LaunchedEffect(feedBackMessageRes) {
+        if(feedBackMessageRes != null) waitingForFeedback = false
+    }
+
+    if(feedBackMessageRes != null || waitingForFeedback) {
+        FeedBackDialog(
+            title = stringResource(operation.toStringRes()),
+            feedBackMessageRes = feedBackMessageRes,
+            canDismiss = !waitingForFeedback,
+            onDismiss = {
+                if (useVibrations) haptics.performHapticFeedback(HapticFeedbackType.Confirm)
+                onEvent(SettingsEvent.ClearFeedbackMessage)
+            }
+        )
+    }
+
     Column(
         modifier = Modifier
                 .fillMaxWidth()
@@ -92,7 +195,7 @@ fun AppStorage(
             fontWeight = FontWeight.Bold,
         )
 
-        // TODO: Clear image cache, show how much used and btn to clear
+        // Show cache disk space and btn to clear
         InteractiveCard(
             title = stringResource(R.string.image_cache),
             rightSideInteraction = {
@@ -109,7 +212,11 @@ fun AppStorage(
                     )
 
                     Button(
-                        onClick = { context.imageLoader.diskCache?.clear(); diskCacheSize = getDiskCacheSizeString() }
+                        onClick = {
+                            if (useVibrations) haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                            context.imageLoader.diskCache?.clear()
+                            diskCacheSize = getDiskCacheSizeString()
+                        }
                     ) {
                         Text(stringResource(R.string.clear))
                     }
@@ -126,6 +233,7 @@ fun AppStorage(
                     }
                 ),
                 onCardClick = {
+                    if (useVibrations) haptics.performHapticFeedback(HapticFeedbackType.LongPress)
                     try {
                         when(it) {
                             Operation.Backup  -> createFile.launch("backup")

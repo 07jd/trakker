@@ -4,7 +4,7 @@ import com.jd.trakker.ui.Destination
 import com.jd.trakker.ui.theme.ThemeType
 
 data class SettingsState(
-    val errorMessage: String? = null,
+    val feedbackMessage: Int? = null,
     val cachedImagesSize: Long = 0L,
 
     // Data is going to be populated by the PreferencesManager

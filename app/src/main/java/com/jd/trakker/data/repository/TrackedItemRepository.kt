@@ -81,16 +81,22 @@ class TrackedItemRepository(
         }
     }
 
+    suspend fun insertBatch(trackedItems: List<TrackedItem>) {
+        withContext(Dispatchers.IO) {
+            trackedItemDao.insertBatch(trackedItems)
+        }
+    }
+
     suspend fun update(trackedItem: TrackedItem) {
         withContext(Dispatchers.IO) {
             trackedItemDao.update(trackedItem)
         }
     }
 
-    suspend fun delete(item: Item) {
-        withContext(Dispatchers.IO) {
-            val trackedItem = trackedItemDao.find(getID(item), getType(item))
-            if(trackedItem != null) trackedItemDao.remove(trackedItem)
-        }
-    }
+//    suspend fun delete(item: Item) {
+//        withContext(Dispatchers.IO) {
+//            val trackedItem = trackedItemDao.find(getID(item), getType(item))
+//            if(trackedItem != null) trackedItemDao.remove(trackedItem)
+//        }
+//    }
 }

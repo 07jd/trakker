@@ -13,6 +13,9 @@ interface TrackedItemDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(item: TrackedItem)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertBatch(items: List<TrackedItem>)
+
     @Query("SELECT * FROM tracked WHERE id = :id AND type = :type LIMIT 1")
     suspend fun find(id: Int, type: ItemType): TrackedItem?
 
@@ -22,10 +25,10 @@ interface TrackedItemDao {
     @Update
     suspend fun update(item: TrackedItem)
 
-    @Query("SELECT * FROM tracked")
+    @Query("SELECT * FROM tracked WHERE favorite = 1 OR status IS NOT NULL")
     suspend fun getAll(): List<TrackedItem>
 
-    @Query("SELECT * FROM tracked WHERE type = :type")
+    @Query("SELECT * FROM tracked WHERE type = :type AND (favorite = 1 OR status IS NOT NULL)")
     suspend fun getAllByType(type: ItemType): List<TrackedItem>
 
     @Query("SELECT EXISTS(SELECT 1 FROM tracked WHERE id = :id AND type = :type)")

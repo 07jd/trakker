@@ -40,6 +40,26 @@ class ItemRepository(
     @JvmName("cacheShowItems")
     private suspend fun cacheItems(items: List<Show>)   { withContext(Dispatchers.IO) { showDao.insert(items)} }
 
+    // Eh, could be better, but it's only used for restore a backup so no problem
+    suspend fun insert(items: List<Item>) {
+        val games   = mutableListOf<Game>()
+        val movies  = mutableListOf<Movie>()
+        val shows   = mutableListOf<Show>()
+        withContext(Dispatchers.IO) {
+            items.forEach {
+                when(it) {
+                    is GameItem  -> games.add(it.game)
+                    is MovieItem -> movies.add(it.movie)
+                    is ShowItem  -> shows.add(it.show)
+                }
+            }
+
+            gameDao.insert(games)
+            movieDao.insert(movies)
+            showDao.insert(shows)
+        }
+    }
+
     // Search online
     suspend fun search(itemType: ItemType, query: String, page: Int = 1): List<Item> {
         return when(itemType) {

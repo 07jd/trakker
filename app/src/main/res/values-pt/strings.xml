@@ -71,11 +71,15 @@
     <string name="error_invalid_data">Data recebida inválida</string>
     <string name="error_data_parsing">Falhar ao fazer parsing da data</string>
     <string name="initial_screen">Ecrã Inicial</string>
-    <string name="backup">Cópia de Segurança</string>
-    <string name="restore">Restaurar</string>
+    <string name="backup">Cópia de segurança</string>
+    <string name="restore">Restaurar cópia de segurança</string>
     <string name="storage">Armazenamento</string>
     <string name="backup_label">Fazer cópia de segurança para um ficheiro json</string>
     <string name="restore_label">Restaurar cópia de segurança de um ficheiro json</string>
     <string name="image_cache">Cache de imagens</string>
     <string name="clear">Limpar</string>
+    <string name="error_file_creation">Falha ao criar o ficheiro</string>
+    <string name="backup_restore_success">Data restaurada com sucesso</string>
+    <string name="error_backup_creation">Falha ao criar o ficheiro de backup</string>
+    <string name="backup_creation_success">Ficheiro de backup criado</string>
 </resources>

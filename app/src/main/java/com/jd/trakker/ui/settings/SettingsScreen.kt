@@ -63,7 +63,10 @@ fun SettingsScreen(
 
         HorizontalDivider(modifier = Modifier.fillMaxWidth())
 
-        AppStorage{ onEvent(it) }
+        AppStorage(
+            feedBackMessageRes = uiState.feedbackMessage,
+            useVibrations = uiState.useVibrations
+        ) { onEvent(it) }
 
         // End padding
         Spacer(modifier = Modifier.padding(top = 32.dp))

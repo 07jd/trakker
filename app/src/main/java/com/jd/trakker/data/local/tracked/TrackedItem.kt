@@ -18,7 +18,7 @@ data class TrackedItem(
     val type: ItemType,
 
     val userRating: Double? = null,
-    val status: TrackedStatus = TrackedStatus.PENDING,
+    val status: TrackedStatus? = null,
     val favorite: Boolean = false,
     val notes: List<Pair<String, String>> = emptyList() // Note title, content
 )
