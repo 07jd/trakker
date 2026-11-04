@@ -54,13 +54,8 @@ fun ThemeCards(
                     BorderStroke(
                         2.dp, MaterialTheme.colorScheme.primary
                     )
-                } else null, colors = CardDefaults.cardColors(
-                    containerColor = if (selected) {
-                        MaterialTheme.colorScheme.primaryContainer
-                    } else {
-                        MaterialTheme.colorScheme.surfaceContainer
-                    }
-                )
+                } else null,
+                colors = CardDefaults.cardColors()
             ) {
                 Column(
                     modifier = Modifier.padding(8.dp),
