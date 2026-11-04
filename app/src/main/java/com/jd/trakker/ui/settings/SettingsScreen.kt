@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.jd.trakker.ui.settings.components.AppFeedTypes
 import com.jd.trakker.ui.settings.components.AppGeneralSettings
 import com.jd.trakker.ui.settings.components.AppInfo
+import com.jd.trakker.ui.settings.components.AppStorage
 
 @Composable
 fun SettingsScreen(
@@ -59,6 +60,10 @@ fun SettingsScreen(
             uiState.showFeedEnabled,
             useVibrations = uiState.useVibrations
         ) { onEvent(it) }
+
+        HorizontalDivider(modifier = Modifier.fillMaxWidth())
+
+        AppStorage{ onEvent(it) }
 
         // End padding
         Spacer(modifier = Modifier.padding(top = 32.dp))

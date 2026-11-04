@@ -10,4 +10,6 @@ sealed interface SettingsEvent {
     data class ChangeTheme(val state: ThemeType): SettingsEvent
     data class ChangeFeedType(val type: ItemType, val state: Boolean): SettingsEvent
     data class ChangeInitialScreen(val state: Destination): SettingsEvent
+    data class Restore(val content: String): SettingsEvent
+    object ClearError: SettingsEvent
 }

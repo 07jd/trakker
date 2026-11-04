@@ -159,7 +159,11 @@ fun AppNavHost(
                     }
                     Destination.Settings -> {
                         val settingsViewModel: SettingsViewModel = viewModel {
-                            SettingsViewModel(viewModel.preferences)
+                            SettingsViewModel(
+                                itemRepository = viewModel.itemRepository,
+                                trackedItemRepository = viewModel.trackedItemRepository,
+                                preferences = viewModel.preferences
+                            )
                         }
 
                         val uiState by settingsViewModel.uiState.collectAsStateWithLifecycle()

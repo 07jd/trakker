@@ -77,4 +77,11 @@
     <string name="error_invalid_data">Invalid data received</string>
     <string name="error_data_parsing">Failed to parse data</string>
     <string name="initial_screen">Initial Screen</string>
+    <string name="backup">Backup</string>
+    <string name="restore">Restore</string>
+    <string name="storage">Storage</string>
+    <string name="backup_label">Backup data to a json file</string>
+    <string name="restore_label">Restore data from a json file</string>
+    <string name="image_cache">Image cache</string>
+    <string name="clear">Clear</string>
 </resources>
