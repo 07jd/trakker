@@ -2,17 +2,17 @@ package com.jd.trakker.ui
 
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavHostController
 
 @Composable
 fun AppScreen(
-    viewModel: AppViewModel
+    viewModel: AppViewModel,
+    navController: NavHostController
 ) {
-    val navController = rememberNavController()
-    val backStackEntry by navController.currentBackStackEntryAsState()
+    val backStackEntry by navController.currentBackStackEntryFlow.collectAsState(initial = navController.currentBackStackEntry)
     val startDestination by viewModel.preferences.initialAppScreen.collectAsStateWithLifecycle(Destination.Tracked)
     var currentDestination = Destination.entries.find {
         it.route == backStackEntry?.destination?.route

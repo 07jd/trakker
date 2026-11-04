@@ -29,6 +29,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val context = LocalContext.current
             val viewModel: AppViewModel = viewModel { AppViewModel(context) }
+            val appNavController = rememberNavController()
 
             val setupViewModel: SetupViewModel = viewModel { SetupViewModel(viewModel.preferences) }
             val setupNavController             = rememberNavController()
@@ -43,13 +44,13 @@ class MainActivity : ComponentActivity() {
                 useDynamicColor = useDynamicColor
             ) {
                 when (setupDone) {
-                    null -> Box(modifier = Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.background))
-                    false -> {
-                        SetupScreen(setupUI, setupViewModel::onEvent, setupNavController)
-                    }
-                    else -> AppScreen(viewModel)
+                    null -> Box(
+                        modifier = Modifier
+                                .fillMaxSize()
+                                .background(MaterialTheme.colorScheme.background)
+                    )
+                    false -> SetupScreen(setupUI, setupViewModel::onEvent, setupNavController)
+                    else -> AppScreen(viewModel, appNavController)
                 }
             }
         }
