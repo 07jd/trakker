@@ -139,7 +139,12 @@ fun AppNavHost(
                                     }
 
                                     val focusedItemUiState by focusedItemViewModel.uiState.collectAsStateWithLifecycle()
-                                    FocusedItem(innerPadding, focusedItemUiState, focusedItemViewModel::onEvent)
+                                    FocusedItem(
+                                        innerRootPadding = innerPadding,
+                                        uiState = focusedItemUiState,
+                                        useVibrations = uiState.useVibrations,
+                                        onEvent = focusedItemViewModel::onEvent
+                                    )
                                 }
                                 else -> Feed(
                                     innerPadding,

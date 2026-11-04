@@ -30,6 +30,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -99,7 +101,7 @@ fun Feed(
 }
 
 @Composable
-fun FeedScreen(
+private fun FeedScreen(
     uiState: FeedState,
     gridState: LazyGridState,
     snackbarHostState: SnackbarHostState,
@@ -109,6 +111,7 @@ fun FeedScreen(
 ) {
     // Close search on back
     BackHandler(uiState.showingSearchResults) { onEvent(FeedEvent.CloseSearch) }
+    val haptics = LocalHapticFeedback.current
     
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -120,6 +123,7 @@ fun FeedScreen(
                 if (uiState.showingSearchResults) uiState.usingOfflineDataSearch
                 else uiState.usingOfflineDataFeed,
                 searchBarState,
+                uiState.useVibrations,
                 onEvent
             )
         },
@@ -159,7 +163,10 @@ fun FeedScreen(
                 modifier = Modifier
                         .fillMaxSize()
                         .padding(innerPadding),
-                onRefresh = { onEvent(FeedEvent.Refresh) },
+                onRefresh = {
+                    if(uiState.useVibrations) haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                    onEvent(FeedEvent.Refresh)
+                },
                 isRefreshing = uiState.isRefreshing
             ) {
                 // PS: I have to do this instead of using directly the variables due to the animation
@@ -176,7 +183,10 @@ fun FeedScreen(
                     !onSearchResultsScreen && !uiState.feed.isEmpty() -> ItemGrid(
                         gridState,
                         items = uiState.feed,
-                        onClick = { onEvent(FeedEvent.Focus(it)) },
+                        onClick = {
+                            if (uiState.useVibrations) haptics.performHapticFeedback(HapticFeedbackType.Confirm)
+                            onEvent(FeedEvent.Focus(it))
+                        },
                         onLoadMore = { if(!uiState.usingOfflineDataFeed) onEvent(FeedEvent.NextPage) }
                     )
                     else -> {

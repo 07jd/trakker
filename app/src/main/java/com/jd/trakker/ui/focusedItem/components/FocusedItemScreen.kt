@@ -21,6 +21,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.jd.trakker.R
@@ -36,8 +38,10 @@ fun FocusedItemScreen(
     item: Item,
     favorite: Boolean,
     userRating: Double?,
+    useVibrations: Boolean = true,
     onEvent: (FocusedItemEvent) -> Unit
 ) {
+    val haptics = LocalHapticFeedback.current
     var rateDialogOpen by rememberSaveable { mutableStateOf(false) }
     val scrollState = rememberScrollState()
     val topBarAlpha by remember {
@@ -77,12 +81,18 @@ fun FocusedItemScreen(
                 is ShowItem  -> "https://www.themoviedb.org/tv/${item.show.id}"
             },
             alpha = topBarAlpha
-        ) { onEvent(FocusedItemEvent.GoBack) } }
+        ) {
+            if(useVibrations) haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+            onEvent(FocusedItemEvent.GoBack)
+        } }
     ) { innerPadding ->
         Box(modifier = Modifier.fillMaxSize()) {
             // Rate dialog
             if(rateDialogOpen) {
-                RateDialog(onDismiss = { rateDialogOpen = false }) {
+                RateDialog(
+                    onDismiss = { rateDialogOpen = false }
+                ) {
+                    if(useVibrations) haptics.performHapticFeedback(HapticFeedbackType.Confirm)
                     onEvent(FocusedItemEvent.Rate(it))
                 }
             }
@@ -139,7 +149,10 @@ fun FocusedItemScreen(
                         iconDescription = stringResource(R.string.favorite),
                         label = stringResource(R.string.favorite),
                         activeLabel = stringResource(R.string.favorited)
-                    ) { onEvent(FocusedItemEvent.Favorite) }
+                    ) {
+                        if(useVibrations) haptics.performHapticFeedback(HapticFeedbackType.Confirm)
+                        onEvent(FocusedItemEvent.Favorite)
+                    }
 
                     // Button to give a personal rating
                     IconButton(
@@ -164,7 +177,8 @@ fun FocusedItemScreen(
 
                 CollapsableText(
                     text = summary,
-                    modifier = Modifier.fillMaxWidth().padding(top = 6.dp)
+                    modifier = Modifier.fillMaxWidth().padding(top = 6.dp),
+                    useVibrations = useVibrations
                 )
             }
         }

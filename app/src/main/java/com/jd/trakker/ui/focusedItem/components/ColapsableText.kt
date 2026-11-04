@@ -24,6 +24,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -35,8 +37,10 @@ import com.jd.trakker.R
 fun CollapsableText(
     text: String,
     modifier: Modifier,
+    useVibrations: Boolean = true,
     hiddenHeight: Dp = 75.dp
 ) {
+    val haptics = LocalHapticFeedback.current
     val bg = MaterialTheme.colorScheme.background
     var expanded by rememberSaveable{ mutableStateOf(false) }
 
@@ -72,7 +76,13 @@ fun CollapsableText(
         ) {
             HorizontalDivider(modifier = Modifier.weight(1f))
 
-            Box(modifier = Modifier.width(30.dp).clickable{ expanded = !expanded },
+            Box(
+                modifier = Modifier
+                    .width(30.dp)
+                    .clickable{
+                        if(useVibrations) haptics.performHapticFeedback(HapticFeedbackType.Confirm)
+                        expanded = !expanded
+                    },
                 contentAlignment = Alignment.Center
             ) {
                 AnimatedContent(expanded) { isExpanded ->

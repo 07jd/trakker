@@ -15,6 +15,7 @@ import com.jd.trakker.ui.focusedItem.notes.NotesScreen
 fun FocusedItem(
     innerRootPadding: PaddingValues,
     uiState: FocusedItemState,
+    useVibrations: Boolean = true,
     onEvent: (FocusedItemEvent) -> Unit
 ) {
     // Go back to previous screen
@@ -30,6 +31,7 @@ fun FocusedItem(
                     notes = uiState.trackedItem?.notes ?: emptyList(),
                     index = uiState.noteIndex,
                     selectedNote = uiState.note,
+                    useVibrations = useVibrations
                 ) { onEvent(it) }
             }
         } else {
@@ -40,7 +42,8 @@ fun FocusedItem(
                 FocusedItemScreen(
                     item = uiState.item,
                     favorite = uiState.trackedItem?.favorite ?: false,
-                    userRating = uiState.trackedItem?.userRating
+                    userRating = uiState.trackedItem?.userRating,
+                    useVibrations = useVibrations
                 ) { onEvent(it) }
             }
         }
