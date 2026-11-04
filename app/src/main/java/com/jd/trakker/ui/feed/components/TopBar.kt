@@ -4,13 +4,16 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.jd.trakker.R
 import com.jd.trakker.data.local.ItemType
 import com.jd.trakker.ui.feed.FeedEvent
@@ -51,6 +54,10 @@ fun TopBar(enabledFeeds: List<ItemType>,
                 onEvent(FeedEvent.ChangeFeedType(it))
             } )
         }
+
+        // Just to avoid covers get right against the search bar
+        if(enabledFeeds.size <= 1)
+            Spacer(modifier = Modifier.height(12.dp))
 
         // Inform user that is using local data
         AnimatedVisibility(usingOfflineData) {
