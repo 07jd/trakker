@@ -44,13 +44,13 @@ class MainActivity : ComponentActivity() {
                 type            = theme,
                 useDynamicColor = useDynamicColor
             ) {
-                when (setupDone) {
-                    null, (initialScreen == null) -> Box(
+                when {
+                    setupDone == null || (initialScreen == null && setupDone == true) -> Box(
                         modifier = Modifier
                                 .fillMaxSize()
                                 .background(MaterialTheme.colorScheme.background)
                     )
-                    false -> SetupScreen(setupUI, setupViewModel::onEvent, setupNavController)
+                    setupDone == false -> SetupScreen(setupUI, setupViewModel::onEvent, setupNavController)
                     else -> AppScreen(viewModel, appNavController, initialScreen!!)
                 }
             }
