@@ -19,6 +19,7 @@ import com.jd.trakker.ui.components.ThemeCards
 import com.jd.trakker.ui.components.ToggleCard
 import com.jd.trakker.ui.settings.SettingsEvent
 import com.jd.trakker.ui.theme.ThemeType
+import com.jd.trakker.ui.theme.isDynamicColorAvailable
 
 @Composable
 fun AppGeneralSettings(
@@ -58,14 +59,16 @@ fun AppGeneralSettings(
         }
 
 
-        // Dynamic Color card
-        ToggleCard(
-            title = stringResource(R.string.setup_useSystemColors),
-            label = stringResource(R.string.setup_useSystemColors_detailed),
-            state = dynamicColor,
-            useVibrations = vibrate,
-            onStateChange = { onEvent(SettingsEvent.ChangeDynamicColor(it)) }
-        )
+        // Dynamic Color card, if available
+        if(isDynamicColorAvailable()) {
+            ToggleCard(
+                title = stringResource(R.string.setup_useSystemColors),
+                label = stringResource(R.string.setup_useSystemColors_detailed),
+                state = dynamicColor,
+                useVibrations = vibrate,
+                onStateChange = { onEvent(SettingsEvent.ChangeDynamicColor(it)) }
+            )
+        }
 
         // Vibrate option card
         ToggleCard(
