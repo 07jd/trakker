@@ -4,16 +4,17 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.navigation.NavHostController
 
 @Composable
 fun AppScreen(
     viewModel: AppViewModel,
-    navController: NavHostController
+    navController: NavHostController,
+    initialScreen: Destination
 ) {
     val backStackEntry by navController.currentBackStackEntryFlow.collectAsState(initial = navController.currentBackStackEntry)
-    val startDestination by viewModel.preferences.initialAppScreen.collectAsStateWithLifecycle(Destination.Tracked)
+    val startDestination = rememberSaveable{ initialScreen }
     var currentDestination = Destination.entries.find {
         it.route == backStackEntry?.destination?.route
     } ?: startDestination

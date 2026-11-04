@@ -76,5 +76,5 @@
     <string name="error_failed_data">Failed to get or parse data</string>
     <string name="error_invalid_data">Invalid data received</string>
     <string name="error_data_parsing">Failed to parse data</string>
-
+    <string name="initial_screen">Initial Screen</string>
 </resources>

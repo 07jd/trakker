@@ -47,7 +47,8 @@ fun SettingsScreen(
         AppGeneralSettings(
             theme = uiState.theme,
             dynamicColor = uiState.useDynamicColor,
-            vibrate = uiState.useVibrations
+            vibrate = uiState.useVibrations,
+            initialScreen = uiState.initialScreen
         ) { onEvent(it) }
 
         HorizontalDivider(modifier = Modifier.fillMaxWidth())

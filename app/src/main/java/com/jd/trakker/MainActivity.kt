@@ -38,19 +38,20 @@ class MainActivity : ComponentActivity() {
             val theme           by viewModel.preferences.theme.collectAsStateWithLifecycle(ThemeType.AUTO)
             val useDynamicColor by viewModel.preferences.useDynamicColor.collectAsStateWithLifecycle(false)
             val setupDone       by viewModel.preferences.initialSetupDone.collectAsStateWithLifecycle(null)
+            val initialScreen   by viewModel.preferences.initialAppScreen.collectAsStateWithLifecycle(null)
 
             TrakkerTheme(
                 type            = theme,
                 useDynamicColor = useDynamicColor
             ) {
                 when (setupDone) {
-                    null -> Box(
+                    null, (initialScreen == null) -> Box(
                         modifier = Modifier
                                 .fillMaxSize()
                                 .background(MaterialTheme.colorScheme.background)
                     )
                     false -> SetupScreen(setupUI, setupViewModel::onEvent, setupNavController)
-                    else -> AppScreen(viewModel, appNavController)
+                    else -> AppScreen(viewModel, appNavController, initialScreen!!)
                 }
             }
         }

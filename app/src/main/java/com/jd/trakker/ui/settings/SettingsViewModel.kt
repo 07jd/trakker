@@ -24,15 +24,17 @@ class SettingsViewModel(
             preferences.useVibrations,
             preferences.theme,
             preferences.useDynamicColor
-        ) { vibrate, theme, dynColor -> Triple(vibrate, theme, dynColor) }
-    ) { feedSettings, appSettings ->
+        ) { vibrate, theme, dynColor -> Triple(vibrate, theme, dynColor) },
+        preferences.initialAppScreen
+    ) { feedSettings, appSettings, initialScreen ->
         SettingsState(
             useVibrations = appSettings.first,
             theme = appSettings.second,
             useDynamicColor = appSettings.third,
             gameFeedEnabled = feedSettings.first,
             movieFeedEnabled = feedSettings.second,
-            showFeedEnabled = feedSettings.third
+            showFeedEnabled = feedSettings.third,
+            initialScreen = initialScreen
         )
     }.stateIn(
         viewModelScope,
@@ -51,6 +53,7 @@ class SettingsViewModel(
                     ItemType.Movie -> preferences.setMovieFeed(event.state)
                     ItemType.Show  -> preferences.setShowFeed(event.state)
                 }
+                is SettingsEvent.ChangeInitialScreen -> preferences.setInitialAppScreen(event.state)
             }
         }
     }
