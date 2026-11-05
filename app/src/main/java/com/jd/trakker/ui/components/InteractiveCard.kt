@@ -1,5 +1,6 @@
 package com.jd.trakker.ui.components
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -24,6 +26,7 @@ fun InteractiveCard(
     title: String,
     label: String? = null,
     cardHeight: Dp = 72.dp,
+    highlightCard: Boolean = false,
     onCardClick: (() -> Unit)? = null,
     rightSideInteraction: (@Composable () -> Unit)? = null
 ) {
@@ -31,7 +34,11 @@ fun InteractiveCard(
             .fillMaxWidth()
             .clickable(onCardClick != null) { onCardClick?.invoke() }
             .height(cardHeight)
-         ,
+            .border(
+                width = if(highlightCard) 2.dp else 0.dp,
+                color = if(highlightCard) MaterialTheme.colorScheme.primary else Color.Transparent,
+                shape = RoundedCornerShape(16.dp)
+            ),
          shape = RoundedCornerShape(16.dp),
          colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer))
     {

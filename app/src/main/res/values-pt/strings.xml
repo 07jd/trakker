@@ -82,4 +82,8 @@
     <string name="backup_restore_success">Data restaurada com sucesso</string>
     <string name="error_backup_creation">Falha ao criar o ficheiro de backup</string>
     <string name="backup_creation_success">Ficheiro de backup criado</string>
+    <string name="tracked_status_dropped">Abandonado</string>
+    <string name="tracked_status_completed">Completado</string>
+    <string name="tracked_status_pending">Pendente</string>
+    <string name="tracked_status_untracked">Náo acompanhado</string>
 </resources>

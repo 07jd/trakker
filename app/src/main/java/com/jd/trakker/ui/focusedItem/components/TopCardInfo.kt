@@ -11,8 +11,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -33,6 +36,8 @@ import com.jd.trakker.data.local.GameItem
 import com.jd.trakker.data.local.Item
 import com.jd.trakker.data.local.MovieItem
 import com.jd.trakker.data.local.ShowItem
+import com.jd.trakker.data.local.tracked.TrackedStatus
+import com.jd.trakker.data.local.tracked.toStringRes
 import com.jd.trakker.ui.components.ItemCard
 import java.util.Locale
 
@@ -80,8 +85,35 @@ private fun SideText(
 }
 
 @Composable
+private fun StatusTag(
+    trackedStatus: TrackedStatus,
+    onClick: () -> Unit
+) {
+    AssistChip(
+        onClick = { onClick() },
+        label = { Text(text = stringResource(trackedStatus.toStringRes())) },
+        leadingIcon = {
+            val iconRes = when(trackedStatus) {
+                TrackedStatus.UNTRACKED -> R.drawable.x_circle_fill
+                TrackedStatus.PENDING   -> R.drawable.pause_circle_fill
+                TrackedStatus.COMPLETED -> R.drawable.check_circle_fill
+                TrackedStatus.DROPPED   -> R.drawable.stop_circle_fill
+            }
+
+            Icon(
+                painter = painterResource(iconRes),
+                contentDescription = null,
+                modifier = Modifier.size(AssistChipDefaults.IconSize)
+            )
+        }
+    )
+}
+
+@Composable
 fun TopCardInfo(
     item: Item,
+    trackedStatus: TrackedStatus,
+    onClick: () -> Unit,
     itemCardWidth: Dp = 140.dp
 ) {
     val title = when(item) {
@@ -153,6 +185,12 @@ fun TopCardInfo(
                     stringResource(R.string.focused_item_metadata_provider)
                 ),
                 content = metadataSource
+            )
+
+            // Tracked status info
+            StatusTag(
+                trackedStatus = trackedStatus,
+                onClick = { onClick() }
             )
 
             Spacer(modifier = Modifier.height(6.dp))

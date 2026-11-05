@@ -88,4 +88,8 @@
     <string name="backup_restore_success">Successfully restored data from the backup file</string>
     <string name="error_backup_creation">Failed to create the backup file</string>
     <string name="backup_creation_success">Backup file created</string>
+    <string name="tracked_status_dropped">Dropped</string>
+    <string name="tracked_status_completed">Completed</string>
+    <string name="tracked_status_pending">Pending</string>
+    <string name="tracked_status_untracked">Not tracked</string>
 </resources>

@@ -11,7 +11,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -24,18 +29,69 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import com.jd.trakker.R
 import com.jd.trakker.data.local.GameItem
 import com.jd.trakker.data.local.Item
 import com.jd.trakker.data.local.MovieItem
 import com.jd.trakker.data.local.ShowItem
+import com.jd.trakker.data.local.tracked.TrackedStatus
+import com.jd.trakker.data.local.tracked.toStringRes
+import com.jd.trakker.ui.components.InteractiveCard
 import com.jd.trakker.ui.focusedItem.FocusedItemEvent
 import java.util.Locale
 
 @Composable
+private fun TrackedDialog(
+    selected: TrackedStatus,
+    onChange: (FocusedItemEvent) -> Unit,
+    onDismiss: () -> Unit
+) {
+    BasicAlertDialog(
+        onDismissRequest = { onDismiss() },
+        modifier = Modifier.fillMaxWidth(.9f),
+        properties = DialogProperties()
+    ) {
+        Surface(
+            color = MaterialTheme.colorScheme.surfaceContainerHighest
+        ) {
+            Column(
+                modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(6.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterVertically)
+            ) {
+                TrackedStatus.entries.forEach {
+                    val selected = it == selected
+
+                    InteractiveCard(
+                        title = stringResource(it.toStringRes()),
+                        highlightCard = selected,
+                        onCardClick = { onChange(FocusedItemEvent.ChangeState(it)) }
+                    )
+                }
+
+
+                TextButton(
+                    onClick = { onDismiss() }
+                ) {
+                    Text(
+                        text = stringResource(R.string.go_back),
+                        textAlign = TextAlign.Center,
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
 fun FocusedItemScreen(
     item: Item,
+    trackedStatus: TrackedStatus,
     favorite: Boolean,
     userRating: Double?,
     useVibrations: Boolean = true,
@@ -43,6 +99,7 @@ fun FocusedItemScreen(
 ) {
     val haptics = LocalHapticFeedback.current
     var rateDialogOpen by rememberSaveable { mutableStateOf(false) }
+    var trackedDialog by rememberSaveable { mutableStateOf(false) }
     val scrollState = rememberScrollState()
     val topBarAlpha by remember {
         derivedStateOf {
@@ -97,6 +154,15 @@ fun FocusedItemScreen(
                 }
             }
 
+            // Tracked dialog
+            if(trackedDialog) {
+                TrackedDialog(
+                    selected = trackedStatus,
+                    onDismiss = { trackedDialog = !trackedDialog },
+                    onChange = { onEvent(it) }
+                )
+            }
+
             // Background banners
             BackgroundBanner(item)
 
@@ -110,7 +176,11 @@ fun FocusedItemScreen(
                    verticalArrangement = Arrangement.Top,
                    horizontalAlignment = Alignment.Start
             ) {
-                TopCardInfo(item)
+                TopCardInfo(
+                    item = item,
+                    trackedStatus = trackedStatus,
+                    onClick = { trackedDialog = !trackedDialog }
+                )
 
                 // Row with platforms and their icons
                 if(platforms != null) {
