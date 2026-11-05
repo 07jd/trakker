@@ -27,7 +27,7 @@ fun AppBottomNavBar(
 
             NavigationBarItem(
                 selected = isSelected,
-                onClick = { navigateTo(destination) },
+                onClick = { if(!isSelected) navigateTo(destination) },
                 icon = {
                     AnimatedContent(
                         targetState = isSelected,
