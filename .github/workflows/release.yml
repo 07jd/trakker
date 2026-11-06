@@ -1,0 +1,39 @@
+name: Build Release APK
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: 'ubuntu-26.04'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Make JKS file
+        env: 
+          TEMP_FOLDER: ${{ runner.temp }}
+          JKS_DATA: ${{ secrets.BASE64_JKS_FILE }}
+        run: |
+          echo "$JKS_DATA" | base64 --decode > "$TEMP_FOLDER/trakker.jks"
+
+      - name: Build APK
+        env:
+          KEYFILE_PATH: ${{ runner.temp }}/trakker.jks
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          chmod +x ./gradlew
+          
+          ./gradlew assembleRelease \ 
+            -Pandroid.injected.signing.store.file="$KEYFILE_PATH" \
+            -Pandroid.injected.signing.store.password="$STORE_PASSWORD" \
+            -Pandroid.injected.signing.key.alias="$KEY_ALIAS" \
+            -Pandroid.injected.signing.key.password="$KEY_PASSWORD"
+      
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Trakker
+          path: app/build/outputs/apk/release/*.apk
+          if-no-files-found: error
