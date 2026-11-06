@@ -31,7 +31,6 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
-          cache: gradle
 
       - name: Build APK
         env:
@@ -61,8 +60,8 @@ jobs:
           VERSION: ${{ inputs.major_version }}.${{ inputs.minor_version }}
           APK_NAME: trakker_${{ inputs.major_version }}_${{ inputs.minor_version }}.apk
         with:
-          tag_name: v$VERSION
-          name: Trakker $VERSION
+          tag_name: v${{ env.VERSION }}
+          name: Trakker ${{ env.VERSION }}
           generate_release_notes: true
           fail_on_unmatched_files: true
-          files: app/build/outputs/apk/release/$APK_NAME
+          files: app/build/outputs/apk/release/${{ env.APK_NAME }}
