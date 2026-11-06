@@ -16,6 +16,12 @@ jobs:
         run: |
           echo "$JKS_DATA" | base64 --decode > "$TEMP_FOLDER/trakker.jks"
 
+      - name: Setup java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
       - name: Build APK
         env:
           KEYFILE_PATH: ${{ runner.temp }}/trakker.jks
@@ -24,8 +30,7 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
           chmod +x ./gradlew
-          
-          ./gradlew assembleRelease \ 
+          ./gradlew assembleRelease \
             -Pandroid.injected.signing.store.file="$KEYFILE_PATH" \
             -Pandroid.injected.signing.store.password="$STORE_PASSWORD" \
             -Pandroid.injected.signing.key.alias="$KEY_ALIAS" \
