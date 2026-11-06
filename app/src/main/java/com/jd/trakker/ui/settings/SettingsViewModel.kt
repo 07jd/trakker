@@ -8,8 +8,8 @@ import com.jd.trakker.data.local.GameItem
 import com.jd.trakker.data.local.ItemType
 import com.jd.trakker.data.local.MovieItem
 import com.jd.trakker.data.local.ShowItem
+import com.jd.trakker.data.local.backup.Backup
 import com.jd.trakker.data.local.preferences.PreferencesManager
-import com.jd.trakker.data.local.tracked.TrackedItem
 import com.jd.trakker.data.repository.ItemRepository
 import com.jd.trakker.data.repository.TrackedItemRepository
 import kotlinx.coroutines.Dispatchers
@@ -20,15 +20,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
-// Json backup format
-private data class Backup(
-    val timestamp: Long = System.currentTimeMillis(),
-    val games: List<GameItem>,
-    val movies: List<MovieItem>,
-    val shows: List<ShowItem>,
-    val trackedItems: List<TrackedItem>
-)
 
 class SettingsViewModel(
     val itemRepository: ItemRepository,
