@@ -1,6 +1,16 @@
 name: Build Release APK
 on:
   workflow_dispatch:
+    inputs:
+      major_version:
+        description: 'Major Release version'
+        required: true
+      minor_version:
+        description: 'Minor Release version'
+        required: true
+
+permissions: 
+  contents: write
 
 jobs:
   build:
@@ -17,10 +27,11 @@ jobs:
           echo "$JKS_DATA" | base64 --decode > "$TEMP_FOLDER/trakker.jks"
 
       - name: Setup java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v6
         with:
           distribution: temurin
-          java-version: 21
+          java-version: '21'
+          cache: gradle
 
       - name: Build APK
         env:
@@ -35,10 +46,23 @@ jobs:
             -Pandroid.injected.signing.store.password="$STORE_PASSWORD" \
             -Pandroid.injected.signing.key.alias="$KEY_ALIAS" \
             -Pandroid.injected.signing.key.password="$KEY_PASSWORD"
+
+      - name: Rename APK
+        env:
+          LOCATION: app/build/outputs/apk/release
+          OLD_APP_NAME: app-release.apk
+          NEW_APP_NAME: trakker_${{ inputs.major_version }}_${{ inputs.minor_version }}.apk
+        run: |
+          mv $LOCATION/$OLD_APP_NAME $LOCATION/$NEW_APP_NAME 
       
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+      - name: Release
+        uses: softprops/action-gh-release@v3
+        env:
+          VERSION: ${{ inputs.major_version }}.${{ inputs.minor_version }}
+          APK_NAME: trakker_${{ inputs.major_version }}_${{ inputs.minor_version }}.apk
         with:
-          name: Trakker
-          path: app/build/outputs/apk/release/*.apk
-          if-no-files-found: error
+          tag_name: v$VERSION
+          name: Trakker $VERSION
+          generate_release_notes: true
+          fail_on_unmatched_files: true
+          files: app/build/outputs/apk/release/$APK_NAME
