@@ -33,10 +33,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.jd.trakker.R
-import com.jd.trakker.data.local.GameItem
-import com.jd.trakker.data.local.Item
-import com.jd.trakker.data.local.MovieItem
-import com.jd.trakker.data.local.ShowItem
+import com.jd.trakker.data.local.item.GameItem
+import com.jd.trakker.data.local.item.Item
+import com.jd.trakker.data.local.item.MovieItem
+import com.jd.trakker.data.local.item.ShowItem
 import com.jd.trakker.data.local.tracked.TrackedStatus
 import com.jd.trakker.data.local.tracked.toStringRes
 import com.jd.trakker.ui.components.InteractiveCard
@@ -108,9 +108,9 @@ fun FocusedItemScreen(
     }
 
     val summary = when(item) {
-        is GameItem  -> item.game.summary ?: ""
-        is MovieItem -> item.movie.overview
-        is ShowItem  -> item.show.overview
+        is GameItem  -> item.game.summary
+        is MovieItem -> item.movie.summary
+        is ShowItem  -> item.show.summary
     }
 
     val genres = when(item) {
@@ -129,13 +129,13 @@ fun FocusedItemScreen(
         topBar = { TopBar(
             title = when(item) {
                 is GameItem  -> item.game.name
-                is MovieItem -> item.movie.title
+                is MovieItem -> item.movie.name
                 is ShowItem  -> item.show.name
             },
             url = when(item) {
-                is GameItem  -> item.game.url!!
-                is MovieItem -> "https://www.themoviedb.org/movie/${item.movie.id}"
-                is ShowItem  -> "https://www.themoviedb.org/tv/${item.show.id}"
+                is GameItem  -> item.game.url
+                is MovieItem -> item.movie.url
+                is ShowItem  -> item.show.url
             },
             alpha = topBarAlpha
         ) {

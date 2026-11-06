@@ -15,7 +15,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.jd.trakker.R
-import com.jd.trakker.data.local.ItemType
+import com.jd.trakker.data.local.item.ItemType
 import com.jd.trakker.ui.feed.FeedEvent
 
 @Composable

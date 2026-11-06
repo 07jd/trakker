@@ -1,6 +1,6 @@
 package com.jd.trakker.ui.focusedItem
 
-import com.jd.trakker.data.local.Item
+import com.jd.trakker.data.local.item.Item
 import com.jd.trakker.data.local.tracked.TrackedItem
 
 data class FocusedItemState(

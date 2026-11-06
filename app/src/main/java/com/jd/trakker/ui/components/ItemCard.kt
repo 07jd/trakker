@@ -23,16 +23,16 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.jd.trakker.R
-import com.jd.trakker.data.local.GameItem
-import com.jd.trakker.data.local.Item
-import com.jd.trakker.data.local.MovieItem
-import com.jd.trakker.data.local.ShowItem
+import com.jd.trakker.data.local.item.GameItem
+import com.jd.trakker.data.local.item.Item
+import com.jd.trakker.data.local.item.MovieItem
+import com.jd.trakker.data.local.item.ShowItem
 
 @Composable
 private fun ItemCardBackup(item: Item) {
     val itemTitle = when(item) {
         is GameItem  -> item.game.name
-        is MovieItem -> item.movie.title
+        is MovieItem -> item.movie.name
         is ShowItem  -> item.show.name
     }
 
@@ -59,7 +59,7 @@ fun ItemCard(item: Item, onClick: (() -> Unit)? = null) {
 
     val imageDescription = when(item) {
         is GameItem  -> stringResource(R.string.item_card_image_description_game, item.game.name)
-        is MovieItem -> stringResource(R.string.item_card_image_description_movie_or_show, item.movie.title)
+        is MovieItem -> stringResource(R.string.item_card_image_description_movie_or_show, item.movie.name)
         is ShowItem  -> stringResource(R.string.item_card_image_description_movie_or_show, item.show.name)
     }
 

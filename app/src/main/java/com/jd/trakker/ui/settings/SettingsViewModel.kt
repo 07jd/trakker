@@ -4,14 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.GsonBuilder
 import com.jd.trakker.R
-import com.jd.trakker.data.local.GameItem
-import com.jd.trakker.data.local.ItemType
-import com.jd.trakker.data.local.MovieItem
-import com.jd.trakker.data.local.ShowItem
+import com.jd.trakker.data.local.item.GameItem
+import com.jd.trakker.data.local.item.ItemType
+import com.jd.trakker.data.local.item.MovieItem
+import com.jd.trakker.data.local.item.ShowItem
 import com.jd.trakker.data.local.backup.Backup
 import com.jd.trakker.data.local.preferences.PreferencesManager
 import com.jd.trakker.data.repository.ItemRepository
-import com.jd.trakker.data.repository.TrackedItemRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -23,7 +22,6 @@ import kotlinx.coroutines.withContext
 
 class SettingsViewModel(
     val itemRepository: ItemRepository,
-    val trackedItemRepository: TrackedItemRepository,
     val preferences: PreferencesManager
 ): ViewModel() {
     private val gson by lazy {
@@ -85,7 +83,7 @@ class SettingsViewModel(
                     }
 
                     val feedbackResult = withContext(Dispatchers.IO) {
-                        val trackedItems = trackedItemRepository.getAll()
+                        val trackedItems = itemRepository.getAllTracked()
                         val groupedItems = trackedItems.groupBy { it.type }.mapValues { (_, items) -> items.map { it.id } }
 
                         val games = mutableListOf<GameItem>()
@@ -137,8 +135,8 @@ class SettingsViewModel(
                                 addAll(parsed.shows)
                             }
 
-                            itemRepository.insert(items)
-                            trackedItemRepository.insertBatch(parsed.trackedItems)
+                            itemRepository.upsertBatch(items)
+                            itemRepository.upsertBatch(parsed.trackedItems)
                         }
                         _state.update { it.copy(feedbackMessage = R.string.backup_restore_success) }
                     } catch(e: Exception) {

@@ -1,6 +1,6 @@
 package com.jd.trakker.data.repository
 
-import com.jd.trakker.data.local.ItemType
+import com.jd.trakker.data.local.item.ItemType
 import com.jd.trakker.data.local.feed.CachedFeed
 import com.jd.trakker.data.local.feed.CacheFeedDao
 import kotlinx.coroutines.Dispatchers

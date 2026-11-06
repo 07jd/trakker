@@ -32,10 +32,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.jd.trakker.R
-import com.jd.trakker.data.local.GameItem
-import com.jd.trakker.data.local.Item
-import com.jd.trakker.data.local.MovieItem
-import com.jd.trakker.data.local.ShowItem
+import com.jd.trakker.data.local.item.GameItem
+import com.jd.trakker.data.local.item.Item
+import com.jd.trakker.data.local.item.MovieItem
+import com.jd.trakker.data.local.item.ShowItem
 import com.jd.trakker.data.local.tracked.TrackedStatus
 import com.jd.trakker.data.local.tracked.toStringRes
 import com.jd.trakker.ui.components.ItemCard
@@ -118,7 +118,7 @@ fun TopCardInfo(
 ) {
     val title = when(item) {
         is GameItem  -> item.game.name
-        is MovieItem -> item.movie.title
+        is MovieItem -> item.movie.name
         is ShowItem  -> item.show.name
     }
 
@@ -130,9 +130,9 @@ fun TopCardInfo(
 
     // Rating 0-10, shown in %.2f
     val rating = when(item) {
-        is GameItem  -> item.game.rating?.div(10.0)
-        is MovieItem -> item.movie.vote_average
-        is ShowItem  -> item.show.vote_average
+        is GameItem  -> item.game.rating.div(10.0)
+        is MovieItem -> item.movie.rating
+        is ShowItem  -> item.show.rating
     }
 
     Row(modifier = Modifier
@@ -173,8 +173,8 @@ fun TopCardInfo(
                     }
                 ), content = when(item) {
                     is GameItem  -> item.game.localDateString()
-                    is MovieItem -> item.movie.localDateString(stringResource(R.string.unknown))
-                    is ShowItem  -> item.show.localDateString(stringResource(R.string.unknown))
+                    is MovieItem -> item.movie.localDateString()
+                    is ShowItem  -> item.show.localDateString()
                 }
             )
 

@@ -4,12 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jd.trakker.data.remote.ExceptionAPI
 import com.jd.trakker.data.local.preferences.PreferencesManager
-import com.jd.trakker.data.local.GameItem
-import com.jd.trakker.data.local.Item
+import com.jd.trakker.data.local.item.GameItem
+import com.jd.trakker.data.local.item.Item
 import com.jd.trakker.data.repository.ItemRepository
-import com.jd.trakker.data.local.ItemType
-import com.jd.trakker.data.local.MovieItem
-import com.jd.trakker.data.local.ShowItem
+import com.jd.trakker.data.local.item.ItemType
+import com.jd.trakker.data.local.item.MovieItem
+import com.jd.trakker.data.local.item.ShowItem
 import com.jd.trakker.data.repository.FeedRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

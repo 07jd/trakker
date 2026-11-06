@@ -1,6 +1,6 @@
 package com.jd.trakker.ui.settings
 
-import com.jd.trakker.data.local.ItemType
+import com.jd.trakker.data.local.item.ItemType
 import com.jd.trakker.ui.Destination
 import com.jd.trakker.ui.theme.ThemeType
 import java.io.OutputStream

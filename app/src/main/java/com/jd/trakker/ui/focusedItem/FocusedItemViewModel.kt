@@ -2,8 +2,8 @@ package com.jd.trakker.ui.focusedItem
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jd.trakker.data.local.Item
-import com.jd.trakker.data.repository.TrackedItemRepository
+import com.jd.trakker.data.local.item.Item
+import com.jd.trakker.data.repository.ItemRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 
 class FocusedItemViewModel(
     private val item: Item,
-    private val trackedItemRepository: TrackedItemRepository,
+    private val itemRepository: ItemRepository,
     private val goBack: () -> Unit
 ): ViewModel() {
     private val _state = MutableStateFlow(FocusedItemState(item))
@@ -19,7 +19,7 @@ class FocusedItemViewModel(
 
     init {
         viewModelScope.launch {
-            val trackedItem = trackedItemRepository.getTrackedInfo(item) ?: trackedItemRepository.createDefault(item)
+            val trackedItem = itemRepository.getTracked(item)
             _state.update { it.copy(loading = false, trackedItem = trackedItem) }
         }
     }
@@ -28,7 +28,7 @@ class FocusedItemViewModel(
         viewModelScope.launch {
             when(event) {
                 FocusedItemEvent.GoBack -> {
-                    trackedItemRepository.update(_state.value.trackedItem!!)
+                    itemRepository.upsert(_state.value.trackedItem!!)
                     goBack()
                 }
                 is FocusedItemEvent.ChangeState -> {
@@ -47,14 +47,14 @@ class FocusedItemViewModel(
                         )
                     ) }
 
-                    trackedItemRepository.update(_state.value.trackedItem!!)
+                    itemRepository.upsert(_state.value.trackedItem!!)
                 }
                 FocusedItemEvent.Favorite       -> {
                     _state.update { it.copy(
                         trackedItem = _state.value.trackedItem!!.copy(favorite = !_state.value.trackedItem!!.favorite))
                     }
 
-                    trackedItemRepository.update(_state.value.trackedItem!!)
+                    itemRepository.upsert(_state.value.trackedItem!!)
                 }
                 FocusedItemEvent.NotesScreen    -> {
                     _state.update { it.copy(
@@ -77,16 +77,16 @@ class FocusedItemViewModel(
                         trackedItem = _state.value.trackedItem?.copy(notes = notes)
                     ) }
 
-                    trackedItemRepository.update(_state.value.trackedItem!!)
+                    itemRepository.upsert(_state.value.trackedItem!!)
                 }
                 is FocusedItemEvent.Rate        -> {
                     _state.update { it.copy(
                         trackedItem = _state.value.trackedItem!!.copy(
-                            userRating = event.rating
+                            rating = event.rating
                         )
                     ) }
 
-                    trackedItemRepository.update(_state.value.trackedItem!!)
+                    itemRepository.upsert(_state.value.trackedItem!!)
                 }
             }
         }

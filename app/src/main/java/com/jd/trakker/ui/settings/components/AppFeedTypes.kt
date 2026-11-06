@@ -15,7 +15,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.jd.trakker.R
-import com.jd.trakker.data.local.ItemType
+import com.jd.trakker.data.local.item.ItemType
 import com.jd.trakker.ui.components.FeedTypeCards
 import com.jd.trakker.ui.settings.SettingsEvent
 

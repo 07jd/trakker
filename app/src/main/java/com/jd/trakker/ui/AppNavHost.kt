@@ -18,10 +18,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.jd.trakker.R
-import com.jd.trakker.data.local.GameItem
-import com.jd.trakker.data.local.ItemType
-import com.jd.trakker.data.local.MovieItem
-import com.jd.trakker.data.local.ShowItem
+import com.jd.trakker.data.local.item.getId
+import com.jd.trakker.data.local.item.getType
 import com.jd.trakker.ui.feed.Feed
 import com.jd.trakker.ui.feed.FeedEvent
 import com.jd.trakker.ui.feed.FeedViewModel
@@ -116,24 +114,12 @@ fun AppNavHost(
                         ) { focusedItem ->
                             when {
                                 focusedItem != null -> {
-                                    val id = when(focusedItem){
-                                        is GameItem  -> focusedItem.game.id
-                                        is MovieItem -> focusedItem.movie.id
-                                        is ShowItem  -> focusedItem.show.id
-                                    }
-
-                                    val type = when(focusedItem) {
-                                        is GameItem  -> ItemType.Game
-                                        is MovieItem -> ItemType.Movie
-                                        is ShowItem  -> ItemType.Show
-                                    }
-
                                     val focusedItemViewModel: FocusedItemViewModel = viewModel(
-                                        key = "focused_item_${type}_${id}"
+                                        key = "focused_item_${focusedItem.getType()}_${focusedItem.getId()}"
                                     ) {
                                         FocusedItemViewModel(
                                             item = focusedItem,
-                                            trackedItemRepository = viewModel.trackedItemRepository,
+                                            itemRepository = viewModel.itemRepository,
                                             goBack = { feedViewModel.onEvent(FeedEvent.Unfocus) }
                                         )
                                     }
@@ -161,7 +147,6 @@ fun AppNavHost(
                         val settingsViewModel: SettingsViewModel = viewModel {
                             SettingsViewModel(
                                 itemRepository = viewModel.itemRepository,
-                                trackedItemRepository = viewModel.trackedItemRepository,
                                 preferences = viewModel.preferences
                             )
                         }

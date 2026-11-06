@@ -2,7 +2,7 @@ package com.jd.trakker.data.local.feed
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.jd.trakker.data.local.ItemType
+import com.jd.trakker.data.local.item.ItemType
 
 @Entity(tableName = "cachedFeed")
 data class CachedFeed(

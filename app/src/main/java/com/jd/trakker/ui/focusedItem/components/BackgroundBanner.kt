@@ -21,10 +21,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.jd.trakker.R
-import com.jd.trakker.data.local.GameItem
-import com.jd.trakker.data.local.Item
-import com.jd.trakker.data.local.MovieItem
-import com.jd.trakker.data.local.ShowItem
+import com.jd.trakker.data.local.item.GameItem
+import com.jd.trakker.data.local.item.Item
+import com.jd.trakker.data.local.item.MovieItem
+import com.jd.trakker.data.local.item.ShowItem
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
 
@@ -36,7 +36,7 @@ fun BackgroundBanner(
     timeoutSeconds: Int = 10
 ) {
     val banners = when(item) {
-        is GameItem  -> { item.game.artworks?.map { item.game.getBannerURL(it) } ?: emptyList() }
+        is GameItem  -> { item.game.backdrops.map { item.game.getBannerURL(it) } }
         is MovieItem -> { listOf(item.movie.getBannerURL()) }
         is ShowItem  -> { listOf(item.show.getBannerURL())  }
     }.filterNotNull()

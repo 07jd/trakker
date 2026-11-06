@@ -3,30 +3,46 @@ package com.jd.trakker.data.remote.tmdb
 import com.jd.trakker.BuildConfig
 import com.jd.trakker.R
 import com.jd.trakker.data.remote.ExceptionAPI
-import com.jd.trakker.data.local.movie.Movie
+import com.jd.trakker.data.local.item.Movie
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.time.LocalDate
+import java.time.ZoneId
 
 class MovieFetcher {
+    private val tmdbMovieURL = "https://www.themoviedb.org/movie/"
     private val api: TMDB by lazy {
         Retrofit.Builder().baseUrl(BuildConfig.BASE_URL).addConverterFactory(GsonConverterFactory.create()).build()
             .create(TMDB::class.java)
     }
 
+    private fun parseDate(date: String?): Long {
+        // Date on format yyyy-MM-DD
+        if(date == null) return 0L
+
+        try {
+            val date = LocalDate.parse(date)
+            return date
+                    .atStartOfDay(ZoneId.systemDefault())
+                    .toInstant()
+                    .toEpochMilli()
+        } catch(_: Exception) {
+            return 0L
+        }
+    }
+
     private fun parseMovies(data: TmdbResponse): List<Movie> {
         return data.results.map {
-            println(it)
             Movie(
                 id = it.id,
-                adult = it.adult,
-                title = it.title!!,
+                url = "${tmdbMovieURL}${it.id}",
+                name = it.title!!,
                 genres = it.genres,
-                overview = it.overview,
-                release_date = it.release_date!!,
-                vote_average = it.vote_average,
-                video = it.video!!,
-                backdrop_path = it.backdrop_path,
-                poster_path = it.poster_path
+                summary = it.overview,
+                releaseDate = parseDate(it.release_date),
+                rating = it.vote_average,
+                backdrops = if(it.backdrop_path == null) emptyList() else listOf(it.backdrop_path),
+                cover = it.poster_path
             )
         }
     }

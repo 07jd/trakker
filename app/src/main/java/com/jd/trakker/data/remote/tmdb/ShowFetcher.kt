@@ -3,9 +3,11 @@ package com.jd.trakker.data.remote.tmdb
 import com.jd.trakker.BuildConfig
 import com.jd.trakker.R
 import com.jd.trakker.data.remote.ExceptionAPI
-import com.jd.trakker.data.local.show.Show
+import com.jd.trakker.data.local.item.Show
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.time.LocalDate
+import java.time.ZoneId
 
 enum class FetchType {
     Feed,
@@ -13,23 +15,39 @@ enum class FetchType {
 }
 
 class ShowFetcher {
+    private val tmdbShowURL = "https://www.themoviedb.org/tv/"
     private val api: TMDB by lazy {
         Retrofit.Builder().baseUrl(BuildConfig.BASE_URL).addConverterFactory(GsonConverterFactory.create()).build()
             .create(TMDB::class.java)
+    }
+
+    private fun parseDate(date: String?): Long {
+        // Date on format yyyy-MM-DD
+        if(date == null) return 0L
+
+        try {
+            val date = LocalDate.parse(date)
+            return date
+                    .atStartOfDay(ZoneId.systemDefault())
+                    .toInstant()
+                    .toEpochMilli()
+        } catch(_: Exception) {
+            return 0L
+        }
     }
 
     private fun parseShows(data: TmdbResponse): List<Show> {
         return data.results.map {
             Show(
                 id = it.id,
+                url = "${tmdbShowURL}${it.id}",
                 genres = it.genres,
-                overview = it.overview,
-                vote_average = it.vote_average,
-                backdrop_path = it.backdrop_path,
-                poster_path = it.poster_path,
-                adult = it.adult,
+                summary = it.overview,
+                rating = it.vote_average,
+                backdrops = if(it.backdrop_path == null) emptyList() else listOf(it.backdrop_path),
+                cover = it.poster_path,
                 name = it.name!!,
-                first_air_date = it.first_air_date!!
+                releaseDate = parseDate(it.first_air_date)
             )
         }
     }

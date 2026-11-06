@@ -44,7 +44,7 @@ fun FocusedItem(
                     item = uiState.item,
                     trackedStatus = uiState.trackedItem?.status ?: TrackedStatus.UNTRACKED,
                     favorite = uiState.trackedItem?.favorite ?: false,
-                    userRating = uiState.trackedItem?.userRating,
+                    userRating = uiState.trackedItem?.rating,
                     useVibrations = useVibrations
                 ) { onEvent(it) }
             }

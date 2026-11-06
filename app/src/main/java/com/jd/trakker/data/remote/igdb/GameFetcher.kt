@@ -3,7 +3,7 @@ package com.jd.trakker.data.remote.igdb
 import com.jd.trakker.BuildConfig
 import com.jd.trakker.R
 import com.jd.trakker.data.remote.ExceptionAPI
-import com.jd.trakker.data.local.game.Game
+import com.jd.trakker.data.local.item.Game
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -22,22 +22,26 @@ class GameFetcher {
         val games = data.filterNotNull().map { game ->
             Game(
                 id = game.id,
-                name = game.name,
-                rating = game.rating,
-                storyline = game.storyline,
-                summary = game.summary,
                 url = game.url,
-                artworks = game.artworks?.filter { val type = it.image_type?.name
-                    (type == "Artwork" || type == "Infographic" || type == "Screenshot" || type == "Concept art")
+                name = game.name,
+                rating = (game.rating / 10.0),
+                summary = game.summary,
+                backdrops = game.artworks?.filter {
+                    val type = it.image_type?.name
+
+                    (   type == "Artwork"       ||
+                        type == "Infographic"   ||
+                        type == "Screenshot"    ||
+                        type == "Concept art"
+                    )
                 }?.map { it.image_id } ?: emptyList(),
                 genres = game.genres?.map {
                     // Remove abbreviations from name ex.: Input = Roleplay... (RPG) -> Roleplay...
                     it.name.replace(Regex("""\s*\(.*?\)"""), "").trim()
-                } ?: emptyList(),
-                first_release_date = game.first_release_date,
+                }?.distinct() ?: emptyList(),
+                releaseDate = game.first_release_date,
                 cover = game.cover?.image_id,
-                platforms = game.platforms?.map { it.abbreviation } ?: emptyList(),
-                similarGames = game.similar_games?.map { it.id } ?: emptyList()
+                platforms = game.platforms?.map { it.abbreviation } ?: emptyList()
             )
         }
 

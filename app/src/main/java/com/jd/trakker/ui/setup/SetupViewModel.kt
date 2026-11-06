@@ -2,7 +2,7 @@ package com.jd.trakker.ui.setup
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jd.trakker.data.local.ItemType
+import com.jd.trakker.data.local.item.ItemType
 import com.jd.trakker.data.local.preferences.PreferencesManager
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch

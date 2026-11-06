@@ -16,8 +16,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.jd.trakker.R
-import com.jd.trakker.data.local.ItemType
-import com.jd.trakker.data.local.toStringRes
+import com.jd.trakker.data.local.item.ItemType
+import com.jd.trakker.data.local.item.toStringRes
 
 @Composable
 fun FeedTypeChips(enabledFeeds: List<ItemType>, feedType: ItemType, onClick: (ItemType) -> Unit) {

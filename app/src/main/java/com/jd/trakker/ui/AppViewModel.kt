@@ -8,7 +8,6 @@ import com.jd.trakker.data.local.Database
 import com.jd.trakker.data.local.preferences.PreferencesManager
 import com.jd.trakker.data.repository.FeedRepository
 import com.jd.trakker.data.repository.ItemRepository
-import com.jd.trakker.data.repository.TrackedItemRepository
 
 class AppViewModel(
     context: Context
@@ -24,9 +23,8 @@ class AppViewModel(
 
     val itemRepository: ItemRepository by lazy {
         ItemRepository(
-            gameDao  = database.gameDao,
-            movieDao = database.movieDao,
-            showDao  = database.showDao,
+            metadataDao = database.metadataDao,
+            trackedDao = database.trackedItemDao
         )
     }
 
@@ -34,12 +32,4 @@ class AppViewModel(
         FeedRepository(database.cachedFeedDao)
     }
 
-    val trackedItemRepository: TrackedItemRepository by lazy {
-        TrackedItemRepository(
-            trackedItemDao = database.trackedItemDao,
-            gameDao = database.gameDao,
-            movieDao = database.movieDao,
-            showDao = database.showDao
-        )
-    }
 }

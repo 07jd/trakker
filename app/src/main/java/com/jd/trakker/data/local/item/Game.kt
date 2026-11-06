@@ -1,43 +1,38 @@
-package com.jd.trakker.data.local.game
+package com.jd.trakker.data.local.item
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
 import com.jd.trakker.R
+import com.jd.trakker.data.local.metadata.Language
+import com.jd.trakker.data.local.metadata.Metadata
 import java.time.Instant
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
 
-private const val imageEndpoint = "https://images.igdb.com/igdb/image/upload/t_"
+private const val igdbImageEndpoint = "https://images.igdb.com/igdb/image/upload/t_"
 
-@Suppress("PropertyName")
-@Entity(tableName = "game")
 data class Game(
-    @PrimaryKey(autoGenerate = false)
     val id: Int,                        // ID provided by igdb
+    val url: String,                    // IGDB page of this game
     val name: String,                   // Game name
-    val rating: Double?,                // 0-100
-    val storyline: String?,             // Talks about the game story
-    val summary: String?,               // Talks about the game (more gameplaywise)
+    val summary: String,                // Game story summary
     val genres: List<String>,           // Genres
-    val url: String?,                   // igdb game url page
-    val artworks: List<String>?,        // Image IDS of the artworks
-    val cover: String?,                 // Image ID of the cover of the game
-    val platforms: List<String>?,       // Platforms that the game can be play (X360,PS3,PC,...)
-    val first_release_date: Long,       // Release date (Unix timestamp)
-    val similarGames: List<Int>?        // List of similar games IDS
+    val cover: String?,                 // Game art box cover
+    val backdrops: List<String>,        // Game artworks
+    val platforms: List<String>,        // List of platforms where game is on
+    val releaseDate: Long,              // Timestamp
+    val rating: Double                  // 0-10
 ) {
     fun getCoverURL(): String? {
-        return if(cover == null) null else "${imageEndpoint}cover_big/${cover}.jpg"
+        return if(cover == null) null else "${igdbImageEndpoint}cover_big/${cover}.jpg"
     }
 
-    fun getBannerURL(artworkID: String?): String? {
-        return if(artworkID == null) null else "${imageEndpoint}1080p/${artworkID}.jpg"
+    fun getBannerURL(id: String): String {
+        return "${igdbImageEndpoint}1080p/${id}.jpg"
     }
 
     fun localDateString(): String {
-        return Instant.ofEpochSecond(first_release_date).atZone(ZoneOffset.UTC).toLocalDate()
+        return Instant.ofEpochSecond(releaseDate).atZone(ZoneOffset.UTC).toLocalDate()
                 .format(
                     DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
                             .withLocale(Locale.getDefault())
@@ -45,7 +40,7 @@ data class Game(
     }
 
     fun platformIconRes(): List<Pair<Int?, String>> {
-        if(platforms.isNullOrEmpty()) return emptyList()
+        if(platforms.isEmpty()) return emptyList()
 
         val iconRes = platforms.map {
             when(it) {
@@ -67,5 +62,26 @@ data class Game(
 
 
         return iconRes
+    }
+
+    fun toMetadata(language: Language = Language.EN_US): Metadata {
+        return Metadata(
+            id = id,
+            type = ItemType.Game,
+            language = language,
+            name = name,
+            url = url,
+            summary = summary,
+            genres = genres,
+            cover = cover,
+            backdrops = backdrops,
+            platforms = platforms,
+            releaseDate = releaseDate,
+            rating = rating
+        )
+    }
+
+    fun toItem(): Item {
+        return GameItem(this)
     }
 }
