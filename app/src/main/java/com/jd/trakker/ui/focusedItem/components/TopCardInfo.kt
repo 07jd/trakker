@@ -130,7 +130,7 @@ fun TopCardInfo(
 
     // Rating 0-10, shown in %.2f
     val rating = when(item) {
-        is GameItem  -> item.game.rating.div(10.0)
+        is GameItem  -> item.game.rating
         is MovieItem -> item.movie.rating
         is ShowItem  -> item.show.rating
     }

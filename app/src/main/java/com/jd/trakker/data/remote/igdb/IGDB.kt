@@ -49,16 +49,16 @@ data class ShallowGameResponse(
 @Suppress("PropertyName")
 data class GameResponse(
     val id: Int,
+    val name: String,
     val artworks: List<Artwork>?,
     val cover: Cover?,
     val first_release_date: Long,
-    val name: String,
     val platforms: List<Platform>?,
     val rating: Double,
     val similar_games: List<ShallowGameResponse>?,
     val genres: List<Genre>?,
     val storyline: String,
-    val summary: String,
+    val summary: String?,
     val url: String
 )
 

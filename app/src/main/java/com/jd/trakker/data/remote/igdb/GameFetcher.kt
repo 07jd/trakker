@@ -25,7 +25,7 @@ class GameFetcher {
                 url = game.url,
                 name = game.name,
                 rating = (game.rating / 10.0),
-                summary = game.summary,
+                summary = game.summary ?: "",
                 backdrops = game.artworks?.filter {
                     val type = it.image_type?.name
 

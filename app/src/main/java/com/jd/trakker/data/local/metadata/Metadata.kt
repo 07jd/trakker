@@ -56,7 +56,7 @@ fun Metadata.toItem(): Item {
         ItemType.Game  -> GameItem(Game(
             id = id,
             url = url,
-            name = url,
+            name = name,
             summary = summary,
             genres = genres,
             cover = cover,
