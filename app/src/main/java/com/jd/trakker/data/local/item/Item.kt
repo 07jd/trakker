@@ -2,7 +2,6 @@ package com.jd.trakker.data.local.item
 
 import androidx.annotation.StringRes
 import com.jd.trakker.R
-import com.jd.trakker.data.local.metadata.Language
 import com.jd.trakker.data.local.metadata.Metadata
 
 enum class ItemType {
@@ -23,11 +22,11 @@ data class GameItem(val game: Game)     : Item
 data class MovieItem(val movie: Movie)  : Item
 data class ShowItem(val show: Show)     : Item
 
-fun Item.toMetadata(language: Language = Language.EN_US): Metadata {
+fun Item.toMetadata(): Metadata {
     return when(this) {
-        is GameItem  -> this.game.toMetadata(language)
-        is MovieItem -> this.movie.toMetadata(language)
-        is ShowItem  -> this.show.toMetadata(language)
+        is GameItem  -> this.game.toMetadata()
+        is MovieItem -> this.movie.toMetadata()
+        is ShowItem  -> this.show.toMetadata()
     }
 }
 

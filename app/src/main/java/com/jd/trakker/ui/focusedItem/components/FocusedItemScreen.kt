@@ -159,7 +159,7 @@ fun FocusedItemScreen(
                 TrackedDialog(
                     selected = trackedStatus,
                     onDismiss = { trackedDialog = !trackedDialog },
-                    onChange = { onEvent(it) }
+                    onChange = { onEvent(it); trackedDialog = !trackedDialog  }
                 )
             }
 

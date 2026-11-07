@@ -26,10 +26,9 @@ interface MetadataDao {
         INNER JOIN Metadata 
         ON Metadata.id = MetadataFTS.rowid
         WHERE MetadataFTS MATCH :query
-        AND language = :language
         AND type = :type
     """)
-    suspend fun search(query: String, language: Language, type: ItemType): List<Metadata>
+    suspend fun search(query: String, type: ItemType): List<Metadata>
 
     @Query("""
         SELECT *

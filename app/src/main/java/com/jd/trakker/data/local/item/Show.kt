@@ -1,6 +1,5 @@
 package com.jd.trakker.data.local.item
 
-import com.jd.trakker.data.local.metadata.Language
 import com.jd.trakker.data.local.metadata.Metadata
 import java.time.Instant
 import java.time.ZoneOffset
@@ -30,18 +29,17 @@ data class Show(
     }
 
     fun localDateString(): String {
-        return Instant.ofEpochSecond(releaseDate).atZone(ZoneOffset.UTC).toLocalDate()
+        return Instant.ofEpochMilli(releaseDate).atZone(ZoneOffset.UTC).toLocalDate()
                 .format(
                     DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
                             .withLocale(Locale.getDefault())
                 ).replace("/", "-")
     }
 
-    fun toMetadata(language: Language = Language.EN_US): Metadata {
+    fun toMetadata(): Metadata {
         return Metadata(
             id = id,
             type = ItemType.Show,
-            language = language,
             name = name,
             url = url,
             summary = summary,

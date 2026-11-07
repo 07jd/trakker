@@ -25,7 +25,7 @@ class GameFetcher {
                 url = game.url,
                 name = game.name,
                 rating = (game.rating / 10.0),
-                summary = game.summary ?: "",
+                summary = game.storyline ?: "",
                 backdrops = game.artworks?.filter {
                     val type = it.image_type?.name
 
@@ -41,7 +41,7 @@ class GameFetcher {
                 }?.distinct() ?: emptyList(),
                 releaseDate = game.first_release_date,
                 cover = game.cover?.image_id,
-                platforms = game.platforms?.map { it.abbreviation } ?: emptyList()
+                platforms = game.platforms?.mapNotNull { it?.abbreviation } ?: emptyList()
             )
         }
 

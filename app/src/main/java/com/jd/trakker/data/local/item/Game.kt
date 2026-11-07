@@ -1,7 +1,6 @@
 package com.jd.trakker.data.local.item
 
 import com.jd.trakker.R
-import com.jd.trakker.data.local.metadata.Language
 import com.jd.trakker.data.local.metadata.Metadata
 import java.time.Instant
 import java.time.ZoneOffset
@@ -64,11 +63,10 @@ data class Game(
         return iconRes
     }
 
-    fun toMetadata(language: Language = Language.EN_US): Metadata {
+    fun toMetadata(): Metadata {
         return Metadata(
             id = id,
             type = ItemType.Game,
-            language = language,
             name = name,
             url = url,
             summary = summary,

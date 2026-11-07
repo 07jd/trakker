@@ -5,7 +5,6 @@ import com.jd.trakker.data.local.item.ItemType
 import com.jd.trakker.data.local.item.getId
 import com.jd.trakker.data.local.item.getType
 import com.jd.trakker.data.local.item.toMetadata
-import com.jd.trakker.data.local.metadata.Language
 import com.jd.trakker.data.local.metadata.MetadataDao
 import com.jd.trakker.data.local.metadata.toItem
 import com.jd.trakker.data.local.tracked.TrackedDao
@@ -59,9 +58,9 @@ class ItemRepository(
     }
 
     // Search on the DB
-    suspend fun searchLocally(type: ItemType, query: String, language: Language = Language.EN_US): List<Item> {
+    suspend fun searchLocally(type: ItemType, query: String): List<Item> {
         return withContext(Dispatchers.IO) {
-            metadataDao.search(query, language, type).map { it.toItem() }
+            metadataDao.search(query, type).map { it.toItem() }
         }
     }
 

@@ -7,7 +7,7 @@ import com.jd.trakker.data.local.item.Movie
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.time.LocalDate
-import java.time.ZoneId
+import java.time.ZoneOffset
 
 class MovieFetcher {
     private val tmdbMovieURL = "https://www.themoviedb.org/movie/"
@@ -23,7 +23,7 @@ class MovieFetcher {
         try {
             val date = LocalDate.parse(date)
             return date
-                    .atStartOfDay(ZoneId.systemDefault())
+                    .atStartOfDay(ZoneOffset.UTC)
                     .toInstant()
                     .toEpochMilli()
         } catch(_: Exception) {

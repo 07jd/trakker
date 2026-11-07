@@ -25,10 +25,10 @@ data class MetadataFTS(
 
 @Entity(
     tableName = "Metadata",
-    primaryKeys = ["id", "type", "language"],
+    primaryKeys = ["id", "type"],
     indices = [
         Index(
-            value = ["id", "type", "language"],
+            value = ["id", "type"],
             unique = true
         )
     ]
@@ -36,7 +36,6 @@ data class MetadataFTS(
 data class Metadata(
     val id: Int,
     val type: ItemType,
-    val language: Language,
 
     // Data
     val name: String,

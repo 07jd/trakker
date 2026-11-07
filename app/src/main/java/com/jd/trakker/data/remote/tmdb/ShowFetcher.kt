@@ -7,7 +7,7 @@ import com.jd.trakker.data.local.item.Show
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.time.LocalDate
-import java.time.ZoneId
+import java.time.ZoneOffset
 
 enum class FetchType {
     Feed,
@@ -28,7 +28,7 @@ class ShowFetcher {
         try {
             val date = LocalDate.parse(date)
             return date
-                    .atStartOfDay(ZoneId.systemDefault())
+                    .atStartOfDay(ZoneOffset.UTC)
                     .toInstant()
                     .toEpochMilli()
         } catch(_: Exception) {
