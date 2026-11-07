@@ -40,6 +40,9 @@ fun CollapsableText(
     useVibrations: Boolean = true,
     hiddenHeight: Dp = 75.dp
 ) {
+    // No content
+    if(text.isEmpty()) return
+
     val haptics = LocalHapticFeedback.current
     val bg = MaterialTheme.colorScheme.background
     var expanded by rememberSaveable{ mutableStateOf(false) }

@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.clearText
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -110,7 +111,7 @@ private fun FeedScreen(
     loadingBarHeight: Dp = 5.dp
 ) {
     // Close search on back
-    BackHandler(uiState.showingSearchResults) { onEvent(FeedEvent.CloseSearch) }
+    BackHandler(uiState.showingSearchResults) { onEvent(FeedEvent.CloseSearch); searchBarState.clearText() }
     val haptics = LocalHapticFeedback.current
     
     Scaffold(

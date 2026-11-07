@@ -10,6 +10,7 @@ import com.jd.trakker.data.repository.ItemRepository
 import com.jd.trakker.data.local.item.ItemType
 import com.jd.trakker.data.local.item.MovieItem
 import com.jd.trakker.data.local.item.ShowItem
+import com.jd.trakker.data.local.item.getId
 import com.jd.trakker.data.repository.FeedRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -25,8 +26,7 @@ class FeedViewModel(
     private val itemRepository: ItemRepository,
     private val feedRepository: FeedRepository
 ) : ViewModel() {
-    // TODO: this should be obtained via the PreferencesManager
-    val feedExpirationTimeInMinutes = 5
+    private val feedExpirationTimeInMinutes = 5
     private val _state = MutableStateFlow(FeedState())
     val uiState: StateFlow<FeedState> = combine(
         _state,
@@ -102,11 +102,7 @@ class FeedViewModel(
             feedRepository.cacheFeed(
                 type = feedType,
                 page = page,
-                ids = data.map { when(it) {
-                    is GameItem  -> it.game.id
-                    is MovieItem -> it.movie.id
-                    is ShowItem  -> it.show.id
-                } }.distinct()
+                ids = data.map { it.getId() }.distinct()
             )
 
             data
