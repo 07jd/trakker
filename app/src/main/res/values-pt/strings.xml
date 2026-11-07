@@ -86,4 +86,16 @@
     <string name="tracked_status_completed">Completado</string>
     <string name="tracked_status_pending">Pendente</string>
     <string name="tracked_status_untracked">Náo acompanhado</string>
+    <string name="ascendent">Ascendente</string>
+    <string name="descendent">Descendente</string>
+    <string name="filter_rating">Avaliação</string>
+    <string name="filter_user_rating">Avaliação do utilizador</string>
+    <string name="filter_alphabetical">Alfabéticamente</string>
+    <string name="filter_release_date">Data de lançamento</string>
+    <string name="filter">Filtro</string>
+    <string name="reset">Redefinir</string>
+    <string name="apply">Aplicar</string>
+    <string name="order">Ordem</string>
+    <string name="type">Tipo</string>
+    <string name="filter_relevance">Relevancia</string>
 </resources>

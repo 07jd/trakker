@@ -16,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.jd.trakker.R
 import com.jd.trakker.data.local.item.ItemType
+import com.jd.trakker.ui.components.SearchBar
 import com.jd.trakker.ui.feed.FeedEvent
 
 @Composable
@@ -28,20 +29,27 @@ fun TopBar(enabledFeeds: List<ItemType>,
            onEvent: (FeedEvent) -> Unit
 ) {
     val haptics = LocalHapticFeedback.current
+    val placeholderText = when(feedType) {
+        ItemType.Game -> stringResource(R.string.search_for_game)
+        ItemType.Movie -> stringResource(R.string.search_for_movie)
+        ItemType.Show -> stringResource(R.string.search_for_show)
+    }
 
     Column(modifier = Modifier.fillMaxWidth()) {
         // This is the search box, the material3 provided one is kinda buggy and unstable
         SearchBar(
-            showingSearchResults,
-            placeholderText = when(feedType) {
-                ItemType.Game  -> stringResource(R.string.search_for_game)
-                ItemType.Movie -> stringResource(R.string.search_for_movie)
-                ItemType.Show  -> stringResource(R.string.search_for_show)
-            },
-            searchBarState,
-            onSearch = { if(useVibrations) haptics.performHapticFeedback(HapticFeedbackType.LongPress); onEvent (FeedEvent.Search(it)) },
-            onBack   = { if(useVibrations) haptics.performHapticFeedback(HapticFeedbackType.LongPress); onEvent(FeedEvent.CloseSearch) }
-        )
+            showBackButton = showingSearchResults,
+            showFilterButton = !showingSearchResults,
+            placeholderText = placeholderText,
+            state = searchBarState,
+            onSearch = {
+                if (useVibrations) haptics.performHapticFeedback(HapticFeedbackType.LongPress); onEvent(
+                FeedEvent.Search(it)
+            ) },
+            onBack = {
+                if (useVibrations) haptics.performHapticFeedback(HapticFeedbackType.LongPress); onEvent(
+                FeedEvent.CloseSearch
+            ) })
 
         // Hide ships when showing search results or only 1 feed type enabled
         AnimatedVisibility(

@@ -1,4 +1,4 @@
-package com.jd.trakker.ui.feed.components
+package com.jd.trakker.ui.components
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
@@ -12,6 +12,7 @@ import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -31,17 +32,22 @@ import androidx.compose.ui.unit.dp
 import com.jd.trakker.R
 
 @Composable
-fun SearchBar(showingSearchResults: Boolean,
-              placeholderText: String,
-              state: TextFieldState? = null,
-              onSearch: (String) -> Unit,
-              onBack: () -> Unit
+fun SearchBar(
+    showBackButton: Boolean,
+    showFilterButton: Boolean,
+    placeholderText: String,
+    state: TextFieldState? = null,
+    filterType: FilterType? = null,
+    filterOrder: FilterOrder? = null,
+    onApplyFilter: ((FilterOrder, FilterType) -> Unit)? = null,
+    onSearch: (String) -> Unit,
+    onBack: () -> Unit
 ) {
     val focus                   = LocalFocusManager.current
     val textBarState            = state ?: rememberTextFieldState()
-    var isFocused               by remember{ mutableStateOf(false) }
+    var isFocused               by remember { mutableStateOf(false) }
+    var showFilterOptions       by remember { mutableStateOf(false) }
 
-    // TODO: Improve this, i couldn't find a viable way of getting if the keyboard is open or not, this is kinda of a hack
     // On back gesture remove focus from text field
     // PS: The first back gesture is captured by the OS keyboard, meaning only after hiding the keyboard
     //     the user can back gesture again to remove focus from text field
@@ -50,17 +56,26 @@ fun SearchBar(showingSearchResults: Boolean,
         isFocused = false
     }
 
+    if (showFilterOptions) {
+        Filter(
+            filterType = filterType ?: FilterDefaults.type,
+            filterOrder = filterOrder ?: FilterDefaults.order,
+            onApplyFilter = { order, type -> onApplyFilter?.invoke(order, type); showFilterOptions = false },
+            onDismiss = { showFilterOptions = false }
+        )
+    }
+
     TextField(
         modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = if (showingSearchResults) 15.dp else 5.dp, horizontal = 15.dp)
+                .padding(vertical = if (showBackButton) 15.dp else 5.dp, horizontal = 15.dp)
                 .onFocusChanged { isFocused = it.isFocused },
         state = textBarState,
         lineLimits = TextFieldLineLimits.SingleLine,
         placeholder = { Text(placeholderText) },
         shape = MaterialTheme.shapes.small,
         leadingIcon = {
-            if (showingSearchResults) {
+            if (showBackButton) {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.chevron_double_left),
                     contentDescription = stringResource(R.string.selected),
@@ -77,6 +92,24 @@ fun SearchBar(showingSearchResults: Boolean,
                 )
             }
         },
+        trailingIcon = {
+            if(!showFilterButton) return@TextField
+
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.filter),
+                contentDescription = stringResource(R.string.filter),
+                tint = when {
+                    // Filter order/type != Defaults
+                    filterType != null && filterOrder != null &&
+                    (filterType != FilterDefaults.type ||
+                    filterOrder != FilterDefaults.order) -> MaterialTheme.colorScheme.primary
+                    else -> LocalContentColor.current
+                },
+                modifier = Modifier
+                        .size(FilterChipDefaults.IconSize)
+                        .clickable { showFilterOptions = true }
+            )
+        },
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
         onKeyboardAction = {
             val userInput = textBarState.text.toString().trim()
@@ -84,5 +117,6 @@ fun SearchBar(showingSearchResults: Boolean,
             if (!userInput.isEmpty()) {
                 onSearch(userInput)
             }
-        })
+        }
+    )
 }

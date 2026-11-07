@@ -92,4 +92,16 @@
     <string name="tracked_status_completed">Completed</string>
     <string name="tracked_status_pending">Pending</string>
     <string name="tracked_status_untracked">Not tracked</string>
+    <string name="ascendent">Ascendant</string>
+    <string name="descendent">Descendant</string>
+    <string name="filter_rating">Rating</string>
+    <string name="filter_user_rating">User rating</string>
+    <string name="filter_alphabetical">Alphabetical</string>
+    <string name="filter_release_date">Release date</string>
+    <string name="filter">Filter</string>
+    <string name="reset">Reset</string>
+    <string name="apply">Apply</string>
+    <string name="order">Order</string>
+    <string name="type">Type</string>
+    <string name="filter_relevance">Relevance</string>
 </resources>
