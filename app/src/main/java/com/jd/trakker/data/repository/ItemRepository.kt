@@ -9,6 +9,7 @@ import com.jd.trakker.data.local.metadata.MetadataDao
 import com.jd.trakker.data.local.metadata.toItem
 import com.jd.trakker.data.local.tracked.TrackedDao
 import com.jd.trakker.data.local.tracked.TrackedItem
+import com.jd.trakker.data.local.tracked.TrackedStatus
 import com.jd.trakker.data.remote.igdb.GameFetcher
 import com.jd.trakker.data.remote.tmdb.MovieFetcher
 import com.jd.trakker.data.remote.tmdb.ShowFetcher
@@ -64,6 +65,24 @@ class ItemRepository(
         }
     }
 
+    // Given a query returns the items that are tracked
+    suspend fun searchLocallyTrackedAndFavorite(query: String): List<Item> {
+        return withContext(Dispatchers.IO) {
+            val favorites = getAllFavorite()
+            val data = ItemType.entries.flatMap { type ->
+                metadataDao.search(query, type).map { it.toItem() }
+            }
+
+
+            data.filter { item ->
+                trackedDao.get(item.getId(), item.getType()) != null ||
+                favorites.any {
+                    it.id == item.getId() && it.type == item.getType()
+                }
+            }.distinct()
+        }
+    }
+
     // Get feed (online)
     suspend fun getFeed(itemType: ItemType, page: Int = 1): List<Item> {
         val items = when(itemType) {
@@ -90,6 +109,21 @@ class ItemRepository(
         }
     }
 
+    // Get from tracked info
+    suspend fun getAll(data: List<TrackedItem>): List<Item> {
+        return withContext(Dispatchers.IO) {
+            data.mapNotNull { metadataDao.get(it.type, it.id)?.toItem() }
+        }
+    }
+
+    // Get an item
+    suspend fun get(itemType: ItemType, id: Int): Item? {
+        return withContext(Dispatchers.IO) {
+            metadataDao.get(itemType, id)?.toItem()
+        }
+    }
+
+
     /*
      *  TRACKED ITEM
      */
@@ -111,7 +145,19 @@ class ItemRepository(
     // Gets all tems where status != Untracked
     suspend fun getAllTracked(): List<TrackedItem> {
         return withContext(Dispatchers.IO) {
-            trackedDao.getAllTracked()
+            trackedDao.getAllTrackedJoined()
+        }
+    }
+
+    suspend fun getAllTracked(status: TrackedStatus): List<TrackedItem> {
+        return withContext(Dispatchers.IO) {
+            trackedDao.getAllTracked(status)
+        }
+    }
+
+    suspend fun getAllFavorite(): List<TrackedItem> {
+        return withContext(Dispatchers.IO) {
+            trackedDao.getAllFavorite()
         }
     }
 

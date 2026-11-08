@@ -10,6 +10,7 @@ import com.jd.trakker.data.local.item.MovieItem
 import com.jd.trakker.data.local.item.ShowItem
 import com.jd.trakker.data.local.backup.Backup
 import com.jd.trakker.data.local.preferences.PreferencesManager
+import com.jd.trakker.data.local.tracked.TrackedStatus
 import com.jd.trakker.data.repository.ItemRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -84,6 +85,7 @@ class SettingsViewModel(
 
                     val feedbackResult = withContext(Dispatchers.IO) {
                         val trackedItems = itemRepository.getAllTracked()
+
                         val groupedItems = trackedItems.groupBy { it.type }.mapValues { (_, items) -> items.map { it.id } }
 
                         val games = mutableListOf<GameItem>()

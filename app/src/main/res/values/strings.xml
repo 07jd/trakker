@@ -104,4 +104,9 @@
     <string name="order">Order</string>
     <string name="type">Type</string>
     <string name="filter_relevance">Relevance</string>
+    <string name="search_generic">Search for something</string>
+    <string name="no_tracked">Nothing tracked</string>
+    <string name="view_all">View all</string>
+    <string name="favorite_plural">Favorites</string>
+    <string name="no_items">No items</string>
 </resources>

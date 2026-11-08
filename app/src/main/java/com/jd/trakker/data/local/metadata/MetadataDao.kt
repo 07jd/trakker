@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
 import com.jd.trakker.data.local.item.ItemType
+import com.jd.trakker.data.local.tracked.TrackedItem
 
 @Dao
 interface MetadataDao {
@@ -12,6 +13,15 @@ interface MetadataDao {
 
     @Upsert
     suspend fun upsertBatch(data: List<Metadata>)
+
+    @Query("""
+        SELECT *
+        FROM metadata
+        WHERE type = :type
+        AND id = :id
+        LIMIT 1
+    """)
+    suspend fun get(type: ItemType, id: Int): Metadata?
 
     @Query("""
         SELECT *

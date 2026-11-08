@@ -27,6 +27,10 @@ import com.jd.trakker.ui.focusedItem.FocusedItem
 import com.jd.trakker.ui.focusedItem.FocusedItemViewModel
 import com.jd.trakker.ui.settings.SettingsScreen
 import com.jd.trakker.ui.settings.SettingsViewModel
+import com.jd.trakker.ui.tracked.TrackedEvent
+import com.jd.trakker.ui.tracked.TrackedScreen
+import com.jd.trakker.ui.tracked.TrackedState
+import com.jd.trakker.ui.tracked.TrackedViewModel
 
 enum class Destination(
     val route: String,
@@ -88,7 +92,53 @@ fun AppNavHost(
             composable(destination.route) {
                 when (destination) {
                     Destination.Tracked -> {
-                        // TODO
+                        val trackedViewModel = viewModel{ TrackedViewModel(viewModel.itemRepository) }
+                        val uiState by trackedViewModel.uiState.collectAsStateWithLifecycle(initialValue = TrackedState())
+
+                        val gridState = rememberLazyGridState()
+                        val searchBarState = rememberTextFieldState()
+
+
+                        AnimatedContent(
+                            targetState = uiState.focusedItem,
+                            transitionSpec = {
+                                when {
+                                    targetState != null -> slideInHorizontally { it } togetherWith  slideOutHorizontally { -it }
+                                    else                -> slideInHorizontally { -it } togetherWith slideOutHorizontally { it }
+                                }
+                            }
+                        ) { focusedItem ->
+                            when {
+                                focusedItem != null -> {
+                                    //val focusedItemTracked = uiState.focusedItemTracked!!
+
+                                    val focusedItemViewModel: FocusedItemViewModel = viewModel(
+                                        key = "focused_item_${focusedItem.getType()}_${focusedItem.getId()}"
+                                    ) {
+                                        FocusedItemViewModel(
+                                            item = focusedItem,
+                                            itemRepository = viewModel.itemRepository,
+                                            goBack = { trackedViewModel.onEvent(TrackedEvent.Unfocus) }
+                                        )
+                                    }
+
+                                    val focusedItemUiState by focusedItemViewModel.uiState.collectAsStateWithLifecycle()
+                                    FocusedItem(
+                                        innerRootPadding = innerPadding,
+                                        uiState = focusedItemUiState,
+                                        onEvent = focusedItemViewModel::onEvent,
+                                    )
+                                }
+                                else -> TrackedScreen(
+                                    innerRootPadding = innerPadding,
+                                    uiState = uiState,
+                                    gridState = gridState,
+                                    searchBarState = searchBarState,
+                                    onEvent = trackedViewModel::onEvent,
+                                    onBack = { onBack() }
+                                )
+                            }
+                        }
                     }
                     Destination.Feed -> {
                         val feedViewModel: FeedViewModel = viewModel {

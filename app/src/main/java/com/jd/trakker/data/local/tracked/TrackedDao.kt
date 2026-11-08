@@ -27,7 +27,21 @@ interface TrackedDao {
     @Query("""
         SELECT *
         FROM Tracked
-        WHERE status != :defaultStatus
+        WHERE status = :status
     """)
-    suspend fun getAllTracked(defaultStatus: TrackedStatus = TrackedStatus.UNTRACKED): List<TrackedItem>
+    suspend fun getAllTracked(status: TrackedStatus): List<TrackedItem>
+
+    @Query("""
+        SELECT *
+        FROM Tracked
+        WHERE status != :status
+    """)
+    suspend fun getAllTrackedJoined(status: TrackedStatus = TrackedStatus.UNTRACKED): List<TrackedItem>
+
+    @Query("""
+        SELECT *
+        FROM Tracked
+        WHERE favorite = 1
+    """)
+    suspend fun getAllFavorite(): List<TrackedItem>
 }
