@@ -1,4 +1,4 @@
-package com.jd.trakker.ui.feed.components
+package com.jd.trakker.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -18,7 +18,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.jd.trakker.R
 import com.jd.trakker.data.local.item.ItemType
-import com.jd.trakker.ui.components.SearchBar
+import com.jd.trakker.ui.feed.components.FeedTypeChips
+import com.jd.trakker.ui.feed.components.OfflineDataBanner
 
 @Composable
 fun TopBar(
@@ -65,13 +66,10 @@ fun TopBar(
                 exit     = scaleOut() + fadeOut ()
             ) {
                 FeedTypeChips(
-                    enabledFeeds = enabledFeeds,
-                    feedType = feedType,
-                    onClick = {
-                        if(useVibrations) haptics.performHapticFeedback(HapticFeedbackType.Confirm)
+                    enabledFeeds = enabledFeeds, feedType = feedType, onClick = {
+                        if (useVibrations) haptics.performHapticFeedback(HapticFeedbackType.Confirm)
                         onFeedTypeChange?.invoke(it)
-                    }
-                )
+                    })
             }
         }
 

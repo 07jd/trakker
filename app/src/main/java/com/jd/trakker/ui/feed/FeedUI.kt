@@ -40,7 +40,7 @@ import com.jd.trakker.R
 import com.jd.trakker.ui.components.ItemGrid
 import com.jd.trakker.ui.components.LoadingCircle
 import com.jd.trakker.ui.feed.components.SadScreen
-import com.jd.trakker.ui.feed.components.TopBar
+import com.jd.trakker.ui.components.TopBar
 
 @Composable
 fun Feed(
