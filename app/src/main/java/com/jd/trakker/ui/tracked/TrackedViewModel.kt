@@ -41,27 +41,41 @@ class TrackedViewModel(
     // Get data
     init {
         viewModelScope.launch {
-            val pending      = getData(TrackedStatus.PENDING)
-            val completed    = getData(TrackedStatus.COMPLETED)
-            val dropped      = getData(TrackedStatus.DROPPED)
-            val favorite = withContext(Dispatchers.IO) {
-                itemRepository.getAllFavorite().mapNotNull { itemRepository.get(it.type, it.id) }
-            }
+            // Get data and collapse empty categories
+            refreshData()
+            val map = _state.value.collapsedCategories.toMutableMap()
+            map[TrackedStatus.PENDING.name]     = _state.value.pendingItems.isEmpty()
+            map[TrackedStatus.COMPLETED.name]   = _state.value.completedItems.isEmpty()
+            map[TrackedStatus.DROPPED.name]     = _state.value.droppedItems.isEmpty()
+            map["favorite"]                     = _state.value.favoriteItems.isEmpty()
 
             _state.update {
-                it.copy(
-                    pendingItems    = pending,
-                    completedItems  = completed,
-                    droppedItems    = dropped,
-                    favoriteItems   = favorite,
-                    loading         = false
-                )
+                it.copy(loading = false, collapsedCategories = map)
             }
         }
     }
 
     private suspend fun getData(status: TrackedStatus): List<Item> {
         return itemRepository.getAll(itemRepository.getAllTracked(status))
+    }
+
+    // Gets all data and updates the _state
+    private suspend fun refreshData() {
+        val pending      = getData(TrackedStatus.PENDING)
+        val completed    = getData(TrackedStatus.COMPLETED)
+        val dropped      = getData(TrackedStatus.DROPPED)
+        val favorite = withContext(Dispatchers.IO) {
+            itemRepository.getAllFavorite().mapNotNull { itemRepository.get(it.type, it.id) }
+        }
+
+        _state.update {
+            it.copy(
+                pendingItems    = pending,
+                completedItems  = completed,
+                droppedItems    = dropped,
+                favoriteItems   = favorite
+            )
+        }
     }
 
     private fun sortWithFilter(
@@ -113,7 +127,6 @@ class TrackedViewModel(
                 is TrackedEvent.ChangeCollapsedState -> {
                     val map = _state.value.collapsedCategories.toMutableMap()
                     map[event.key] = event.value
-
                     _state.update { it.copy(collapsedCategories = map) }
                 }
                 is TrackedEvent.Focus -> {
@@ -125,19 +138,9 @@ class TrackedViewModel(
                 }
                 is TrackedEvent.Unfocus -> {
                     // Have to refresh data since it can change
-                    val pending      = getData(TrackedStatus.PENDING)
-                    val completed    = getData(TrackedStatus.COMPLETED)
-                    val dropped      = getData(TrackedStatus.DROPPED)
-                    val favorite = withContext(Dispatchers.IO) {
-                        itemRepository.getAllFavorite().mapNotNull { itemRepository.get(it.type, it.id) }
-                    }
-
+                    refreshData()
                     _state.update {
                         it.copy(
-                            pendingItems    = pending,
-                            completedItems  = completed,
-                            droppedItems    = dropped,
-                            favoriteItems   = favorite,
                             focusedItem = null,
                             focusedItemTracked = null
                         )
@@ -151,6 +154,7 @@ class TrackedViewModel(
                 is TrackedEvent.ViewAll -> _state.update { it.copy(viewAllType = event.name) }
                 is TrackedEvent.CloseViewAll -> _state.update { it.copy(viewAllType = null) }
                 is TrackedEvent.CloseSearch -> _state.update { it.copy(searchResults = null) }
+                is TrackedEvent.Refresh -> refreshData()
             }
         }
     }
