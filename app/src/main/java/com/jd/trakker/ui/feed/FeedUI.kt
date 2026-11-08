@@ -118,14 +118,15 @@ private fun FeedScreen(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             TopBar(
-                uiState.enabledFeeds,
-                uiState.feedType,
-                uiState.showingSearchResults,
-                if (uiState.showingSearchResults) uiState.usingOfflineDataSearch
-                else uiState.usingOfflineDataFeed,
-                searchBarState,
-                uiState.useVibrations,
-                onEvent
+                searchBarState = searchBarState,
+                enabledFeeds = uiState.enabledFeeds,
+                feedType = uiState.feedType,
+                showingSearchResults = uiState.showingSearchResults,
+                usingOfflineData = uiState.usingOfflineDataSearch || uiState.usingOfflineDataFeed,
+                useVibrations = uiState.useVibrations,
+                onFeedTypeChange = { onEvent(FeedEvent.ChangeFeedType(it)) },
+                onSearch = { onEvent(FeedEvent.Search(it)) },
+                onCloseSearch = { onEvent(FeedEvent.CloseSearch) }
             )
         },
         bottomBar = {

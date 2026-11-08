@@ -1,8 +1,10 @@
 package com.jd.trakker.ui.feed.components
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,22 +19,25 @@ import androidx.compose.ui.unit.dp
 import com.jd.trakker.R
 import com.jd.trakker.data.local.item.ItemType
 import com.jd.trakker.ui.components.SearchBar
-import com.jd.trakker.ui.feed.FeedEvent
 
 @Composable
-fun TopBar(enabledFeeds: List<ItemType>,
-           feedType: ItemType,
-           showingSearchResults: Boolean,
-           usingOfflineData: Boolean,
-           searchBarState: TextFieldState,
-           useVibrations: Boolean = true,
-           onEvent: (FeedEvent) -> Unit
+fun TopBar(
+    enabledFeeds: List<ItemType>? = null,
+    feedType: ItemType? = null,
+    showingSearchResults: Boolean,
+    usingOfflineData: Boolean = false,
+    searchBarState: TextFieldState,
+    useVibrations: Boolean = true,
+    onFeedTypeChange: ((ItemType) -> Unit)? = null,
+    onSearch: (String) -> Unit,
+    onCloseSearch: () -> Unit,
 ) {
     val haptics = LocalHapticFeedback.current
     val placeholderText = when(feedType) {
         ItemType.Game -> stringResource(R.string.search_for_game)
         ItemType.Movie -> stringResource(R.string.search_for_movie)
         ItemType.Show -> stringResource(R.string.search_for_show)
+        else -> stringResource(R.string.search_generic)
     }
 
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -43,28 +48,35 @@ fun TopBar(enabledFeeds: List<ItemType>,
             placeholderText = placeholderText,
             state = searchBarState,
             onSearch = {
-                if (useVibrations) haptics.performHapticFeedback(HapticFeedbackType.LongPress); onEvent(
-                FeedEvent.Search(it)
-            ) },
+                if (useVibrations) haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                onSearch(it)
+            },
             onBack = {
-                if (useVibrations) haptics.performHapticFeedback(HapticFeedbackType.LongPress); onEvent(
-                FeedEvent.CloseSearch
-            ) })
+                if (useVibrations) haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                onCloseSearch()
+            }
+        )
 
-        // Hide ships when showing search results or only 1 feed type enabled
-        AnimatedVisibility(
-            visible  = !showingSearchResults && enabledFeeds.size > 1,
-            enter    = slideInVertically(),
-            exit     = slideOutVertically()
-        ) {
-            FeedTypeChips(enabledFeeds, feedType, onClick = {
-                if(useVibrations) haptics.performHapticFeedback(HapticFeedbackType.Confirm)
-                onEvent(FeedEvent.ChangeFeedType(it))
-            } )
+        if(feedType != null && enabledFeeds != null) {
+            // Hide ships when showing search results or only 1 feed type enabled
+            AnimatedVisibility(
+                visible  = !showingSearchResults && enabledFeeds.size > 1,
+                enter    = scaleIn() + fadeIn(),
+                exit     = scaleOut() + fadeOut ()
+            ) {
+                FeedTypeChips(
+                    enabledFeeds = enabledFeeds,
+                    feedType = feedType,
+                    onClick = {
+                        if(useVibrations) haptics.performHapticFeedback(HapticFeedbackType.Confirm)
+                        onFeedTypeChange?.invoke(it)
+                    }
+                )
+            }
         }
 
         // Just to avoid covers get right against the search bar
-        if(enabledFeeds.size <= 1)
+        if(enabledFeeds == null || enabledFeeds.size <= 1)
             Spacer(modifier = Modifier.height(12.dp))
 
         // Inform user that is using local data
