@@ -35,7 +35,6 @@ import com.jd.trakker.R
 enum class FilterType {
     RELEVANCE,
     RATING,
-    USER_RATING,
     ALPHABETICAL,
     RELEASE_DATE
 }
@@ -54,7 +53,6 @@ object FilterDefaults {
 fun FilterType.toStringRes(): Int = when(this) {
     FilterType.RELEVANCE    -> R.string.filter_relevance
     FilterType.RATING       -> R.string.filter_rating
-    FilterType.USER_RATING  -> R.string.filter_user_rating
     FilterType.ALPHABETICAL -> R.string.filter_alphabetical
     FilterType.RELEASE_DATE -> R.string.filter_release_date
 }
