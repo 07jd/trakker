@@ -98,7 +98,11 @@ class ItemRepository(
     // Gets all items of type and id
     suspend fun getItemBatch(itemType: ItemType, ids: List<Int>): List<Item> {
         return withContext(Dispatchers.IO) {
-            metadataDao.getBatch(ids, itemType).map { it.toItem() }
+            val items = metadataDao.getBatch(ids, itemType)
+                    .associateBy { it.id }
+
+            // This is to maintain id order
+            ids.mapNotNull { items[it]?.toItem() }
         }
     }
 
