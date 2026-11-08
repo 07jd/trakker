@@ -116,13 +116,12 @@ fun AppNavHost(
                         ) { focusedItem ->
                             when {
                                 focusedItem != null -> {
-                                    //val focusedItemTracked = uiState.focusedItemTracked!!
-
                                     val focusedItemViewModel: FocusedItemViewModel = viewModel(
                                         key = "focused_item_${focusedItem.getType()}_${focusedItem.getId()}"
                                     ) {
                                         FocusedItemViewModel(
                                             item = focusedItem,
+                                            trackedItem = uiState.focusedItemTracked!!,
                                             itemRepository = viewModel.itemRepository,
                                             goBack = { trackedViewModel.onEvent(TrackedEvent.Unfocus) }
                                         )
@@ -177,6 +176,7 @@ fun AppNavHost(
                                     ) {
                                         FocusedItemViewModel(
                                             item = focusedItem,
+                                            trackedItem = uiState.focusedTracked!!,
                                             itemRepository = viewModel.itemRepository,
                                             goBack = { feedViewModel.onEvent(FeedEvent.Unfocus) }
                                         )

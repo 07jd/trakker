@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.jd.trakker.data.local.tracked.TrackedStatus
 import com.jd.trakker.ui.focusedItem.components.FocusedItemScreen
 import com.jd.trakker.ui.focusedItem.notes.NotesScreen
 
@@ -29,7 +28,7 @@ fun FocusedItem(
                     .padding(innerRootPadding)
             ) {
                 NotesScreen(
-                    notes = uiState.trackedItem?.notes ?: emptyList(),
+                    notes = uiState.trackedItem.notes,
                     index = uiState.noteIndex,
                     selectedNote = uiState.note,
                     useVibrations = useVibrations
@@ -42,9 +41,9 @@ fun FocusedItem(
             ) {
                 FocusedItemScreen(
                     item = uiState.item,
-                    trackedStatus = uiState.trackedItem?.status ?: TrackedStatus.UNTRACKED,
-                    favorite = uiState.trackedItem?.favorite ?: false,
-                    userRating = uiState.trackedItem?.rating,
+                    trackedStatus = uiState.trackedItem.status,
+                    favorite = uiState.trackedItem.favorite,
+                    userRating = uiState.trackedItem.rating,
                     useVibrations = useVibrations
                 ) { onEvent(it) }
             }

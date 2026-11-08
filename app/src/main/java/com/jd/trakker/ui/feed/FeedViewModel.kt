@@ -143,12 +143,13 @@ class FeedViewModel(
                 // Switches screen from feed to item detailed screen
                 // Reset any previous errors and its messages
                 is FeedEvent.Focus -> {
-                    _state.update { it.copy(focused = event.item, operationFailed = false, failureMessage = "") }
+                    val trackedInfo = itemRepository.getTracked(event.item)
+                    _state.update { it.copy(focused = event.item, focusedTracked = trackedInfo, operationFailed = false, failureMessage = "") }
                 }
 
                 // Remove focused item
                 FeedEvent.Unfocus -> {
-                    _state.update { it.copy(focused = null, operationFailed = false, failureMessage = "") }
+                    _state.update { it.copy(focused = null, focusedTracked = null, operationFailed = false, failureMessage = "") }
                 }
 
                 // Change feed type

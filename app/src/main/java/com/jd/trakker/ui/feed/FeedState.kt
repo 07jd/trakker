@@ -2,6 +2,7 @@ package com.jd.trakker.ui.feed
 
 import com.jd.trakker.data.local.item.Item
 import com.jd.trakker.data.local.item.ItemType
+import com.jd.trakker.data.local.tracked.TrackedItem
 
 data class FeedState(
     // From user preferences
@@ -15,6 +16,7 @@ data class FeedState(
 
     val loading: Boolean = true,
     val focused: Item? = null,
+    val focusedTracked: TrackedItem? = null,
 
     val showingSearchResults: Boolean = false,
     val searchTerm: String = "",  // Needed for refresh search term
