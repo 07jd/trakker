@@ -11,7 +11,7 @@ data class FeedRepository(
 ) {
     suspend fun getCachedFeed(type: ItemType, page: Int = 1, minutes: Int = 5): List<Int>? {
         return withContext(Dispatchers.IO) {
-            cachedFeedsDao.clearOldFeeds(type, minutes, page)
+            cachedFeedsDao.clearOldFeeds(type = type, minutes = minutes, page = page)
             cachedFeedsDao.getFeedResult(
                 minutes = minutes,
                 type = type,
