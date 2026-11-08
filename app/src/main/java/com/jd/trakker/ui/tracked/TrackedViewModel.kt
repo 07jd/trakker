@@ -4,8 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jd.trakker.data.local.item.GameItem
 import com.jd.trakker.data.local.item.Item
+import com.jd.trakker.data.local.item.ItemType
 import com.jd.trakker.data.local.item.MovieItem
 import com.jd.trakker.data.local.item.ShowItem
+import com.jd.trakker.data.local.item.getType
 import com.jd.trakker.data.local.tracked.TrackedStatus
 import com.jd.trakker.data.repository.ItemRepository
 import com.jd.trakker.ui.components.FilterDefaults
@@ -49,6 +51,7 @@ class TrackedViewModel(
             map[TrackedStatus.DROPPED.name]     = _state.value.droppedItems.isEmpty()
             map["favorite"]                     = _state.value.favoriteItems.isEmpty()
 
+            calculateStats()
             _state.update {
                 it.copy(loading = false, collapsedCategories = map)
             }
@@ -74,6 +77,77 @@ class TrackedViewModel(
                 completedItems  = completed,
                 droppedItems    = dropped,
                 favoriteItems   = favorite
+            )
+        }
+    }
+
+    // Calculate all the stats, updates the _state
+    private suspend fun calculateStats() {
+        val meanRating      = mutableMapOf<ItemType, Double>()
+        val meanUserRating  = mutableMapOf<ItemType, Double>()
+        val count           = mutableMapOf<ItemType, Int>()
+        val genresCount     = mutableMapOf<String, Int>()
+        val categoryCount   = mutableMapOf<TrackedStatus, Int>()
+
+        val favorite = _state.value.favoriteItems
+        val pending = _state.value.pendingItems
+        val completed = _state.value.completedItems
+        val dropped = _state.value.droppedItems
+
+        val userRatingCount = mutableMapOf<ItemType, Int>()
+        val itemRatingCount = mutableMapOf<ItemType, Int>()
+        suspend fun iterate(item: Item, status: TrackedStatus? = null) {
+            // Register category count
+            if(status != null) categoryCount[status] = categoryCount.getOrPut(status) { 0 } + 1
+
+            val type = item.getType()
+            val (rating, genres) = when(item) {
+                is GameItem  -> item.game.rating to item.game.genres
+                is MovieItem -> item.movie.rating to item.movie.genres
+                is ShowItem  -> item.show.rating to item.show.genres
+            }
+            val userRating = withContext(Dispatchers.IO) {
+                itemRepository.getTracked(item).rating
+            }
+
+            // Register item type count
+            count[type] = count.getOrPut(type) { 0 } + 1
+
+            // Register ratings
+            meanRating[type] = meanRating.getOrPut(type) { 0.toDouble() } + rating
+            itemRatingCount[type] = itemRatingCount.getOrPut(type) { 0 } + 1
+
+            // Register user ratings
+            if(userRating != null) {
+                userRatingCount[type] = userRatingCount.getOrPut(type) { 0 } + 1
+                meanUserRating[type] = meanUserRating.getOrPut(type) { 0.toDouble() } + userRating
+            }
+
+            // Register genres
+            genres.forEach {
+                genresCount[it] = genresCount.getOrPut(it) { 0 } + 1
+            }
+        }
+
+        favorite.forEach    { iterate(it) }
+        pending.forEach     { iterate(it, TrackedStatus.PENDING) }
+        completed.forEach   { iterate(it, TrackedStatus.COMPLETED) }
+        dropped.forEach     { iterate(it, TrackedStatus.DROPPED) }
+
+        ItemType.entries.forEach {
+            meanUserRating[it]  = meanUserRating.getOrPut(it) { 0.toDouble() } / userRatingCount.getOrPut(it) { 1 }
+            meanRating[it]      = meanRating.getOrPut(it) { 0.toDouble() } / itemRatingCount.getOrPut(it) { 1 }
+        }
+
+        _state.update {
+            it.copy(
+                stats = Stats(
+                    meanRating = meanRating,
+                    meanUserRating = meanUserRating,
+                    count = count,
+                    genresCount = genresCount,
+                    categoryCount = categoryCount
+                )
             )
         }
     }
@@ -154,7 +228,7 @@ class TrackedViewModel(
                 is TrackedEvent.ViewAll -> _state.update { it.copy(viewAllType = event.name) }
                 is TrackedEvent.CloseViewAll -> _state.update { it.copy(viewAllType = null) }
                 is TrackedEvent.CloseSearch -> _state.update { it.copy(searchResults = null) }
-                is TrackedEvent.Refresh -> refreshData()
+                is TrackedEvent.Refresh -> { refreshData(); calculateStats() }
             }
         }
     }

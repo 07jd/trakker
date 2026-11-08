@@ -24,5 +24,8 @@ data class TrackedState(
 
     // Focused item
     val focusedItem: Item? = null,
-    val focusedItemTracked: TrackedItem? = null
+    val focusedItemTracked: TrackedItem? = null,
+
+    // Stats
+    val stats: Stats = Stats()
 )
