@@ -7,6 +7,8 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,6 +22,7 @@ import androidx.navigation.compose.composable
 import com.jd.trakker.R
 import com.jd.trakker.data.local.item.getId
 import com.jd.trakker.data.local.item.getType
+import com.jd.trakker.data.local.tracked.TrackedStatus
 import com.jd.trakker.ui.feed.Feed
 import com.jd.trakker.ui.feed.FeedEvent
 import com.jd.trakker.ui.feed.FeedViewModel
@@ -96,7 +99,10 @@ fun AppNavHost(
                         val uiState by trackedViewModel.uiState.collectAsStateWithLifecycle(initialValue = TrackedState())
 
                         val gridState = rememberLazyGridState()
+                        val verticalScrollState = rememberScrollState()
                         val searchBarState = rememberTextFieldState()
+                        // Status + Favorite
+                        val horizontalScrollStates = (0..<(TrackedStatus.entries.size + 1)).map { rememberLazyListState() }
 
 
                         AnimatedContent(
@@ -131,6 +137,8 @@ fun AppNavHost(
                                 }
                                 else -> TrackedScreen(
                                     innerRootPadding = innerPadding,
+                                    scrollState = verticalScrollState,
+                                    horizontalScrollStates = horizontalScrollStates,
                                     uiState = uiState,
                                     gridState = gridState,
                                     searchBarState = searchBarState,

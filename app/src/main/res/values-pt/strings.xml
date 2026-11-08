@@ -98,9 +98,10 @@
     <string name="order">Ordem</string>
     <string name="type">Tipo</string>
     <string name="filter_relevance">Relevancia</string>
-    <string name="search_generic">Procurar por algo</string>
+    <string name="search_generic">Pesquisar por algo</string>
     <string name="no_tracked">Nada tracked</string>
     <string name="view_all">Ver todos</string>
     <string name="favorite_plural">Favoritos</string>
     <string name="no_items">Sem itens</string>
+    <string name="empty">Vazio</string>
 </resources>

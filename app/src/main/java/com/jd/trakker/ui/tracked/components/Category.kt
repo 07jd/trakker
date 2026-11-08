@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -92,14 +93,14 @@ fun Category(
                     AnimatedContent(
                         targetState = collapsed
                     ) { isCollapsed ->
-                        if(!isCollapsed) {
+                        if(isCollapsed) {
                             Icon(
                                 painter = painterResource(R.drawable.chevron_down),
                                 contentDescription = null
                             )
                         } else {
                             Icon(
-                                painter = painterResource(R.drawable.chevron_double_up),
+                                painter = painterResource(R.drawable.chevron_up),
                                 contentDescription = null
                             )
                         }
@@ -134,6 +135,26 @@ fun Category(
             exit = shrinkVertically() + fadeOut()
         ) {
             Box(modifier = Modifier.fillMaxWidth()) {
+                // Nothing to list
+                if(items.isEmpty()) {
+                    Box(
+                        modifier = Modifier
+                                .fillMaxSize()
+                                .aspectRatio(3/4f),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = stringResource(R.string.empty),
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+
+
+                    return@Box
+                }
+
+                // List items
                 LazyRow(
                     state = state,
                     modifier = Modifier.fillMaxWidth(),

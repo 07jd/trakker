@@ -1,10 +1,11 @@
 package com.jd.trakker.ui.tracked.components
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -19,6 +20,8 @@ import com.jd.trakker.ui.tracked.TrackedEvent
 @Composable
 fun MainScreen(
     innerPadding: PaddingValues,
+    scrollState: ScrollState,
+    horizontalScrollStates: List<LazyListState>,
     collapsedCategories: Map<String, Boolean>,
     favoriteItems: List<Item>,
     pendingItems: List<Item>,
@@ -30,13 +33,14 @@ fun MainScreen(
             .fillMaxSize()
             .padding(innerPadding)
             .padding(horizontal = 16.dp)
-            .verticalScroll(rememberScrollState())
+            .verticalScroll(scrollState)
     ) {
         // TODO: Stats
 
         val favoriteTypeName = "favorite"
         val isFavoriteCollapsed = collapsedCategories.getOrDefault(favoriteTypeName, false)
         Category(
+            state = horizontalScrollStates[0],
             title = stringResource(R.string.favorite_plural),
             items = favoriteItems,
             onItemClick = { onEvent(TrackedEvent.Focus(it)) },
@@ -46,9 +50,10 @@ fun MainScreen(
         )
 
 
-        TrackedStatus.entries.filter { it != TrackedStatus.UNTRACKED }.forEach { category ->
+        TrackedStatus.entries.filter { it != TrackedStatus.UNTRACKED }.forEachIndexed { i, category ->
             val isCollapsed = collapsedCategories.getOrDefault(category.name, false)
             Category(
+                state = horizontalScrollStates[i+1],
                 title = stringResource(category.toStringRes()),
                 items = when(category) {
                     TrackedStatus.PENDING   -> pendingItems

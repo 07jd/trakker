@@ -5,6 +5,10 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.text.input.TextFieldState
@@ -39,12 +44,13 @@ import com.jd.trakker.ui.components.TopBar
 import com.jd.trakker.ui.feed.components.SadScreen
 import com.jd.trakker.ui.tracked.components.MainScreen
 
-// TODO: Look into the search logic, it seems it's not working
 @Composable
 fun TrackedScreen(
     innerRootPadding: PaddingValues,
     uiState: TrackedState,
     gridState: LazyGridState,
+    horizontalScrollStates: List<LazyListState>,
+    scrollState: ScrollState,
     searchBarState: TextFieldState,
     onEvent: (TrackedEvent) -> Unit,
     onBack: () -> Unit
@@ -53,9 +59,16 @@ fun TrackedScreen(
 
     Scaffold(
         topBar = {
-
             AnimatedContent(
-                uiState.viewAllType
+                targetState = uiState.viewAllType,
+                transitionSpec = {
+                    // Main screen -> View All screen
+                    if(initialState == null && targetState != null) {
+                        slideInHorizontally { it } togetherWith slideOutHorizontally { -it }
+                    } else {
+                        slideInHorizontally { -it } togetherWith slideOutHorizontally { it }
+                    }
+                }
             ) { viewAll ->
                 if(viewAll == null) {
                     TopBar(
@@ -116,8 +129,19 @@ fun TrackedScreen(
             exit    = fadeOut()
         ) { LoadingCircle() }
 
+        // Content
         AnimatedContent(
-            targetState = Pair(uiState.searchResults, uiState.viewAllType)
+            targetState = Pair(uiState.searchResults, uiState.viewAllType),
+            transitionSpec = {
+                // Main screen -> { searchResults / viewAll }
+                if(initialState.first == null && initialState.second == null &&
+                   (targetState.first != null || targetState.second != null)
+                ) {
+                    slideInHorizontally { it } togetherWith slideOutHorizontally { -it }
+                } else {
+                    slideInHorizontally { -it } togetherWith slideOutHorizontally { it }
+                }
+            }
         ) { (results, viewAll) ->
             when {
                 results != null -> {
@@ -127,11 +151,18 @@ fun TrackedScreen(
                         SadScreen(stringResource(R.string.search_no_results))
                     } else {
                         // Show results
-                        ItemGrid(
-                            state = gridState,
-                            items = results,
-                            onClick = { onEvent(TrackedEvent.Focus(it)) }
-                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(innerPadding),
+                            contentAlignment = Alignment.TopStart
+                        ) {
+                            ItemGrid(
+                                state = gridState,
+                                items = results,
+                                onClick = { onEvent(TrackedEvent.Focus(it)) }
+                            )
+                        }
                     }
                 }
                 viewAll != null -> {
@@ -140,7 +171,8 @@ fun TrackedScreen(
                         TrackedStatus.COMPLETED.name    -> uiState.completedItems
                         TrackedStatus.PENDING.name      -> uiState.pendingItems
                         TrackedStatus.DROPPED.name      -> uiState.droppedItems
-                        else                            -> uiState.favoriteItems
+                        "favorite"                      -> uiState.favoriteItems
+                        else                            -> return@AnimatedContent // Early return to avoid flickering
                     }
 
                     if (items.isEmpty()) {
@@ -162,6 +194,8 @@ fun TrackedScreen(
                 }
                 else -> MainScreen(
                     innerPadding = innerPadding,
+                    scrollState = scrollState,
+                    horizontalScrollStates = horizontalScrollStates,
                     collapsedCategories = uiState.collapsedCategories,
                     favoriteItems = uiState.favoriteItems,
                     pendingItems = uiState.pendingItems,
