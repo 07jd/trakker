@@ -5,13 +5,16 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
@@ -79,8 +82,13 @@ private fun DisplayScreenOrFocusedItem(
     onFocusedItemBackEvent: () -> Unit,
     screen: @Composable (() -> Unit)
 ) {
+    // Main content
+    screen()
+
+    // Focused screen
+    val content = if(trackedItem != null && item != null) item to trackedItem else null
     AnimatedContent(
-        targetState = trackedItem,
+        targetState = content,
         transitionSpec = {
             when {
                 // screen -> focusedItemScreen
@@ -88,29 +96,30 @@ private fun DisplayScreenOrFocusedItem(
                 else                -> slideInHorizontally { -it } togetherWith slideOutHorizontally { it }
             }
         }
-    ) { tracked ->
-        when {
-            tracked != null && item != null -> {
-                // Create focused item view model
-                val focusedItemViewModel: FocusedItemViewModel = viewModel(
-                    key = "focused_item_${item.getType()}_${item.getId()}"
-                ) {
-                    FocusedItemViewModel(
-                        item = item,
-                        trackedItem = tracked,
-                        itemRepository = itemRepository,
-                        goBack = { onFocusedItemBackEvent() }
-                    )
-                }
+    ) { focusedScreenContent ->
+        if (focusedScreenContent != null) {
+            val (focusedItem, focusedTrackedItem) = focusedScreenContent
 
-                val focusedItemUiState by focusedItemViewModel.uiState.collectAsStateWithLifecycle()
-                FocusedItem(
-                    innerRootPadding = innerPadding,
-                    uiState = focusedItemUiState,
-                    onEvent = focusedItemViewModel::onEvent,
+            // Create focused item view model
+            val focusedItemViewModel: FocusedItemViewModel = viewModel(
+                key = "focused_item_${focusedItem.getType()}_${focusedItem.getId()}"
+            ) {
+                FocusedItemViewModel(
+                    item = focusedItem,
+                    trackedItem = focusedTrackedItem,
+                    itemRepository = itemRepository,
+                    goBack = { onFocusedItemBackEvent() }
                 )
             }
-            else -> screen()
+
+            val focusedItemUiState by focusedItemViewModel.uiState.collectAsStateWithLifecycle()
+            FocusedItem(
+                innerRootPadding = innerPadding,
+                uiState = focusedItemUiState,
+                onEvent = focusedItemViewModel::onEvent,
+            )
+        } else {
+            Box(modifier = Modifier.fillMaxSize())
         }
     }
 }
