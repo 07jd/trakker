@@ -20,9 +20,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.jd.trakker.R
+import com.jd.trakker.data.local.item.Item
 import com.jd.trakker.data.local.item.getId
 import com.jd.trakker.data.local.item.getType
+import com.jd.trakker.data.local.tracked.TrackedItem
 import com.jd.trakker.data.local.tracked.TrackedStatus
+import com.jd.trakker.data.repository.ItemRepository
 import com.jd.trakker.ui.feed.Feed
 import com.jd.trakker.ui.feed.FeedEvent
 import com.jd.trakker.ui.feed.FeedViewModel
@@ -68,6 +71,51 @@ private fun getSlideDirection(
 }
 
 @Composable
+private fun DisplayScreenOrFocusedItem(
+    innerPadding: PaddingValues,
+    item: Item?,
+    trackedItem: TrackedItem?,
+    itemRepository: ItemRepository,
+    onFocusedItemBackEvent: () -> Unit,
+    screen: @Composable (() -> Unit)
+) {
+    AnimatedContent(
+        targetState = trackedItem,
+        transitionSpec = {
+            when {
+                // screen -> focusedItemScreen
+                targetState != null -> slideInHorizontally { it } togetherWith  slideOutHorizontally { -it }
+                else                -> slideInHorizontally { -it } togetherWith slideOutHorizontally { it }
+            }
+        }
+    ) { tracked ->
+        when {
+            tracked != null && item != null -> {
+                // Create focused item view model
+                val focusedItemViewModel: FocusedItemViewModel = viewModel(
+                    key = "focused_item_${item.getType()}_${item.getId()}"
+                ) {
+                    FocusedItemViewModel(
+                        item = item,
+                        trackedItem = tracked,
+                        itemRepository = itemRepository,
+                        goBack = { onFocusedItemBackEvent() }
+                    )
+                }
+
+                val focusedItemUiState by focusedItemViewModel.uiState.collectAsStateWithLifecycle()
+                FocusedItem(
+                    innerRootPadding = innerPadding,
+                    uiState = focusedItemUiState,
+                    onEvent = focusedItemViewModel::onEvent,
+                )
+            }
+            else -> screen()
+        }
+    }
+}
+
+@Composable
 fun AppNavHost(
     innerPadding: PaddingValues,
     viewModel: AppViewModel,
@@ -104,37 +152,14 @@ fun AppNavHost(
                         // Status + Favorite
                         val horizontalScrollStates = (0..<(TrackedStatus.entries.size + 1)).map { rememberLazyListState() }
 
-
-                        AnimatedContent(
-                            targetState = uiState.focusedItem,
-                            transitionSpec = {
-                                when {
-                                    targetState != null -> slideInHorizontally { it } togetherWith  slideOutHorizontally { -it }
-                                    else                -> slideInHorizontally { -it } togetherWith slideOutHorizontally { it }
-                                }
-                            }
-                        ) { focusedItem ->
-                            when {
-                                focusedItem != null -> {
-                                    val focusedItemViewModel: FocusedItemViewModel = viewModel(
-                                        key = "focused_item_${focusedItem.getType()}_${focusedItem.getId()}"
-                                    ) {
-                                        FocusedItemViewModel(
-                                            item = focusedItem,
-                                            trackedItem = uiState.focusedItemTracked!!,
-                                            itemRepository = viewModel.itemRepository,
-                                            goBack = { trackedViewModel.onEvent(TrackedEvent.Unfocus) }
-                                        )
-                                    }
-
-                                    val focusedItemUiState by focusedItemViewModel.uiState.collectAsStateWithLifecycle()
-                                    FocusedItem(
-                                        innerRootPadding = innerPadding,
-                                        uiState = focusedItemUiState,
-                                        onEvent = focusedItemViewModel::onEvent,
-                                    )
-                                }
-                                else -> TrackedScreen(
+                        DisplayScreenOrFocusedItem(
+                            innerPadding            = innerPadding,
+                            item                    = uiState.focusedItem,
+                            trackedItem             = uiState.focusedItemTracked,
+                            itemRepository          = viewModel.itemRepository,
+                            onFocusedItemBackEvent  = { trackedViewModel.onEvent(TrackedEvent.Unfocus) },
+                            screen = {
+                                TrackedScreen(
                                     innerRootPadding = innerPadding,
                                     scrollState = verticalScrollState,
                                     horizontalScrollStates = horizontalScrollStates,
@@ -145,7 +170,7 @@ fun AppNavHost(
                                     onBack = { onBack() }
                                 )
                             }
-                        }
+                        )
                     }
                     Destination.Feed -> {
                         val feedViewModel: FeedViewModel = viewModel {
@@ -162,35 +187,14 @@ fun AppNavHost(
                         val searchBarState  = rememberTextFieldState()
 
 
-
-                        AnimatedContent(targetState = uiState.focused,
-                                        transitionSpec = { when {
-                                            targetState != null -> slideInHorizontally { it } togetherWith  slideOutHorizontally { -it }
-                                            else                -> slideInHorizontally { -it } togetherWith slideOutHorizontally { it }
-                                        } }
-                        ) { focusedItem ->
-                            when {
-                                focusedItem != null -> {
-                                    val focusedItemViewModel: FocusedItemViewModel = viewModel(
-                                        key = "focused_item_${focusedItem.getType()}_${focusedItem.getId()}"
-                                    ) {
-                                        FocusedItemViewModel(
-                                            item = focusedItem,
-                                            trackedItem = uiState.focusedTracked!!,
-                                            itemRepository = viewModel.itemRepository,
-                                            goBack = { feedViewModel.onEvent(FeedEvent.Unfocus) }
-                                        )
-                                    }
-
-                                    val focusedItemUiState by focusedItemViewModel.uiState.collectAsStateWithLifecycle()
-                                    FocusedItem(
-                                        innerRootPadding = innerPadding,
-                                        uiState = focusedItemUiState,
-                                        useVibrations = uiState.useVibrations,
-                                        onEvent = focusedItemViewModel::onEvent
-                                    )
-                                }
-                                else -> Feed(
+                        DisplayScreenOrFocusedItem(
+                            innerPadding = innerPadding,
+                            item = uiState.focused,
+                            trackedItem = uiState.focusedTracked,
+                            itemRepository = viewModel.itemRepository,
+                            onFocusedItemBackEvent = { feedViewModel.onEvent(FeedEvent.Unfocus) },
+                            screen = {
+                                Feed(
                                     innerPadding,
                                     uiState,
                                     gridState,
@@ -199,7 +203,7 @@ fun AppNavHost(
                                     onBack = { onBack() }
                                 )
                             }
-                        }
+                        )
                     }
                     Destination.Settings -> {
                         val settingsViewModel: SettingsViewModel = viewModel {
