@@ -32,11 +32,12 @@ class FocusedItemViewModel(
                     goBack()
                 }
                 is FocusedItemEvent.ChangeState -> {
+                    val updatedTrackedItem = _state.value.trackedItem?.copy(status = event.state)
                     _state.update { it.copy(
-                        trackedItem = _state.value.trackedItem!!.copy(
-                            status = event.state
-                        )
+                        trackedItem = updatedTrackedItem
                     ) }
+
+                    itemRepository.upsert(updatedTrackedItem!!)
                 }
                 is FocusedItemEvent.CloseNote   -> {
                     _state.update { it.copy(
