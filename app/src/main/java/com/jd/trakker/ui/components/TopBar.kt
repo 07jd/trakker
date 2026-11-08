@@ -32,6 +32,10 @@ fun TopBar(
     onFeedTypeChange: ((ItemType) -> Unit)? = null,
     onSearch: (String) -> Unit,
     onCloseSearch: () -> Unit,
+    showFilterIcon: Boolean = false,
+    filterType: FilterType? = null,
+    filterOrder: FilterOrder? = null,
+    onApplyFilter: ((FilterOrder, FilterType) -> Unit)? = null,
 ) {
     val haptics = LocalHapticFeedback.current
     val placeholderText = when(feedType) {
@@ -45,9 +49,11 @@ fun TopBar(
         // This is the search box, the material3 provided one is kinda buggy and unstable
         SearchBar(
             showBackButton = showingSearchResults,
-            showFilterButton = !showingSearchResults,
+            showFilterButton = showFilterIcon && !showingSearchResults,
             placeholderText = placeholderText,
             state = searchBarState,
+            filterType = filterType,
+            filterOrder = filterOrder,
             onSearch = {
                 if (useVibrations) haptics.performHapticFeedback(HapticFeedbackType.LongPress)
                 onSearch(it)
@@ -55,7 +61,8 @@ fun TopBar(
             onBack = {
                 if (useVibrations) haptics.performHapticFeedback(HapticFeedbackType.LongPress)
                 onCloseSearch()
-            }
+            },
+            onApplyFilter = { order, type -> onApplyFilter?.invoke(order, type) }
         )
 
         if(feedType != null && enabledFeeds != null) {
