@@ -3,7 +3,6 @@ package com.jd.trakker.ui.feed
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jd.trakker.data.remote.ExceptionAPI
-import com.jd.trakker.data.local.preferences.PreferencesManager
 import com.jd.trakker.data.local.item.GameItem
 import com.jd.trakker.data.local.item.Item
 import com.jd.trakker.data.repository.ItemRepository
@@ -11,7 +10,9 @@ import com.jd.trakker.data.local.item.ItemType
 import com.jd.trakker.data.local.item.MovieItem
 import com.jd.trakker.data.local.item.ShowItem
 import com.jd.trakker.data.local.item.getId
+import com.jd.trakker.data.local.preferences.PreferencesState
 import com.jd.trakker.data.repository.FeedRepository
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -22,25 +23,22 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class FeedViewModel(
-    private val preferences: PreferencesManager,
-    private val itemRepository: ItemRepository,
-    private val feedRepository: FeedRepository
+    private val preferencesFlow : Flow<PreferencesState>,
+    private val itemRepository  : ItemRepository,
+    private val feedRepository  : FeedRepository
 ) : ViewModel() {
     private val feedExpirationTimeInMinutes = 5
     private val _state = MutableStateFlow(FeedState())
     val uiState: StateFlow<FeedState> = combine(
         _state,
-        preferences.useVibrations,
-        preferences.gameFeedEnabled,
-        preferences.movieFeedEnabled,
-        preferences.showFeedEnabled
-    ){ state, useVibrations, gameFeedEnabled, movieFeedEnabled, showFeedEnabled ->
+        preferencesFlow
+    ){ state, preferences ->
         state.copy(
-            useVibrations = useVibrations,
+            useVibrations = preferences.useVibrations,
             enabledFeeds = buildList {
-                if (gameFeedEnabled)  add(ItemType.Game)
-                if (movieFeedEnabled) add(ItemType.Movie)
-                if (showFeedEnabled)  add(ItemType.Show)
+                if (preferences.gameFeedEnabled)  add(ItemType.Game)
+                if (preferences.movieFeedEnabled) add(ItemType.Movie)
+                if (preferences.showFeedEnabled)  add(ItemType.Show)
             }
         )
     }.stateIn(
@@ -54,13 +52,11 @@ class FeedViewModel(
     init {
         viewModelScope.launch {
             // Get enabled feeds
-            val gameFeedEnabled = preferences.gameFeedEnabled.first()
-            val movieFeedEnabled = preferences.movieFeedEnabled.first()
-            val showFeedEnabled = preferences.showFeedEnabled.first()
+            val preferences = preferencesFlow.first()
             val enabledFeeds = buildList {
-                if (gameFeedEnabled) add(ItemType.Game)
-                if (movieFeedEnabled) add(ItemType.Movie)
-                if (showFeedEnabled) add(ItemType.Show)
+                if (preferences.gameFeedEnabled) add(ItemType.Game)
+                if (preferences.movieFeedEnabled) add(ItemType.Movie)
+                if (preferences.showFeedEnabled) add(ItemType.Show)
             }
 
             _state.update { it.copy(enabledFeeds = enabledFeeds, feedType = enabledFeeds.first()) }

@@ -37,10 +37,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.jd.trakker.R
+import com.jd.trakker.data.local.item.ItemType
+import com.jd.trakker.data.local.preferences.PreferencesState
 import com.jd.trakker.ui.setup.components.ConfirmScreen
 import com.jd.trakker.ui.setup.components.FeedScreen
 import com.jd.trakker.ui.setup.components.ThemeScreen
 import com.jd.trakker.ui.setup.components.WelcomeScreen
+import kotlinx.coroutines.flow.Flow
 
 private enum class Screens(
     val route: String
@@ -83,7 +86,7 @@ private fun transitionDirection(
 @Composable
 private fun SetupNavHost(
     controller: NavHostController,
-    uiState: SetupState,
+    uiState: PreferencesState,
     onEvent: (SetupEvent) -> Unit
 ) {
     NavHost(
@@ -108,8 +111,15 @@ private fun SetupNavHost(
             composable(screen.route) {
                 when (screen) {
                     Screens.WELCOME_SCREEN -> WelcomeScreen()
-                    Screens.THEME -> ThemeScreen(uiState.theme, uiState.useSystemColor, uiState.useVibrations) { onEvent(it) }
-                    Screens.FEED -> FeedScreen(uiState.enabledFeeds, uiState.useVibrations) { onEvent(it) }
+                    Screens.THEME -> ThemeScreen(uiState.themeType, uiState.useDynamicColor, uiState.useVibrations) { onEvent(it) }
+                    Screens.FEED -> FeedScreen(
+                        buildList {
+                            if(uiState.gameFeedEnabled)  add(ItemType.Game)
+                            if(uiState.movieFeedEnabled) add(ItemType.Movie)
+                            if(uiState.showFeedEnabled)  add(ItemType.Show)
+                        },
+                        uiState.useVibrations
+                    ) { onEvent(it) }
                     Screens.CONFIRM -> ConfirmScreen()
                 }
             }
@@ -119,10 +129,12 @@ private fun SetupNavHost(
 
 @Composable
 fun SetupScreen(
-    uiState: SetupState,
+    uiStateFlow: Flow<PreferencesState>,
     onEvent: (SetupEvent) -> Unit,
     navController: NavHostController
 ) {
+    val uiState by uiStateFlow.collectAsState(PreferencesState())
+
     val haptics = LocalHapticFeedback.current
     val backStackEntry by navController.currentBackStackEntryFlow.collectAsState(initial = navController.currentBackStackEntry)
     val currentScreen = Screens.entries.firstOrNull {

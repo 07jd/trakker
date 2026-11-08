@@ -14,7 +14,7 @@ val Context.appDataStore by preferencesDataStore(
 
 object Preferences {
     // Initial setup
-    val isInitalSetupDone = booleanPreferencesKey("initialSetup")
+    val isInitialSetupDone = booleanPreferencesKey("initialSetup")
 
     // Overall App Settings
     val initialAppScreen  = stringPreferencesKey("initialAppScreen")

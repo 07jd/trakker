@@ -93,7 +93,7 @@ fun AppNavHost(
                     Destination.Feed -> {
                         val feedViewModel: FeedViewModel = viewModel {
                             FeedViewModel(
-                                preferences     = viewModel.preferences,
+                                preferencesFlow = viewModel.preferencesFlow,
                                 itemRepository  = viewModel.itemRepository,
                                 feedRepository  = viewModel.feedRepository
                             )

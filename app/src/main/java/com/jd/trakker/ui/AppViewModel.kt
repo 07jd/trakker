@@ -6,8 +6,10 @@ import androidx.room.Room
 import androidx.sqlite.driver.AndroidSQLiteDriver
 import com.jd.trakker.data.local.Database
 import com.jd.trakker.data.local.preferences.PreferencesManager
+import com.jd.trakker.data.local.preferences.PreferencesState
 import com.jd.trakker.data.repository.FeedRepository
 import com.jd.trakker.data.repository.ItemRepository
+import kotlinx.coroutines.flow.combine
 
 class AppViewModel(
     context: Context
@@ -20,6 +22,31 @@ class AppViewModel(
 
     // Public
     val preferences = PreferencesManager(context)
+    val preferencesFlow = combine(
+        combine(
+            preferences.gameFeedEnabled,
+            preferences.movieFeedEnabled,
+            preferences.showFeedEnabled
+        ) { game, movie, show -> Triple(game, movie, show) },
+        combine(
+            preferences.theme,
+            preferences.useDynamicColor,
+            preferences.useVibrations
+        ) { theme, dynColor, vib -> Triple(theme, dynColor, vib) },
+        preferences.initialAppScreen,
+        preferences.initialSetupDone
+    ) { feeds, themeOptions, initialScreen, setupDone ->
+        PreferencesState(
+            isInitialSetupDone = setupDone,
+            initialAppScreen = initialScreen,
+            themeType = themeOptions.first,
+            useDynamicColor = themeOptions.second,
+            useVibrations = themeOptions.third,
+            gameFeedEnabled = feeds.first,
+            movieFeedEnabled = feeds.second,
+            showFeedEnabled = feeds.third
+        )
+    }
 
     val itemRepository: ItemRepository by lazy {
         ItemRepository(

@@ -17,7 +17,6 @@ import androidx.navigation.compose.rememberNavController
 import com.jd.trakker.ui.AppScreen
 import com.jd.trakker.ui.AppViewModel
 import com.jd.trakker.ui.setup.SetupScreen
-import com.jd.trakker.ui.setup.SetupState
 import com.jd.trakker.ui.setup.SetupViewModel
 import com.jd.trakker.ui.theme.ThemeType
 import com.jd.trakker.ui.theme.TrakkerTheme
@@ -29,29 +28,25 @@ class MainActivity : ComponentActivity() {
         setContent {
             val context = LocalContext.current
             val viewModel: AppViewModel = viewModel { AppViewModel(context) }
+            val preferencesState by viewModel.preferencesFlow.collectAsStateWithLifecycle(null)
             val appNavController = rememberNavController()
 
             val setupViewModel: SetupViewModel = viewModel { SetupViewModel(viewModel.preferences) }
             val setupNavController             = rememberNavController()
-            val setupUI by setupViewModel.uiState.collectAsStateWithLifecycle(SetupState())
-
-            val theme           by viewModel.preferences.theme.collectAsStateWithLifecycle(ThemeType.AUTO)
-            val useDynamicColor by viewModel.preferences.useDynamicColor.collectAsStateWithLifecycle(false)
-            val setupDone       by viewModel.preferences.initialSetupDone.collectAsStateWithLifecycle(null)
-            val initialScreen   by viewModel.preferences.initialAppScreen.collectAsStateWithLifecycle(null)
 
             TrakkerTheme(
-                type            = theme,
-                useDynamicColor = useDynamicColor
+                type            = preferencesState?.themeType       ?: ThemeType.AUTO,
+                useDynamicColor = preferencesState?.useDynamicColor ?: false
             ) {
                 when {
-                    setupDone == null || (initialScreen == null && setupDone == true) -> Box(
-                        modifier = Modifier
+                    preferencesState == null ->
+                        Box(
+                            modifier = Modifier
                                 .fillMaxSize()
                                 .background(MaterialTheme.colorScheme.background)
-                    )
-                    setupDone == false -> SetupScreen(setupUI, setupViewModel::onEvent, setupNavController)
-                    else -> AppScreen(viewModel, appNavController, initialScreen!!)
+                        )
+                    !preferencesState!!.isInitialSetupDone -> SetupScreen(viewModel.preferencesFlow, setupViewModel::onEvent, setupNavController)
+                    else                                   -> AppScreen(viewModel, appNavController, preferencesState!!.initialAppScreen)
                 }
             }
         }

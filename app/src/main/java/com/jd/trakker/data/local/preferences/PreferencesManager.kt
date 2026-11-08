@@ -11,7 +11,7 @@ class PreferencesManager(
     private val context: Context
 ) {
     val initialSetupDone: Flow<Boolean> = context.appDataStore.data.map { preferences ->
-        preferences[Preferences.isInitalSetupDone] ?: false
+        preferences[Preferences.isInitialSetupDone] ?: false
     }
 
     val theme: Flow<ThemeType> = context.appDataStore.data.map { preferences ->
@@ -46,7 +46,7 @@ class PreferencesManager(
 
     suspend fun setInitialSetupDone(state: Boolean) {
         context.appDataStore.edit { preferences ->
-            preferences[Preferences.isInitalSetupDone] = state
+            preferences[Preferences.isInitialSetupDone] = state
         }
     }
 
