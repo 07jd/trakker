@@ -4,7 +4,6 @@ import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
 import com.jd.trakker.data.local.item.ItemType
-import com.jd.trakker.data.local.tracked.TrackedItem
 
 @Dao
 interface MetadataDao {
@@ -34,7 +33,7 @@ interface MetadataDao {
         SELECT Metadata.*
         FROM MetadataFTS
         INNER JOIN Metadata 
-        ON Metadata.id = MetadataFTS.rowid
+        ON Metadata.rowid = MetadataFTS.rowid
         WHERE MetadataFTS MATCH :query
         AND type = :type
     """)
