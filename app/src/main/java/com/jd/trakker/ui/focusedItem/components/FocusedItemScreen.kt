@@ -147,6 +147,7 @@ fun FocusedItemScreen(
             // Rate dialog
             if(rateDialogOpen) {
                 RateDialog(
+                    value = userRating,
                     onDismiss = { rateDialogOpen = false }
                 ) {
                     if(useVibrations) haptics.performHapticFeedback(HapticFeedbackType.Confirm)
