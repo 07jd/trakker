@@ -14,8 +14,11 @@ android {
         applicationId = "com.jd.trakker"
         minSdk = 29
         targetSdk = 37
-        versionCode = 1
-        versionName = "1.0"
+
+        val majorVersion: Int = System.getenv("major_version")?.toIntOrNull() ?: 1
+        val minorVersion: Int = System.getenv("minor_version")?.toIntOrNull() ?: 0
+        versionCode = "${majorVersion}0${minorVersion}".toInt()
+        versionName = "${majorVersion}.${minorVersion}"
 
         buildConfigField(
             type = "String",
