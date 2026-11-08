@@ -29,7 +29,7 @@ data class Show(
     }
 
     fun localDateString(): String {
-        return Instant.ofEpochMilli(releaseDate).atZone(ZoneOffset.UTC).toLocalDate()
+        return Instant.ofEpochSecond(releaseDate).atZone(ZoneOffset.UTC).toLocalDate()
                 .format(
                     DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
                             .withLocale(Locale.getDefault())

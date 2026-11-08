@@ -8,6 +8,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.time.LocalDate
 import java.time.ZoneOffset
+import kotlin.time.toKotlinInstant
 
 enum class FetchType {
     Feed,
@@ -29,8 +30,7 @@ class ShowFetcher {
             val date = LocalDate.parse(date)
             return date
                     .atStartOfDay(ZoneOffset.UTC)
-                    .toInstant()
-                    .toEpochMilli()
+                    .toEpochSecond()
         } catch(_: Exception) {
             return 0L
         }

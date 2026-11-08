@@ -24,8 +24,7 @@ class MovieFetcher {
             val date = LocalDate.parse(date)
             return date
                     .atStartOfDay(ZoneOffset.UTC)
-                    .toInstant()
-                    .toEpochMilli()
+                    .toEpochSecond()
         } catch(_: Exception) {
             return 0L
         }
