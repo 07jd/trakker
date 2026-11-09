@@ -15,6 +15,7 @@ import com.jd.trakker.R
 import com.jd.trakker.data.local.item.Item
 import com.jd.trakker.data.local.tracked.TrackedStatus
 import com.jd.trakker.data.local.tracked.toStringRes
+import com.jd.trakker.ui.tracked.Stats
 import com.jd.trakker.ui.tracked.TrackedEvent
 
 @Composable
@@ -27,6 +28,7 @@ fun MainScreen(
     pendingItems: List<Item>,
     completedItems: List<Item>,
     droppedItems: List<Item>,
+    statsData: Stats,
     onEvent: (TrackedEvent) -> Unit
 ) {
     Column(modifier = Modifier
@@ -35,7 +37,7 @@ fun MainScreen(
             .padding(horizontal = 16.dp)
             .verticalScroll(scrollState)
     ) {
-        // TODO: Stats
+        Stats(data = statsData)
 
         val favoriteTypeName = "favorite"
         val isFavoriteCollapsed = collapsedCategories.getOrDefault(favoriteTypeName, false)

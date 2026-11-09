@@ -104,4 +104,11 @@
     <string name="favorite_plural">Favoritos</string>
     <string name="no_items">Sem itens</string>
     <string name="empty">Vazio</string>
+    <string name="meam">Média</string>
+    <string name="count">Contagem</string>
+    <string name="category">Categoria</string>
+    <string name="genres">Generos</string>
+    <string name="others">Outros</string>
+    <string name="average_rating">Avaliação média</string>
+    <string name="average_user_rating">Avaliação média utilizador</string>
 </resources>

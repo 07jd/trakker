@@ -201,6 +201,7 @@ fun TrackedScreen(
                     pendingItems = uiState.pendingItems,
                     completedItems = uiState.completedItems,
                     droppedItems = uiState.droppedItems,
+                    statsData = uiState.stats,
                     onEvent = { onEvent(it) }
                 )
             }

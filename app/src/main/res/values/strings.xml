@@ -110,4 +110,11 @@
     <string name="favorite_plural">Favorites</string>
     <string name="no_items">No items</string>
     <string name="empty">Empty</string>
+    <string name="meam">Mean</string>
+    <string name="count">Count</string>
+    <string name="category">Category</string>
+    <string name="genres">Genres</string>
+    <string name="others">Others</string>
+    <string name="average_rating">Average rating</string>
+    <string name="average_user_rating">Average user rating</string>
 </resources>
