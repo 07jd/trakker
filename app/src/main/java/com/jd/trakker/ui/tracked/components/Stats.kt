@@ -209,7 +209,7 @@ private fun StatsPieChart(
                     )
                 }
             ),
-            spacing = 2.dp
+            spacing = if(entries.size > 1) 2.dp else 0.dp
         )
 
         Row(
